@@ -52,7 +52,12 @@ dependencies:
   textfield_search: ^0.10.0
   popup_card: ^0.1.0
   url_launcher: '5.4.0'
-
+  flutter_signin_button: ^2.0.0
+  firebase_core: ^2.4.0
+  google_sign_in: ^5.4.2
+  firebase_auth: ^4.2.1
+  firebase_storage: ^11.0.8
+  cloud_firestore: ^4.2.0
 
   
 flutter_icons:
