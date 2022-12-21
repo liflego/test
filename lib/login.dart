@@ -1,11 +1,18 @@
 import 'dart:convert';
+import 'dart:ffi';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_signin_button/button_list.dart';
+import 'package:flutter_signin_button/button_view.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
+import 'package:sigma_space/page/sublogin/googlelogin.dart';
 import 'classapi/class.dart';
 import 'main.dart';
 import 'package:sizer/sizer.dart';
+import 'package:flutter_signin_button/button_view.dart';
 
 class login extends StatefulWidget {
   login({Key? key}) : super(key: key);
@@ -20,6 +27,10 @@ class _loginState extends State<login> {
   TextEditingController passwordString = TextEditingController();
   int? status;
   int? status2;
+  GoogleSignInAccount? _userObj;
+  GoogleSignIn _googleSignIn = GoogleSignIn();
+  String name = " ";
+  String email = " ";
   @override
   void initState() {
     super.initState();
@@ -36,6 +47,7 @@ class _loginState extends State<login> {
       return Scaffold(
         backgroundColor: ColorConstants.backgroundbody,
         appBar: AppBar(
+          centerTitle: true,
           toolbarHeight: 10.h,
           title: Text(
             "SENTOR",
@@ -54,6 +66,7 @@ class _loginState extends State<login> {
                 usernametext(),
                 passwordtext(),
                 buttonlogin(),
+                googleloginbutton(),
               ],
             ),
           ),
@@ -78,6 +91,7 @@ class _loginState extends State<login> {
           ),
         ),
         controller: usernameString,
+        // ignore: body_might_complete_normally_nullable
         validator: (input) {
           if (input!.length < 1) {
             return "Please enter Username";
@@ -117,20 +131,50 @@ class _loginState extends State<login> {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.h),
       // ignore: deprecated_member_use
-      child: FlatButton(
-        height: 60,
-        color: ColorConstants.buttoncolor,
+      child: TextButton(
+        style: ButtonStyle(
+            backgroundColor:
+                MaterialStateProperty.all(ColorConstants.buttoncolor)),
         onPressed: doLogin,
         child: Center(
           child: Text(
             "Sign in",
             style: TextStyle(
                 fontSize: 25.0.sp,
-                color: Colors.black,
+                color: Colors.white,
                 fontFamily: 'newbodyfont'),
           ),
         ),
       ),
+    );
+  }
+
+  Widget googleloginbutton() {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 0.h, horizontal: 0.h),
+      // ignore: deprecated_member_use
+      child: SignInButton(Buttons.GoogleDark, onPressed: () {
+        _googleSignIn.signIn().then((userData) {
+          setState(() {
+            _userObj = userData;
+            name = _userObj!.displayName.toString();
+            email = _userObj!.email;
+          });
+          if (userData != null) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => (googlelogin(
+                  name: name,
+                  email: email,
+                )),
+              ),
+            );
+          }
+        }).catchError((e) {
+          print(e);
+        });
+      }),
     );
   }
 
@@ -192,3 +236,4 @@ class _loginState extends State<login> {
     }
   }
 }
+
