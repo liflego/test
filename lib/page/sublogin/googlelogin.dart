@@ -1,16 +1,14 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sigma_space/main.dart';
 import 'package:sizer/sizer.dart';
+
 import '../../classapi/class.dart';
 import 'package:http/http.dart' as http;
 import 'package:sigma_space/login.dart';
@@ -42,7 +40,6 @@ class _googleloginState extends State<googlelogin> {
     required this.name,
     required this.email,
   });
-  GoogleSignIn _googleSignIn = GoogleSignIn();
   final _formkey = GlobalKey<FormState>();
   late int ttt;
   late String s;
@@ -102,12 +99,12 @@ class _googleloginState extends State<googlelogin> {
                       fontFamily: "newbodyfont",
                       fontSize: 45,
                       color: Colors.purple)),
-              Text(name,
+              Text(FirebaseAuth.instance.currentUser!.uid!,
                   style: TextStyle(
                       fontFamily: "newbodyfont",
                       fontSize: 35,
                       color: Colors.purple)),
-              Text(email,
+              Text(FirebaseAuth.instance.currentUser!.displayName!,
                   style: TextStyle(
                       fontFamily: "newbodyfont",
                       fontSize: 30,
@@ -220,15 +217,7 @@ class _googleloginState extends State<googlelogin> {
             backgroundColor:
                 MaterialStateProperty.all(ColorConstants.buttoncolor)),
         onPressed: () {
-          _googleSignIn.signOut().then((value) {
-            setState(() {});
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => (login()),
-              ),
-            );
-          });
+          signOut();
         },
         child: Center(
           child: Text(
@@ -259,12 +248,14 @@ class _googleloginState extends State<googlelogin> {
 
       s = ttt.toString();
       codestore = "A" + ttt.toRadixString(16);
-
-      // print(codestore.runtimeType);
-      // print(codestore);
-      // print(email);
-      // print(name);
     });
+  }
+
+  signOut() {
+    // FirebaseAuth.instance.signOut();
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
+      return login();
+    }));
   }
 
   Future doLogin() async {
