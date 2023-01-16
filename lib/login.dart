@@ -1,18 +1,19 @@
 import 'dart:convert';
-import 'dart:ffi';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_list.dart';
-import 'package:flutter_signin_button/button_view.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
 import 'package:sigma_space/page/sublogin/googlelogin.dart';
+import 'package:sigma_space/showlogo.dart';
+import 'package:sigma_space/test.dart';
 import 'classapi/class.dart';
 import 'main.dart';
 import 'package:sizer/sizer.dart';
-import 'package:flutter_signin_button/button_view.dart';
 
 class login extends StatefulWidget {
   login({Key? key}) : super(key: key);
@@ -29,8 +30,9 @@ class _loginState extends State<login> {
   int? status2;
   GoogleSignInAccount? _userObj;
   GoogleSignIn _googleSignIn = GoogleSignIn();
-  String name = " ";
-  String email = " ";
+  String name = "";
+  String email = "";
+  final auth = FirebaseAuth.instance;
   @override
   void initState() {
     super.initState();
@@ -66,7 +68,7 @@ class _loginState extends State<login> {
                 usernametext(),
                 passwordtext(),
                 buttonlogin(),
-                googleloginbutton(),
+                googleloginbutton()
               ],
             ),
           ),
@@ -154,26 +156,7 @@ class _loginState extends State<login> {
       padding: EdgeInsets.symmetric(vertical: 0.h, horizontal: 0.h),
       // ignore: deprecated_member_use
       child: SignInButton(Buttons.GoogleDark, onPressed: () {
-        _googleSignIn.signIn().then((userData) {
-          setState(() {
-            _userObj = userData;
-            name = _userObj!.displayName.toString();
-            email = _userObj!.email;
-          });
-          if (userData != null) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => (googlelogin(
-                  name: name,
-                  email: email,
-                )),
-              ),
-            );
-          }
-        }).catchError((e) {
-          print(e);
-        });
+        signInWithGoogle();
       }),
     );
   }
@@ -235,5 +218,42 @@ class _loginState extends State<login> {
       }
     }
   }
-}
 
+  signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser =
+        await GoogleSignIn(scopes: <String>["email"]).signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser!.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+    
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
+      return handleAuthState();
+    }));
+
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
+
+  handleAuthState() {
+    return StreamBuilder(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (BuildContext context, snapshot) {
+          if (snapshot.hasData) {
+            return googlelogin(
+              email: email,
+              name: name,
+            );
+          } else {
+            return login();
+          }
+        });
+  }
+}
