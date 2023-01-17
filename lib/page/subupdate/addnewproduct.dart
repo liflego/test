@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:collection';
 import 'dart:convert';
 import 'dart:ffi';
 import 'package:flutter/material.dart';
@@ -37,6 +36,8 @@ class _addnewproductpage extends State<addnewproductpage> {
   List<String>? stringpreferences1;
   bool toggle = false;
   int selectedValue = 1;
+  int numm = 0;
+  int numper = 1;
   void initState() {
     super.initState();
   }
@@ -67,30 +68,36 @@ class _addnewproductpage extends State<addnewproductpage> {
                         size: 20.sp,
                       ))),
               backgroundColor: ColorConstants.backgroundbody,
-              body: Form(
-                key: _formkey,
-                child: Container(
-                  height: MediaQuery.of(context).size.height,
-                  color: Colors.white,
-                  child: Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Column(
-                      children: [
-                        textcode(),
-                        textname(),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [texttype(), textscore(), textprice()]),
-                        SizedBox(
-                          child: textnumberspercrate(),
-                          width: MediaQuery.of(context).size.width / 2,
-                        ),
-                        SizedBox(
-                          child: textnumber(),
-                          width: MediaQuery.of(context).size.width / 2,
-                        ),
-                        buttondone()
-                      ],
+              body: SingleChildScrollView(
+                child: Form(
+                  key: _formkey,
+                  child: Container(
+                    height: MediaQuery.of(context).size.height,
+                    color: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: Column(
+                        children: [
+                          textcode(),
+                          textname(),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [texttype(), textscore(), textprice()]),
+                          SizedBox(
+                            child: textnumber(),
+                            width: MediaQuery.of(context).size.width / 1.8,
+                          ),
+                          SizedBox(
+                            child: textnumberspercrate(),
+                            width: MediaQuery.of(context).size.width / 1.7,
+                          ),
+                          SizedBox(
+                            child: textnumber2(),
+                            width: MediaQuery.of(context).size.width / 1.8,
+                          ),
+                          buttondone()
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -267,7 +274,7 @@ class _addnewproductpage extends State<addnewproductpage> {
       child: Row(
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.width / 3,
+            width: MediaQuery.of(context).size.width / 3.1,
             child: TextFormField(
               onChanged: (text) => setState(() {
                 text = price.text.trim();
@@ -306,19 +313,51 @@ class _addnewproductpage extends State<addnewproductpage> {
       child: Row(
         children: [
           Text(
-            "จำนวน",
+            "บรรจุ",
+            style: TextConstants.textstyle,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: DropdownButton(
+                value: selectedValue,
+                items: [
+                  DropdownMenuItem(
+                    child: Text("ลัง"),
+                    value: 1,
+                  ),
+                  DropdownMenuItem(
+                    child: Text("มัด"),
+                    value: 2,
+                  ),
+                  DropdownMenuItem(
+                    child: Text("คู่"),
+                    value: 3,
+                  ),
+                ],
+                onChanged: (value) {
+                  setState(() {
+                    selectedValue = value as int;
+                  });
+                }),
+          ),
+          Text(
+            "ละ",
             style: TextConstants.textstyle,
           ),
           SizedBox(
             width: MediaQuery.of(context).size.width / 6,
             child: TextFormField(
-              onChanged: (text) => setState(() {
+              onFieldSubmitted: (text) => setState(() {
                 text = numberspercrate.text.trim();
+                numper = int.parse(numberspercrate.text.trim());
               }),
               controller: numberspercrate,
-              style: TextStyle(fontSize: 20.sp, fontFamily: 'newbodyfont'),
+              style: TextStyle(
+                  fontSize: 20.sp,
+                  fontFamily: 'newbodyfont',
+                  color: Colors.red),
               decoration: InputDecoration(
-                labelText: "ต่อ",
+                hintText: ".......",
                 labelStyle:
                     TextStyle(fontFamily: "newbodyfont", fontSize: 15.sp),
                 filled: false,
@@ -333,27 +372,10 @@ class _addnewproductpage extends State<addnewproductpage> {
               },
             ),
           ),
-          DropdownButton(
-              value: selectedValue,
-              items: [
-                DropdownMenuItem(
-                  child: Text("ลัง"),
-                  value: 1,
-                ),
-                DropdownMenuItem(
-                  child: Text("มัด"),
-                  value: 2,
-                ),
-                DropdownMenuItem(
-                  child: Text("คู่"),
-                  value: 3,
-                ),
-              ],
-              onChanged: (value) {
-                setState(() {
-                  selectedValue = value as int;
-                });
-              })
+          Text(
+            "หน่วย",
+            style: TextConstants.textstyle,
+          ),
         ],
       ),
     );
@@ -365,19 +387,23 @@ class _addnewproductpage extends State<addnewproductpage> {
       child: Row(
         children: [
           Text(
-            "จำนวน",
+            "จำนวนทั้งหมด",
             style: TextConstants.textstyle,
           ),
           SizedBox(
             width: MediaQuery.of(context).size.width / 6,
             child: TextFormField(
-              onChanged: (text) => setState(() {
+              onFieldSubmitted: (text) => setState(() {
                 text = numbers.text.trim();
+                numm = int.parse(numbers.text.trim());
               }),
               controller: numbers,
-              style: TextStyle(fontSize: 20.sp, fontFamily: 'newbodyfont'),
+              style: TextStyle(
+                  fontSize: 20.sp,
+                  fontFamily: 'newbodyfont',
+                  color: Colors.red),
               decoration: InputDecoration(
-                labelText: "ต่อ",
+                labelText: "",
                 labelStyle:
                     TextStyle(fontFamily: "newbodyfont", fontSize: 15.sp),
                 filled: false,
@@ -393,9 +419,42 @@ class _addnewproductpage extends State<addnewproductpage> {
             ),
           ),
           Text(
-            "ตัว",
+            "หน่วย",
             style: TextConstants.textstyle,
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget textnumber2() {
+    return Padding(
+      padding: EdgeInsets.all(5),
+      child: Row(
+        children: [
+          Text(
+            "จำนวนทั้งหมด",
+            style: TextConstants.textstyle,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 18.0),
+            child: SizedBox(
+                width: MediaQuery.of(context).size.width / 6,
+                child: Text(
+                  (numm / numper).toInt().toString(),
+                  style: TextConstants.textstyle,
+                )),
+          ),
+          selectedValue == 1
+              ? Text("ลัง", style: TextConstants.textstyle)
+              : selectedValue == 2
+                  ? Text("มัด", style: TextConstants.textstyle)
+                  : selectedValue == 3
+                      ? Text("คู่", style: TextConstants.textstyle)
+                      : Text(
+                          "หน่วย",
+                          style: TextConstants.textstyle,
+                        ),
         ],
       ),
     );
@@ -484,6 +543,7 @@ class _addnewproductpage extends State<addnewproductpage> {
           numberspercrate.clear();
           type.clear();
           code.clear();
+          price.clear();
           return showDialog(
               context: context,
               builder: (_) => new AlertDialog(
