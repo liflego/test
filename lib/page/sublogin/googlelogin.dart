@@ -5,6 +5,7 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
@@ -14,32 +15,18 @@ import 'package:http/http.dart' as http;
 import 'package:sigma_space/login.dart';
 
 class googlelogin extends StatefulWidget {
-  //googlelogin({Key? key}) : super(key: key);
-  String name;
-  String email;
-  googlelogin({
-    required this.name,
-    required this.email,
-  });
+  googlelogin({Key? key}) : super(key: key);
 
   @override
-  State<googlelogin> createState() => _googleloginState(
-        name: name,
-        email: email,
-      );
+  _googlelogin createState() => _googlelogin();
 }
 
-class _googleloginState extends State<googlelogin> {
+class _googlelogin extends State<googlelogin> {
   TextEditingController namestoreString = TextEditingController();
   TextEditingController productypString = TextEditingController();
   TextEditingController phonenumberSting = TextEditingController();
-  String name;
-  String email;
 
-  _googleloginState({
-    required this.name,
-    required this.email,
-  });
+  GoogleSignIn _googleSignIn = GoogleSignIn();
   final _formkey = GlobalKey<FormState>();
   late int ttt;
   late String s;
@@ -252,10 +239,15 @@ class _googleloginState extends State<googlelogin> {
   }
 
   signOut() {
-    // FirebaseAuth.instance.signOut();
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
-      return login();
-    }));
+    _googleSignIn.signOut().then((value) {
+      setState(() {});
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => (login()),
+        ),
+      );
+    });
   }
 
   Future doLogin() async {
@@ -264,8 +256,9 @@ class _googleloginState extends State<googlelogin> {
       try {
         String url = "http://185.78.165.189:3000/nodejsapi/createuserwithgg";
         var body = {
-          "username": email,
-          "password": name,
+          "username": FirebaseAuth.instance.currentUser!.email,
+          "uid": FirebaseAuth.instance.currentUser!.uid,
+          "name": FirebaseAuth.instance.currentUser!.displayName,
           "codestore": codestore,
           "namestore": namestoreString.text.trim(),
           "producttype": productypString.text.trim(),
