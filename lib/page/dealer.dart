@@ -1,9 +1,14 @@
 import 'dart:convert';
 import 'dart:ffi';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sigma_space/login.dart';
 import 'package:sigma_space/page/chectsotck.dart';
@@ -23,10 +28,12 @@ class dealerpage extends StatefulWidget {
 }
 
 class _dealerpageState extends State<dealerpage> {
+  GoogleSignIn _googleSignIn = GoogleSignIn();
   List<Getalldealer> alldealer = [];
   List<Getalldealer> alldealerfordisplay = [];
   TextEditingController message = TextEditingController();
   List<String>? stringpreferences1;
+  String? _scanBarcode = 'Unknown';
   late List<String> cusdata;
   TextEditingController mysearh = TextEditingController();
   List<Getcustomerstore> alldata = [];
@@ -60,6 +67,13 @@ class _dealerpageState extends State<dealerpage> {
               "DEALER",
               style: TextStyle(fontFamily: 'newtitlefont', fontSize: 25.sp),
             ),
+            actions: [
+              IconButton(
+                  onPressed: () {
+                    scanbarcode();
+                  },
+                  icon: Icon(Icons.qr_code_scanner))
+            ],
           ),
           backgroundColor: ColorConstants.backgroundbody,
           body: Form(
@@ -253,9 +267,14 @@ class _dealerpageState extends State<dealerpage> {
                                 await SharedPreferences.getInstance();
                             preferences1.setStringList(
                                 "codestore", stringpreferences1!);
-                            Navigator.of(context).pushReplacement(
+                            _googleSignIn.signOut().then((value) {
+                              Navigator.pushReplacement(
+                                context,
                                 MaterialPageRoute(
-                                    builder: (context) => login()));
+                                  builder: (context) => (login()),
+                                ),
+                              );
+                            });
                           },
                         ),
                       )),
@@ -460,6 +479,31 @@ class _dealerpageState extends State<dealerpage> {
         ),
       ),
     );
+  }
+
+  Future<void> scanbarcode() async {
+    String barcodeScanRes;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+          '#ff6666', 'Cancel', true, ScanMode.QR);
+      setState(() {
+        _scanBarcode = barcodeScanRes;
+
+        print(_scanBarcode);
+      });
+    } on PlatformException {
+      barcodeScanRes = 'Failed to get platform version.';
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
+    setState(() {
+      _scanBarcode = barcodeScanRes;
+    });
   }
 
   Future<List<Getalldealer>> fectalldealerdata() async {
