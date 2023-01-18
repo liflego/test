@@ -10,7 +10,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
 import 'package:sigma_space/page/sublogin/googlelogin.dart';
 import 'package:sigma_space/showlogo.dart';
-import 'package:sigma_space/test.dart';
 import 'classapi/class.dart';
 import 'main.dart';
 import 'package:sizer/sizer.dart';
@@ -153,11 +152,15 @@ class _loginState extends State<login> {
 
   Widget googleloginbutton() {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 0.h, horizontal: 0.h),
+      padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 1.h),
       // ignore: deprecated_member_use
-      child: SignInButton(Buttons.GoogleDark, onPressed: () {
-        signInWithGoogle();
-      }),
+      child: SizedBox(
+        child: Center(
+          child: SignInButton(Buttons.GoogleDark, onPressed: () {
+            signInWithGoogle();
+          }),
+        ),
+      ),
     );
   }
 
@@ -168,7 +171,7 @@ class _loginState extends State<login> {
 
         var body = {
           "username": usernameString.text.trim(),
-          "password": passwordString.text.trim()
+          "uid": passwordString.text.trim()
         };
 
         http.Response response = await http.post(Uri.parse(url),
@@ -177,14 +180,12 @@ class _loginState extends State<login> {
 
         if (response.statusCode == 200) {
           var jsonRes = json.decode(response.body);
-          if (jsonRes["success"] == 1) {
-            SharedPreferences preferences =
-                await SharedPreferences.getInstance();
-            preferences.setInt("userid", jsonRes["results"]["userid"]);
 
+          if (jsonRes["success"] == 1) {
             List<String> stringpreferences1 = [
-              jsonRes["results"]["codestore"],
-              jsonRes["results"]["position"],
+              jsonRes["codestore"],
+              jsonRes["position"],
+              jsonRes["userid"].toString()
             ];
 
             SharedPreferences preferences1 =
@@ -219,6 +220,51 @@ class _loginState extends State<login> {
     }
   }
 
+  Future doLogingg() async {
+    try {
+      String url = "http://185.78.165.189:3000/nodejsapi/logingoogle";
+
+      var body = {
+        "username": FirebaseAuth.instance.currentUser!.email,
+        "uid": FirebaseAuth.instance.currentUser!.uid
+      };
+
+      http.Response response = await http.post(Uri.parse(url),
+          headers: {'Content-Type': 'application/json; charset=utf-8'},
+          body: JsonEncoder().convert(body));
+
+      if (response.statusCode == 200) {
+        var jsonRes = json.decode(response.body);
+
+        if (jsonRes["success"] == 1) {
+          List<String> stringpreferences1 = [
+            jsonRes["codestore"],
+            jsonRes["position"],
+            jsonRes["userid"].toString()
+          ];
+
+          SharedPreferences preferences1 =
+              await SharedPreferences.getInstance();
+          preferences1.setStringList("codestore", stringpreferences1);
+
+          Navigator.of(context)
+              .pushReplacement(MaterialPageRoute(builder: (context) {
+            return MyApp();
+          }));
+        } else {
+          return Navigator.of(context)
+              .pushReplacement(MaterialPageRoute(builder: (context) {
+            return handleAuthState();
+          }));
+        }
+      } else {
+        print("Server error");
+      }
+    } catch (error) {
+      print(error);
+    }
+  }
+
   signInWithGoogle() async {
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser =
@@ -233,11 +279,7 @@ class _loginState extends State<login> {
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
-    
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
-      return handleAuthState();
-    }));
-
+    doLogingg();
     // Once signed in, return the UserCredential
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
@@ -247,10 +289,7 @@ class _loginState extends State<login> {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (BuildContext context, snapshot) {
           if (snapshot.hasData) {
-            return googlelogin(
-              email: email,
-              name: name,
-            );
+            return googlelogin();
           } else {
             return login();
           }
