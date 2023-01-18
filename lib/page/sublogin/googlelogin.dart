@@ -7,6 +7,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
+import 'package:restart_app/restart_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
@@ -27,6 +28,7 @@ class _googlelogin extends State<googlelogin> {
   TextEditingController phonenumberSting = TextEditingController();
 
   GoogleSignIn _googleSignIn = GoogleSignIn();
+
   final _formkey = GlobalKey<FormState>();
   late int ttt;
   late String s;
@@ -86,7 +88,7 @@ class _googlelogin extends State<googlelogin> {
                       fontFamily: "newbodyfont",
                       fontSize: 45,
                       color: Colors.purple)),
-              Text(FirebaseAuth.instance.currentUser!.uid!,
+              Text(FirebaseAuth.instance.currentUser!.email!,
                   style: TextStyle(
                       fontFamily: "newbodyfont",
                       fontSize: 35,
@@ -247,6 +249,7 @@ class _googlelogin extends State<googlelogin> {
           builder: (context) => (login()),
         ),
       );
+      Restart.restartApp();
     });
   }
 
