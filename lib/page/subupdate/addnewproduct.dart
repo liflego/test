@@ -403,7 +403,7 @@ class _addnewproductpage extends State<addnewproductpage> {
                   fontFamily: 'newbodyfont',
                   color: Colors.red),
               decoration: InputDecoration(
-                labelText: "",
+                hintText: ".......",
                 labelStyle:
                     TextStyle(fontFamily: "newbodyfont", fontSize: 15.sp),
                 filled: false,
