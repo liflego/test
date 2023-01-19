@@ -33,7 +33,7 @@ class _dealerpageState extends State<dealerpage> {
   List<Getalldealer> alldealerfordisplay = [];
   TextEditingController message = TextEditingController();
   List<String>? stringpreferences1;
-  String? _scanBarcode = 'Unknown';
+  var _scanBarcode;
   late List<String> cusdata;
   TextEditingController mysearh = TextEditingController();
   List<Getcustomerstore> alldata = [];
@@ -41,6 +41,7 @@ class _dealerpageState extends State<dealerpage> {
   bool toggleall = false;
   List<bool> toggleselect = [];
   final _formkey = GlobalKey<FormState>();
+  List<String> list = [];
 
   @override
   void initState() {
@@ -489,9 +490,9 @@ class _dealerpageState extends State<dealerpage> {
           '#ff6666', 'Cancel', true, ScanMode.QR);
       setState(() {
         _scanBarcode = barcodeScanRes;
-
-        print(_scanBarcode);
+        list = _scanBarcode.split(" ");
       });
+      insertintodealer();
     } on PlatformException {
       barcodeScanRes = 'Failed to get platform version.';
     }
@@ -514,6 +515,7 @@ class _dealerpageState extends State<dealerpage> {
       "codestore": stringpreferences1![0],
     };
 
+    print(body.runtimeType);
     http.Response response = await http.post(Uri.parse(url),
         headers: {'Content-Type': 'application/json; charset=utf-8'},
         body: JsonEncoder().convert(body));
@@ -652,6 +654,44 @@ class _dealerpageState extends State<dealerpage> {
       } catch (error) {
         print(error);
       }
+    }
+  }
+
+  Future insertintodealer() async {
+    try {
+      SharedPreferences preferences1 = await SharedPreferences.getInstance();
+      stringpreferences1 = preferences1.getStringList("codestore");
+      String url = "http://185.78.165.189:3000/nodejsapi/inserttodealer";
+
+      var body = {
+        "dealercode": list[0].trim(),
+        "dealername": list[1].trim(),
+        "phone": list[2].trim(),
+        "codestore": list[3].trim(),
+        "notes": list[4].trim()
+      };
+
+      print(body);
+
+      http.Response response = await http.post(Uri.parse(url),
+          headers: {'Content-Type': 'application/json; charset=utf-8'},
+          body: JsonEncoder().convert(body));
+
+      return showDialog(
+          context: context,
+          builder: (_) => new AlertDialog(
+                content: new Text("Message send successfully"),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              ));
+    } catch (error) {
+      print(error);
     }
   }
 }
