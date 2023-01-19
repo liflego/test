@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -19,9 +20,12 @@ class orderfromstore extends StatefulWidget {
 }
 
 class _orderfromstoreState extends State<orderfromstore> {
+  final _formkey = GlobalKey<FormState>();
   List<String>? stringpreferences1;
   List<Getallorders> allorders = [];
   List<Getallorders> allordersfordisplay = [];
+  TextEditingController companyString = TextEditingController();
+  TextEditingController trackString = TextEditingController();
 
   @override
   void initState() {
@@ -50,151 +54,107 @@ class _orderfromstoreState extends State<orderfromstore> {
             ),
           ),
           backgroundColor: ColorConstants.backgroundbody,
-          body: ListView.builder(
-            itemCount: allordersfordisplay.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Padding(
-                padding: const EdgeInsets.only(top: 4.0),
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  child: Slidable(
-                    endActionPane: stringpreferences1?[1] == "ADMIN"
-                        // ignore: prefer_const_constructors
-                        ? ActionPane(
-                            motion: ScrollMotion(),
+          body: Form(
+            key: _formkey,
+            child: ListView.builder(
+              itemCount: allordersfordisplay.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 4.0),
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: Slidable(
+                      endActionPane: stringpreferences1?[1] == "ADMIN"
+                          // ignore: prefer_const_constructors
+                          ? ActionPane(
+                              motion: ScrollMotion(),
 
-                            // ignore: prefer_const_literals_to_create_immutables
-                            children: [
-                              Container(
-                                color: Colors.green,
-                                width: MediaQuery.of(context).size.width / 2,
-                                height: MediaQuery.of(context).size.height,
-                                child: OutlinedButton(
-                                  onPressed: null,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.delivery_dining_outlined,
-                                        color: Colors.white,
-                                        size: 22.sp,
-                                      ),
-                                      Text(
-                                        "ADD TRACK",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontFamily: 'newbodyfont',
-                                            fontSize: 15.sp),
-                                      )
-                                    ],
+                              // ignore: prefer_const_literals_to_create_immutables
+                              children: [
+                                Container(
+                                  color: Colors.green,
+                                  width: MediaQuery.of(context).size.width / 2,
+                                  height: MediaQuery.of(context).size.height,
+                                  child: OutlinedButton(
+                                    onPressed: () {
+                                      inputnumber(index);
+                                    },
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.fire_truck,
+                                          color: Colors.white,
+                                          size: 22.sp,
+                                        ),
+                                        Text(
+                                          "ADD TRACK",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontFamily: 'newbodyfont',
+                                              fontSize: 15.sp),
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          )
-                        : ActionPane(
-                            motion: ScrollMotion(),
-                            children: [
-                              Container(
-                                color: Colors.red,
-                                width: MediaQuery.of(context).size.width / 2,
-                                height: MediaQuery.of(context).size.height,
-                                child: OutlinedButton(
-                                  onPressed: null,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.cancel,
-                                        color: Colors.white,
-                                        size: 22.sp,
-                                      ),
-                                      Text(
-                                        "Cancel",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontFamily: 'newbodyfont',
-                                            fontSize: 15.sp),
-                                      )
-                                    ],
+                              ],
+                            )
+                          : ActionPane(
+                              motion: ScrollMotion(),
+                              children: [
+                                Container(
+                                  color: Colors.red,
+                                  width: MediaQuery.of(context).size.width / 2,
+                                  height: MediaQuery.of(context).size.height,
+                                  child: OutlinedButton(
+                                    onPressed: null,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.cancel,
+                                          color: Colors.white,
+                                          size: 22.sp,
+                                        ),
+                                        Text(
+                                          "Cancel",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontFamily: 'newbodyfont',
+                                              fontSize: 15.sp),
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
+                              ],
+                            ),
 
-                    // The child of the Slidable is what the user sees when the
-                    // component is not dragged.
-                    child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                          backgroundColor:
-                              allordersfordisplay[index].price != null
-                                  ? Colors.lime[500]
-                                  : ColorConstants.colorcardorder),
-                      onPressed: () {
-                        if (stringpreferences1?[1] == "ADMIN") {
-                          Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(builder: (context) {
-                            return orderforadminedit(
-                              ordernumber:
-                                  allordersfordisplay[index].ordernumber,
-                              cuscode: allordersfordisplay[index].cuscode,
-                              cusname: allordersfordisplay[index].cusname,
-                              pay: allordersfordisplay[index].pay,
-                              amountlist: allordersfordisplay[index]
-                                  .amountlist
-                                  .toString(),
-                              date: DateFormat("dd/MM/yyyy HH:mm:ss")
-                                      .format(DateTime.parse(
-                                          allordersfordisplay[index].date))
-                                      .substring(0, 6) +
-                                  DateFormat("dd/MM/yyyy HH:mm:ss")
-                                      .format(DateTime.parse(
-                                          allordersfordisplay[index].date))
-                                      .substring(8, 16),
-                            );
-                          }));
-                        } else {
-                          Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(builder: (context) {
-                            return orderforedit(
-                              ordernumber:
-                                  allordersfordisplay[index].ordernumber,
-                              cuscode: allordersfordisplay[index].cuscode,
-                              cusname: allordersfordisplay[index].cusname,
-                              pay: allordersfordisplay[index].pay,
-                              amountlist: allordersfordisplay[index]
-                                  .amountlist
-                                  .toString(),
-                              date: DateFormat("dd/MM/yyyy HH:mm:ss")
-                                      .format(DateTime.parse(
-                                          allordersfordisplay[index].date))
-                                      .substring(0, 6) +
-                                  DateFormat("dd/MM/yyyy HH:mm:ss")
-                                      .format(DateTime.parse(
-                                          allordersfordisplay[index].date))
-                                      .substring(8, 16),
-                            );
-                          }));
-                        }
-                      },
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "${allordersfordisplay[index].cusname}",
-                                maxLines: 2,
-                                style: TextStyle(
-                                    fontSize: 20.0.sp,
-                                    fontFamily: 'newbodyfont',
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black),
-                              ),
-                              Text(
-                                DateFormat("dd/MM/yyyy HH:mm:ss")
+                      // The child of the Slidable is what the user sees when the
+                      // component is not dragged.
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                            backgroundColor:
+                                allordersfordisplay[index].price != null
+                                    ? Colors.lime[500]
+                                    : ColorConstants.colorcardorder),
+                        onPressed: () {
+                          if (stringpreferences1?[1] == "ADMIN") {
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(builder: (context) {
+                              return orderforadminedit(
+                                ordernumber:
+                                    allordersfordisplay[index].ordernumber,
+                                cuscode: allordersfordisplay[index].cuscode,
+                                cusname: allordersfordisplay[index].cusname,
+                                pay: allordersfordisplay[index].pay,
+                                amountlist: allordersfordisplay[index]
+                                    .amountlist
+                                    .toString(),
+                                date: DateFormat("dd/MM/yyyy HH:mm:ss")
                                         .format(DateTime.parse(
                                             allordersfordisplay[index].date))
                                         .substring(0, 6) +
@@ -202,25 +162,76 @@ class _orderfromstoreState extends State<orderfromstore> {
                                         .format(DateTime.parse(
                                             allordersfordisplay[index].date))
                                         .substring(8, 16),
-                                style: TextConstants.textstyle,
-                              ),
-                            ],
-                          ),
-                          Text(
-                            "วิธีการชำระ : ${allordersfordisplay[index].pay}",
-                            style: TextConstants.textstyle,
-                          ),
-                          Text(
-                            "จำนวน ${allordersfordisplay[index].amountlist} รายการ",
-                            style: TextConstants.textstyle,
-                          ),
-                        ],
+                              );
+                            }));
+                          } else {
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(builder: (context) {
+                              return orderforedit(
+                                ordernumber:
+                                    allordersfordisplay[index].ordernumber,
+                                cuscode: allordersfordisplay[index].cuscode,
+                                cusname: allordersfordisplay[index].cusname,
+                                pay: allordersfordisplay[index].pay,
+                                amountlist: allordersfordisplay[index]
+                                    .amountlist
+                                    .toString(),
+                                date: DateFormat("dd/MM/yyyy HH:mm:ss")
+                                        .format(DateTime.parse(
+                                            allordersfordisplay[index].date))
+                                        .substring(0, 6) +
+                                    DateFormat("dd/MM/yyyy HH:mm:ss")
+                                        .format(DateTime.parse(
+                                            allordersfordisplay[index].date))
+                                        .substring(8, 16),
+                              );
+                            }));
+                          }
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "${allordersfordisplay[index].cusname}",
+                                  maxLines: 2,
+                                  style: TextStyle(
+                                      fontSize: 20.0.sp,
+                                      fontFamily: 'newbodyfont',
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black),
+                                ),
+                                Text(
+                                  DateFormat("dd/MM/yyyy HH:mm:ss")
+                                          .format(DateTime.parse(
+                                              allordersfordisplay[index].date))
+                                          .substring(0, 6) +
+                                      DateFormat("dd/MM/yyyy HH:mm:ss")
+                                          .format(DateTime.parse(
+                                              allordersfordisplay[index].date))
+                                          .substring(8, 16),
+                                  style: TextConstants.textstyle,
+                                ),
+                              ],
+                            ),
+                            Text(
+                              "วิธีการชำระ : ${allordersfordisplay[index].pay}",
+                              style: TextConstants.textstyle,
+                            ),
+                            Text(
+                              "จำนวน ${allordersfordisplay[index].amountlist} รายการ",
+                              style: TextConstants.textstyle,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
         ),
       );
@@ -281,7 +292,148 @@ class _orderfromstoreState extends State<orderfromstore> {
     return _allorders;
   }
 
-  Future popupforupdatedelivery() async {
-    print("Aaa");
+  void inputnumber(index) => showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+            content: SizedBox(
+              height: 200.sp,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  new Text("ADD TRACK"),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                          child: Center(
+                        child: TextFormField(
+                          controller: companyString,
+                          validator: (input) {
+                            if (input!.length < 1) {
+                              return "Please enter Company";
+                            }
+                          },
+                          textAlign: TextAlign.center,
+                          autofocus: true,
+                          decoration: InputDecoration(hintText: "Company"),
+                        ),
+                      )),
+                      Padding(padding: EdgeInsets.all(10.0)),
+                      SizedBox(
+                          child: Center(
+                        child: TextFormField(
+                          controller: trackString,
+                          validator: (input) {
+                            if (input!.length < 1) {
+                              return "Please enter Track number";
+                            }
+                          },
+                          textAlign: TextAlign.center,
+                          autofocus: true,
+                          decoration: InputDecoration(hintText: "Track number"),
+                        ),
+                      )),
+                      Padding(padding: EdgeInsets.only(top: 30.0)),
+                      TextButton(
+                          child: Container(
+                              width: 18.w,
+                              height: 5.h,
+                              color: ColorConstants.buttoncolor,
+                              child: Center(
+                                  child: Text(
+                                "DONE",
+                                style: TextStyle(color: Colors.white),
+                              ))),
+                          onPressed: () {
+                            insertdelivery(index);
+                          }),
+
+                      // ignore: unnecessary_new
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ));
+
+  Future insertdelivery(index) async {
+    if (_formkey.currentState!.validate()) {
+      try {
+        String url = "http://185.78.165.189:3000/nodejsapi/insertdelivery";
+        if (companyString.text.trim().length < 1 ||
+            trackString.text.trim().length < 1) {
+          return showDialog(
+              context: context,
+              builder: (_) => new AlertDialog(
+                    content: new Text("Plese enter your info."),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text('OK'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      )
+                    ],
+                  ));
+        }
+        var body = {
+          "ordernumber": allordersfordisplay[index].ordernumber,
+          "company": companyString.text.trim(),
+          "track": trackString.text.trim(),
+          "date": DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()),
+        };
+        print(body);
+        http.Response response = await http.post(Uri.parse(url),
+            headers: {'Content-Type': 'application/json; charset=utf-8'},
+            body: JsonEncoder().convert(body));
+        if (response.statusCode == 200) {
+          companyString.clear();
+          trackString.clear();
+          Navigator.of(context)
+              .pushReplacement(MaterialPageRoute(builder: (context) {
+            return MyApp();
+          }));
+          return showDialog(
+              context: context,
+              builder: (_) => new AlertDialog(
+                    content: new Text("Message send successfully"),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text('OK'),
+                        onPressed: () {
+                          companyString.clear();
+                          trackString.clear();
+                          Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(builder: (context) {
+                            return MyApp();
+                          }));
+                        },
+                      )
+                    ],
+                  ));
+        } else {
+          return showDialog(
+              context: context,
+              builder: (_) => new AlertDialog(
+                    content: new Text("Server error"),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text('OK'),
+                        onPressed: () {
+                          companyString.clear();
+                          trackString.clear();
+                          Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(builder: (context) {
+                            return MyApp();
+                          }));
+                        },
+                      )
+                    ],
+                  ));
+        }
+      } catch (error) {
+        print(error);
+      }
+    }
   }
 }
