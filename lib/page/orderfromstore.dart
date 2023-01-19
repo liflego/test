@@ -75,12 +75,12 @@ class _orderfromstoreState extends State<orderfromstore> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Icon(
-                                        Icons.edit,
+                                        Icons.delivery_dining_outlined,
                                         color: Colors.white,
                                         size: 22.sp,
                                       ),
                                       Text(
-                                        "EDIT",
+                                        "ADD TRACK",
                                         style: TextStyle(
                                             color: Colors.white,
                                             fontFamily: 'newbodyfont',
@@ -129,7 +129,7 @@ class _orderfromstoreState extends State<orderfromstore> {
                       style: OutlinedButton.styleFrom(
                           backgroundColor:
                               allordersfordisplay[index].price != null
-                                  ? Colors.amber
+                                  ? Colors.lime[500]
                                   : ColorConstants.colorcardorder),
                       onPressed: () {
                         if (stringpreferences1?[1] == "ADMIN") {
@@ -188,7 +188,7 @@ class _orderfromstoreState extends State<orderfromstore> {
                                 "${allordersfordisplay[index].cusname}",
                                 maxLines: 2,
                                 style: TextStyle(
-                                    fontSize: 24.0,
+                                    fontSize: 20.0.sp,
                                     fontFamily: 'newbodyfont',
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black),
@@ -279,5 +279,9 @@ class _orderfromstoreState extends State<orderfromstore> {
     }
 
     return _allorders;
+  }
+
+  Future popupforupdatedelivery() async {
+    print("Aaa");
   }
 }
