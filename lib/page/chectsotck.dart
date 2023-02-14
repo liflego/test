@@ -151,23 +151,25 @@ class _checkstock extends State<checkstock> {
                 ),
               ]),
             ),
-            floatingActionButton: FloatingActionButton(
-              onPressed: gotoorder,
-              backgroundColor: ColorConstants.appbarcolor,
-              child: noti != 0
-                  ? Badge(
-                      backgroundColor: Colors.white,
-                      label: Text(
-                        '$noti',
-                        style: TextStyle(
-                            fontSize: 12.0.sp,
-                            fontFamily: 'newtitlefont',
-                            color: Colors.red),
-                      ),
-                      child: Icon(Icons.list),
-                    )
-                  : Icon(Icons.list),
-            ),
+            floatingActionButton: stringpreferences1?[1] == "ADMIN"
+                ? null
+                : FloatingActionButton(
+                    onPressed: gotoorder,
+                    backgroundColor: ColorConstants.appbarcolor,
+                    child: noti != 0
+                        ? Badge(
+                            backgroundColor: Colors.white,
+                            label: Text(
+                              '$noti',
+                              style: TextStyle(
+                                  fontSize: 12.0.sp,
+                                  fontFamily: 'newtitlefont',
+                                  color: Colors.red),
+                            ),
+                            child: Icon(Icons.list),
+                          )
+                        : Icon(Icons.list),
+                  ),
             drawer: stringpreferences1?[1] != "ADMIN"
                 ? Drawer(
                     backgroundColor: Colors.green[700],
@@ -984,7 +986,7 @@ class _checkstock extends State<checkstock> {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     stringpreferences1 = preferences.getStringList("codestore");
     try {
-      String url = "http://185.78.165.189:3000/nodejsapi/insertfavorite";
+      String url = "http://185.78.165.189:3000/pythonapi/insertfavorite";
       var body = {
         "codeproduct": allproductfordisplay[index].codeproduct.toString(),
         "codestore": stringpreferences2!.toString(),
