@@ -1,19 +1,18 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sigma_space/classapi/class.dart';
 import 'package:sigma_space/login.dart';
 import 'package:sigma_space/main.dart';
 import 'package:sigma_space/update.dart';
 import 'package:sizer/sizer.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'dart:io' as io;
 
 class addnewproductpage extends StatefulWidget {
   addnewproductpage({Key? key}) : super(key: key);
@@ -38,6 +37,10 @@ class _addnewproductpage extends State<addnewproductpage> {
   int selectedValue = 1;
   int numm = 0;
   int numper = 1;
+  io.File? selectedImage;
+
+  var resJson;
+  String message = "";
   void initState() {
     super.initState();
   }
@@ -49,59 +52,54 @@ class _addnewproductpage extends State<addnewproductpage> {
         return SafeArea(
           top: false,
           child: Scaffold(
-              appBar: AppBar(
-                  toolbarHeight: 7.h,
-                  title: Text(
-                    "ADD",
-                    style:
-                        TextStyle(fontFamily: 'newtitlefont', fontSize: 25.sp),
-                  ),
-                  backgroundColor: ColorConstants.appbarcolor,
-                  leading: IconButton(
-                      onPressed: () {
-                        Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: (context) => MyApp()));
-                      },
-                      icon: Icon(
-                        Icons.arrow_back,
-                        color: Colors.white,
-                        size: 20.sp,
-                      ))),
-              backgroundColor: ColorConstants.backgroundbody,
-              body: SingleChildScrollView(
-                child: Form(
-                  key: _formkey,
-                  child: Container(
-                    height: MediaQuery.of(context).size.height,
-                    color: Colors.white,
-                    child: Padding(
-                      padding: const EdgeInsets.all(2.0),
-                      child: Column(
-                        children: [
-                          textcode(),
-                          textname(),
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [texttype(), textscore(), textprice()]),
-                          SizedBox(
-                            child: textnumber(),
-                            width: MediaQuery.of(context).size.width / 1.8,
-                          ),
-                          SizedBox(
-                            child: textnumberspercrate(),
-                            width: MediaQuery.of(context).size.width / 1.7,
-                          ),
-                          SizedBox(
-                            child: textnumber2(),
-                            width: MediaQuery.of(context).size.width / 1.8,
-                          ),
-                          buttondone()
-                        ],
-                      ),
-                    ),
-                  ),
+            appBar: AppBar(
+                toolbarHeight: 7.h,
+                title: Text(
+                  "ADD",
+                  style: TextStyle(fontFamily: 'newtitlefont', fontSize: 25.sp),
                 ),
-              )),
+                backgroundColor: ColorConstants.appbarcolor,
+                leading: IconButton(
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (context) => MyApp()));
+                    },
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: Colors.white,
+                      size: 20.sp,
+                    ))),
+            backgroundColor: ColorConstants.backgroundbody,
+            body: Form(
+              key: _formkey,
+              child: Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: ListView(
+                  children: [
+                    textcode(),
+                    textname(),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [texttype(), textscore(), textprice()]),
+                    SizedBox(
+                      child: textnumber(),
+                      width: MediaQuery.of(context).size.width / 1.5,
+                    ),
+                    SizedBox(
+                      child: textnumberspercrate(),
+                      width: MediaQuery.of(context).size.width / 1.7,
+                    ),
+                    SizedBox(
+                      child: textnumber2(),
+                      width: MediaQuery.of(context).size.width / 1.5,
+                    ),
+                    selectimage(),
+                    buttondone()
+                  ],
+                ),
+              ),
+            ),
+          ),
         );
       },
     );
@@ -403,7 +401,7 @@ class _addnewproductpage extends State<addnewproductpage> {
                   fontFamily: 'newbodyfont',
                   color: Colors.red),
               decoration: InputDecoration(
-                hintText: ".......",
+                hintText: "......",
                 labelStyle:
                     TextStyle(fontFamily: "newbodyfont", fontSize: 15.sp),
                 filled: false,
@@ -460,6 +458,29 @@ class _addnewproductpage extends State<addnewproductpage> {
     );
   }
 
+  Widget selectimage() {
+    return Padding(
+        padding: EdgeInsets.all(5),
+        child: Column(children: [
+          selectedImage == null
+              ? Text(
+                  "Select Image for Uploade",
+                  style: TextConstants.textStylenotes,
+                )
+              : Image.file(selectedImage!),
+          TextButton.icon(
+              style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all(ColorConstants.buttoncolor)),
+              onPressed: getImage,
+              icon: Icon(Icons.upload),
+              label: Text(
+                "Upload",
+                style: TextConstants.textstyle,
+              ))
+        ]));
+  }
+
   Widget buttondone() {
     return Padding(
       padding: EdgeInsets.all(5),
@@ -472,7 +493,7 @@ class _addnewproductpage extends State<addnewproductpage> {
           ),
         ),
         child: TextButton(
-          onPressed: insertnewproduct,
+          onPressed: onUploadImage,
           child: Text(
             "DONE",
             style: TextStyle(
@@ -566,5 +587,34 @@ class _addnewproductpage extends State<addnewproductpage> {
     } else {
       print("server error");
     }
+  }
+
+  Future getImage() async {
+    final pickimage = await ImagePicker().getImage(source: ImageSource.gallery);
+    selectedImage = io.File(pickimage!.path);
+    setState(() {});
+  }
+
+  onUploadImage() async {
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse("http://185.78.165.189:3000/pythonapi/upload"),
+    );
+    Map<String, String> headers = {"Content-type": "multipart/form-data"};
+    request.files.add(
+      http.MultipartFile(
+        'image',
+        selectedImage!.readAsBytes().asStream(),
+        selectedImage!.lengthSync(),
+        filename: selectedImage!.path.split('/').last,
+      ),
+    );
+    request.headers.addAll(headers);
+    print("request: " + request.toString());
+    var res = await request.send();
+    http.Response response = await http.Response.fromStream(res);
+    setState(() {
+      resJson = jsonDecode(response.body);
+    });
   }
 }
