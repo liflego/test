@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
-import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -18,7 +17,24 @@ import 'package:flutter/services.dart';
 
 class updatepage extends StatefulWidget {
   String codeproduct;
-  updatepage({Key? key, required this.codeproduct}) : super(key: key);
+  String nameproduct;
+  String type;
+  String pdpd;
+  int score;
+  int amount;
+  int amountper;
+  int price;
+  updatepage(
+      {Key? key,
+      required this.codeproduct,
+      required this.nameproduct,
+      required this.type,
+      required this.pdpd,
+      required this.score,
+      required this.amount,
+      required this.amountper,
+      required this.price})
+      : super(key: key);
 
   @override
   _updatepage createState() => _updatepage();
@@ -33,8 +49,6 @@ class _updatepage extends State<updatepage> {
   List<String>? stringpreferences1;
 
   void initState() {
-    fectdatafromapi();
-
     super.initState();
   }
 
@@ -120,7 +134,7 @@ class _updatepage extends State<updatepage> {
                           color: Colors.black),
                       textAlign: TextAlign.start,
                       decoration: InputDecoration(
-                        hintText: "${allproductfordisplay?[6]}",
+                        hintText: "${widget.score}",
                         hintStyle: TextStyle(fontSize: 20.0.sp),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20.0),
@@ -164,7 +178,7 @@ class _updatepage extends State<updatepage> {
                           color: Colors.black),
                       textAlign: TextAlign.start,
                       decoration: InputDecoration(
-                        hintText: "${allproductfordisplay?[2]}",
+                        hintText: "${widget.amount}",
                         hintStyle: TextStyle(fontSize: 20.0.sp),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20.0),
@@ -216,11 +230,11 @@ class _updatepage extends State<updatepage> {
   Widget listitem() {
     return Card(
         elevation: 2,
-        color: allproductfordisplay![6] == 4
+        color: widget.score == 4
             ? ColorConstants.sc4
-            : allproductfordisplay![6] == 3
+            : widget.score == 3
                 ? ColorConstants.sc3
-                : allproductfordisplay![6] == 2
+                : widget.score == 2
                     ? ColorConstants.sc2
                     : Colors.grey[50],
         child: Padding(
@@ -237,11 +251,11 @@ class _updatepage extends State<updatepage> {
                         Row(
                           children: [
                             Text(
-                              allproductfordisplay?[1] +
+                              widget.nameproduct +
                                   "(" +
-                                  allproductfordisplay?[4] +
+                                  widget.type +
                                   "ละ" +
-                                  "${allproductfordisplay?[3]}" +
+                                  "${widget.amountper}" +
                                   ")",
                               maxLines: 2,
                               style: TextStyle(
@@ -256,30 +270,30 @@ class _updatepage extends State<updatepage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              allproductfordisplay?[0],
+                              widget.codeproduct,
                               style: TextConstants.textstyle,
                             ),
                             Text(
-                              "ประเภท: ${allproductfordisplay?[5]}",
+                              "ประเภท: ${widget.type}",
                               style: TextConstants.textstyle,
                             ),
-                            allproductfordisplay?[2] == 0
+                            widget.amount == 0
                                 ? Text(
-                                    "จำนวน : ${allproductfordisplay?[2]}",
+                                    "จำนวน : ${widget.amount}",
                                     style: TextStyle(
                                         fontSize: 18.sp,
                                         fontFamily: 'newbodyfont',
                                         color: Colors.red),
                                   )
                                 : Text(
-                                    "จำนวน : ${allproductfordisplay?[2]}" +
-                                        "(${((allproductfordisplay?[2]) / allproductfordisplay?[3]).toInt()}" +
-                                        allproductfordisplay?[4] +
+                                    "จำนวน : ${widget.amount}" +
+                                        "(${((widget.amount) / widget.amountper).toInt()}" +
+                                        widget.pdpd +
                                         ")",
                                     style: TextConstants.textstyle,
                                   ),
                             Text(
-                              "ราคา: ${allproductfordisplay?[7]}",
+                              "ราคา: ${widget.price}",
                               style: TextConstants.textstyle,
                             ),
                           ],
@@ -294,48 +308,20 @@ class _updatepage extends State<updatepage> {
         ));
   }
 
-  Future fectdatafromapi() async {
-    SharedPreferences preferences1 = await SharedPreferences.getInstance();
-    stringpreferences1 = preferences1.getStringList("codestore");
-    String url = "http://185.78.165.189:3000/nodejsapi/codeproduct/codestore";
-    var body = {
-      "codeproduct": widget.codeproduct,
-      "codestore": stringpreferences1?[0],
-    };
-
-    http.Response response = await http.post(Uri.parse(url),
-        headers: {'Content-Type': 'application/json; charset=utf-8'},
-        body: JsonEncoder().convert(body));
-
-    dynamic jsonres = json.decode(response.body);
-    List<Getallproduct>? _allproduct = [];
-
-    allproductfordisplay!.add(jsonres["codeproduct"]);
-    allproductfordisplay!.add(jsonres["nameproduct"]);
-    allproductfordisplay!.add(jsonres["amount"]);
-    allproductfordisplay!.add(jsonres["amountpercrate"]);
-    allproductfordisplay!.add(jsonres["productset"]);
-    allproductfordisplay!.add(jsonres["type"]);
-    allproductfordisplay!.add(jsonres["score"]);
-    allproductfordisplay!.add(jsonres["price"]);
-
-    setState(() {
-      score.text = allproductfordisplay![6].toString();
-      amount.text = allproductfordisplay![2].toString();
-    });
-  }
-
   Future updateamountproduct() async {
     if (_formkey.currentState!.validate()) {
       try {
-        String url = "http://185.78.165.189:3000/nodejsapi/updateamountproduct";
+        SharedPreferences preferences1 = await SharedPreferences.getInstance();
+        stringpreferences1 = preferences1.getStringList("codestore");
+        String url = "http://185.78.165.189:3000/pythonapi/updateamountproduct";
         var body = {
-          "nameproduct": allproductfordisplay?[0].nameproduct,
+          "nameproduct": widget.nameproduct,
           "score": int.parse(score.text.trim()),
           "amount": int.parse(amount.text.trim()),
           "codestore": stringpreferences1![0],
-          "codeproduct": allproductfordisplay?[0].codeproduct.trim()
+          "codeproduct": widget.codeproduct
         };
+
         http.Response response = await http.patch(Uri.parse(url),
             headers: {'Content-Type': 'application/json; charset=utf-8'},
             body: JsonEncoder().convert(body));

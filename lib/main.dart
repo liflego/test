@@ -1,6 +1,6 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
-import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sigma_space/classapi/class.dart';
 import 'package:sigma_space/page/chectsotck.dart';
@@ -9,10 +9,11 @@ import 'package:sigma_space/page/dealer.dart';
 import 'package:sigma_space/page/noti.dart';
 import 'package:sigma_space/page/orderfromstore.dart';
 import 'package:sigma_space/showlogo.dart';
-import 'package:sigma_space/update.dart';
 import 'package:sizer/sizer.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(
       new MaterialApp(debugShowCheckedModeBanner: false, home: new showlogo()));
 }
@@ -54,7 +55,7 @@ class MyAppState extends State<MyApp> {
       numpercrate: [],
       productset: [],
     ),
-    customerpage()
+    customer()
   ];
 
   final _pageOption3 = [dealerpage(), notipage()];
@@ -150,6 +151,7 @@ class MyAppState extends State<MyApp> {
 
     setState(() {
       stringpreferences1 = preferences1.getStringList("codestore");
+      print(stringpreferences1);
     });
   }
 }

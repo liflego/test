@@ -32,6 +32,8 @@ class _loginState extends State<login> {
   String name = "";
   String email = "";
   final auth = FirebaseAuth.instance;
+  List<String> stringpreferences1 = [];
+  List<String> stringpreferences2 = [];
   @override
   void initState() {
     super.initState();
@@ -167,7 +169,7 @@ class _loginState extends State<login> {
   Future doLogin() async {
     if (_formkey.currentState!.validate()) {
       try {
-        String url = "http://185.78.165.189:3000/nodejsapi/login";
+        String url = "http://185.78.165.189:3000/pythonapi/login";
 
         var body = {
           "username": usernameString.text.trim(),
@@ -182,10 +184,11 @@ class _loginState extends State<login> {
           var jsonRes = json.decode(response.body);
 
           if (jsonRes["success"] == 1) {
-            List<String> stringpreferences1 = [
+            stringpreferences1 = [
               jsonRes["codestore"],
               jsonRes["position"],
-              jsonRes["userid"].toString()
+              jsonRes["userid"].toString(),
+              jsonRes["namestore"]
             ];
 
             SharedPreferences preferences1 =
@@ -222,7 +225,7 @@ class _loginState extends State<login> {
 
   Future doLogingg() async {
     try {
-      String url = "http://185.78.165.189:3000/nodejsapi/logingoogle";
+      String url = "http://185.78.165.189:3000/pythonapi/logingoogle";
 
       var body = {
         "username": FirebaseAuth.instance.currentUser!.email,
@@ -240,7 +243,8 @@ class _loginState extends State<login> {
           List<String> stringpreferences1 = [
             jsonRes["codestore"],
             jsonRes["position"],
-            jsonRes["userid"].toString()
+            jsonRes["userid"].toString(),
+            jsonRes["namestore"]
           ];
 
           SharedPreferences preferences1 =
