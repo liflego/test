@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:sizer/sizer.dart';
 
@@ -84,7 +83,7 @@ class GetorderBycodestoreandcuscodeandordernumber {
   String pay;
   String notes;
   String date;
-  double price;
+  num price;
 
   GetorderBycodestoreandcuscodeandordernumber(
       this.ordernumber,
@@ -149,17 +148,17 @@ class Getcustomerstore {
 }
 
 class Getallorders {
-  int ordernumber;
   String cuscode;
-  String cusname;
+  int ordernumber;
   String pay;
+  num price;
+  int saleconfirm;
+  String cusname;
   int amountlist;
   String date;
-  int saleconfirm;
-  double price;
 
-  Getallorders(this.ordernumber, this.cuscode, this.cusname, this.pay,
-      this.amountlist, this.date, this.saleconfirm, this.price);
+  Getallorders(this.cuscode, this.ordernumber, this.pay, this.price,
+      this.saleconfirm, this.cusname, this.amountlist, this.date);
 }
 
 // class for get data from noti database
@@ -170,10 +169,22 @@ class Getnotifordealer {
   String message;
   String date;
   String namestore;
-  int countordernumbers;
   String pay;
-  double amount;
+  int countorder;
+  num priceall;
+  String company;
+  String track;
 
-  Getnotifordealer(this.ordernumber, this.fromwho, this.towho, this.message,
-      this.date, this.namestore, this.countordernumbers, this.pay, this.amount);
+  Getnotifordealer(
+      this.ordernumber,
+      this.fromwho,
+      this.towho,
+      this.message,
+      this.date,
+      this.namestore,
+      this.pay,
+      this.countorder,
+      this.priceall,
+      this.company,
+      this.track);
 }
