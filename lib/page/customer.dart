@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
@@ -14,14 +12,14 @@ import '../classapi/class.dart';
 import 'package:http/http.dart' as http;
 import 'package:popup_card/popup_card.dart';
 
-class customerpage extends StatefulWidget {
-  customerpage({Key? key}) : super(key: key);
+class customer extends StatefulWidget {
+  customer({Key? key}) : super(key: key);
 
   @override
-  _customerpageState createState() => _customerpageState();
+  _customerState createState() => _customerState();
 }
 
-class _customerpageState extends State<customerpage> {
+class _customerState extends State<customer> {
   List<Getallcustomer> allcustomer = [];
   List<Getallcustomer> allcustomerfordisplay = [];
   TextEditingController message = TextEditingController();

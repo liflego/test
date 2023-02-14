@@ -1,7 +1,6 @@
 // ignore_for_file: no_logic_in_create_state, unnecessary_string_interpolations, prefer_const_constructors, unnecessary_new
 
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -52,8 +51,8 @@ class _orderforadminedit extends State<orderforadminedit> {
   List<GetorderBycodestoreandcuscodeandordernumber> allorder = [];
   List<GetorderBycodestoreandcuscodeandordernumber> allorderfordisplay = [];
 
-  List<double> myprice = [];
-  List<double> mysumprice = [];
+  List<num> myprice = [];
+  List<num> mysumprice = [];
   final numformat = new NumberFormat("#,##0.00", "en_US");
 
   @override
@@ -63,6 +62,7 @@ class _orderforadminedit extends State<orderforadminedit> {
         allorder.addAll(value);
         allorderfordisplay = allorder;
         notes.text = allorderfordisplay[0].notes;
+
         for (int i = 0; i < allorderfordisplay.length; i++) {
           if (allorderfordisplay[i].price == null) {
             myprice.add(0);
@@ -335,11 +335,109 @@ class _orderforadminedit extends State<orderforadminedit> {
         padding: const EdgeInsets.all(2.0),
         child: TextButton(
           onPressed: () {
-            if (stringpreferences1?[1] == "ADMIN") {
-              insertintonotice();
+            int i = 0;
+            if (allorderfordisplay.length == 1) {
+              if (myprice[0] == 0) {
+                i = 1000;
+                showDialog(
+                    context: context,
+                    builder: (_) => new AlertDialog(
+                          content: new Text("Please enter price"),
+                          actions: <Widget>[
+                            TextButton(
+                                child: Text('OK'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                })
+                          ],
+                        ));
+              } else {
+                if (stringpreferences1?[1] == "ADMIN") {
+                  insertintonotice();
+                } else {
+                  btdone();
+                }
+              }
             } else {
-              btdone();
+              for (i = 0; i < allorderfordisplay.length; i++) {
+                if (myprice[i] == 0) {
+                  i = 1000;
+                  showDialog(
+                      context: context,
+                      builder: (_) => new AlertDialog(
+                            content: new Text("Please enter price"),
+                            actions: <Widget>[
+                              TextButton(
+                                  child: Text('OK'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  })
+                            ],
+                          ));
+                } else if (myprice[i + 1] == 0) {
+                  i = 1000;
+                  showDialog(
+                      context: context,
+                      builder: (_) => new AlertDialog(
+                            content: new Text("Please enter price"),
+                            actions: <Widget>[
+                              TextButton(
+                                  child: Text('OK'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  })
+                            ],
+                          ));
+                } else {
+                  i = 1000;
+                  if (stringpreferences1?[1] == "ADMIN") {
+                    insertintonotice();
+                  } else {
+                    btdone();
+                  }
+                }
+              }
             }
+
+////for case > 1 row
+            // for (i = 0; i < allorderfordisplay.length; i++) {
+            //   if (myprice[i] == 0) {
+            //     i = 1000;
+            //     showDialog(
+            //         context: context,
+            //         builder: (_) => new AlertDialog(
+            //               content: new Text("Please enter price"),
+            //               actions: <Widget>[
+            //                 TextButton(
+            //                     child: Text('OK'),
+            //                     onPressed: () {
+            //                       Navigator.of(context).pop();
+            //                     })
+            //               ],
+            //             ));
+            //   } else if (myprice[i + 1] == 0) {
+            //     i = 1000;
+            //     showDialog(
+            //         context: context,
+            //         builder: (_) => new AlertDialog(
+            //               content: new Text("Please enter price"),
+            //               actions: <Widget>[
+            //                 TextButton(
+            //                     child: Text('OK'),
+            //                     onPressed: () {
+            //                       Navigator.of(context).pop();
+            //                     })
+            //               ],
+            //             ));
+            //   } else {
+            //     i = 1000;
+            //     if (stringpreferences1?[1] == "ADMIN") {
+            //       insertintonotice();
+            //     } else {
+            //       btdone();
+            //     }
+            //   }
+            // }
           },
           child: Container(
             width: MediaQuery.of(context).size.width / 2,

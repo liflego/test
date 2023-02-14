@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sigma_space/login.dart';
 import 'package:sigma_space/main.dart';
 import 'package:sigma_space/page/suborders/orderforadminedit.dart';
 import 'package:sigma_space/page/suborders/orderforedit.dart';
@@ -26,6 +27,7 @@ class _orderfromstoreState extends State<orderfromstore> {
   List<Getallorders> allordersfordisplay = [];
   TextEditingController companyString = TextEditingController();
   TextEditingController trackString = TextEditingController();
+  String namestore = "";
 
   @override
   void initState() {
@@ -64,7 +66,8 @@ class _orderfromstoreState extends State<orderfromstore> {
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width,
                     child: Slidable(
-                      endActionPane: stringpreferences1?[1] == "ADMIN"
+                      endActionPane: stringpreferences1?[1] == "ADMIN" &&
+                              allordersfordisplay[index].price != null
                           // ignore: prefer_const_constructors
                           ? ActionPane(
                               motion: ScrollMotion(),
@@ -154,14 +157,9 @@ class _orderfromstoreState extends State<orderfromstore> {
                                 amountlist: allordersfordisplay[index]
                                     .amountlist
                                     .toString(),
-                                date: DateFormat("dd/MM/yyyy HH:mm:ss")
-                                        .format(DateTime.parse(
-                                            allordersfordisplay[index].date))
-                                        .substring(0, 6) +
-                                    DateFormat("dd/MM/yyyy HH:mm:ss")
-                                        .format(DateTime.parse(
-                                            allordersfordisplay[index].date))
-                                        .substring(8, 16),
+                                date: allordersfordisplay[index]
+                                    .date
+                                    .substring(5, 25),
                               );
                             }));
                           } else {
@@ -176,14 +174,9 @@ class _orderfromstoreState extends State<orderfromstore> {
                                 amountlist: allordersfordisplay[index]
                                     .amountlist
                                     .toString(),
-                                date: DateFormat("dd/MM/yyyy HH:mm:ss")
-                                        .format(DateTime.parse(
-                                            allordersfordisplay[index].date))
-                                        .substring(0, 6) +
-                                    DateFormat("dd/MM/yyyy HH:mm:ss")
-                                        .format(DateTime.parse(
-                                            allordersfordisplay[index].date))
-                                        .substring(8, 16),
+                                date: allordersfordisplay[index]
+                                    .date
+                                    .substring(5, 25),
                               );
                             }));
                           }
@@ -198,20 +191,15 @@ class _orderfromstoreState extends State<orderfromstore> {
                                   "${allordersfordisplay[index].cusname}",
                                   maxLines: 2,
                                   style: TextStyle(
-                                      fontSize: 20.0.sp,
+                                      fontSize: 16.0.sp,
                                       fontFamily: 'newbodyfont',
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black),
                                 ),
                                 Text(
-                                  DateFormat("dd/MM/yyyy HH:mm:ss")
-                                          .format(DateTime.parse(
-                                              allordersfordisplay[index].date))
-                                          .substring(0, 6) +
-                                      DateFormat("dd/MM/yyyy HH:mm:ss")
-                                          .format(DateTime.parse(
-                                              allordersfordisplay[index].date))
-                                          .substring(8, 16),
+                                  allordersfordisplay[index]
+                                      .date
+                                      .substring(5, 25),
                                   style: TextConstants.textstyle,
                                 ),
                               ],
@@ -233,6 +221,63 @@ class _orderfromstoreState extends State<orderfromstore> {
               },
             ),
           ),
+          drawer: Drawer(
+            backgroundColor: Colors.green[700],
+            child: ListView(
+              // Important: Remove any padding from the ListView.
+              padding: EdgeInsets.zero,
+              children: <Widget>[
+                DrawerHeader(
+                  child: Column(
+                    children: [
+                      Text(
+                        namestore,
+                        style: TextStyle(
+                            fontSize: 25.0,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'newtitlefont'),
+                      ),
+                    ],
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[50],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                      height: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border:
+                            Border.all(width: 0, color: Colors.grey.shade800),
+                        color: Colors.grey[50],
+                      ),
+                      child: Center(
+                        child: TextButton(
+                          child: Text(
+                            "LOG OUT",
+                            style: TextStyle(
+                                fontSize: 20.0,
+                                color: Colors.black,
+                                fontFamily: 'newtitlefont'),
+                          ),
+                          onPressed: () async {
+                            stringpreferences1![0] = "";
+                            SharedPreferences preferences1 =
+                                await SharedPreferences.getInstance();
+                            preferences1.setStringList(
+                                "codestore", stringpreferences1!);
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (context) => login()));
+                          },
+                        ),
+                      )),
+                )
+              ],
+            ),
+          ),
         ),
       );
     });
@@ -240,7 +285,7 @@ class _orderfromstoreState extends State<orderfromstore> {
 
   Future addamount() async {
     try {
-      String url = "http://185.78.165.189:3000/nodejsapi/addamount";
+      String url = "http://185.78.165.189:3000//addamount";
       SharedPreferences preferences1 = await SharedPreferences.getInstance();
       stringpreferences1 = preferences1.getStringList("codestore");
       for (var i = 0; i < 5; i++) {
@@ -262,7 +307,10 @@ class _orderfromstoreState extends State<orderfromstore> {
   Future<List<Getallorders>> fectalldata() async {
     SharedPreferences preferences1 = await SharedPreferences.getInstance();
     stringpreferences1 = preferences1.getStringList("codestore");
-    String url = "http://185.78.165.189:3000/nodejsapi/getallorders";
+    setState(() {
+      namestore = stringpreferences1![3];
+    });
+    String url = "http://185.78.165.189:3000/pythonapi/getallorders";
     var body = {
       "codestore": stringpreferences1![0],
     };
@@ -274,17 +322,18 @@ class _orderfromstoreState extends State<orderfromstore> {
     dynamic jsonres = json.decode(response.body);
     List<Getallorders>? _allorders = [];
     List getgrouptype = [];
-
     for (var u in jsonres) {
       Getallorders data = Getallorders(
-          u["MAX(a.ordernumber)"],
-          u["MAX(a.cuscode)"],
-          u["MAX(b.cusname)"],
-          u["MAX(a.pay)"],
-          u["count(a.ordernumber)"],
-          u["MAX(a.date)"],
-          u["MAX(a.saleconfirm)"],
-          u["MAX(a.price)"]);
+        u["MAX(a.cuscode)"],
+        u["MAX(a.ordernumber)"],
+        u["MAX(a.pay)"],
+        u["MAX(a.price)"],
+        u["MAX(a.saleconfirm)"],
+        u["MAX(b.cusname)"],
+        u["count(a.ordernumber)"],
+        u["date"],
+      );
+
       _allorders.add(data);
       getgrouptype.add(u["type"]);
     }
@@ -359,7 +408,7 @@ class _orderfromstoreState extends State<orderfromstore> {
   Future insertdelivery(index) async {
     if (_formkey.currentState!.validate()) {
       try {
-        String url = "http://185.78.165.189:3000/nodejsapi/insertdelivery";
+        String url = "http://185.78.165.189:3000/pythonapi/insertdelivery";
         if (companyString.text.trim().length < 1 ||
             trackString.text.trim().length < 1) {
           return showDialog(
@@ -379,20 +428,16 @@ class _orderfromstoreState extends State<orderfromstore> {
         var body = {
           "ordernumber": allordersfordisplay[index].ordernumber,
           "company": companyString.text.trim(),
-          "track": trackString.text.trim(),
-          "date": DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()),
+          "track": trackString.text.trim()
         };
-        print(body);
+
         http.Response response = await http.post(Uri.parse(url),
             headers: {'Content-Type': 'application/json; charset=utf-8'},
             body: JsonEncoder().convert(body));
         if (response.statusCode == 200) {
           companyString.clear();
           trackString.clear();
-          Navigator.of(context)
-              .pushReplacement(MaterialPageRoute(builder: (context) {
-            return MyApp();
-          }));
+
           return showDialog(
               context: context,
               builder: (_) => new AlertDialog(

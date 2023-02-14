@@ -42,6 +42,7 @@ class _dealerpageState extends State<dealerpage> {
   List<bool> toggleselect = [];
   final _formkey = GlobalKey<FormState>();
   List<String> list = [];
+  String namestore = "";
 
   @override
   void initState() {
@@ -167,21 +168,7 @@ class _dealerpageState extends State<dealerpage> {
                   child: Column(
                     children: [
                       Text(
-                        'ชื่อร้าน',
-                        style: TextStyle(
-                            fontSize: 25.0,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'newtitlefont'),
-                      ),
-                      Text(
-                        'ID:',
-                        style: TextStyle(
-                            fontSize: 25.0,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'newtitlefont'),
-                      ),
-                      Text(
-                        'วันที่ใช้บริการ :',
+                        namestore,
                         style: TextStyle(
                             fontSize: 25.0,
                             fontWeight: FontWeight.bold,
@@ -191,56 +178,6 @@ class _dealerpageState extends State<dealerpage> {
                   ),
                   decoration: BoxDecoration(
                     color: Colors.grey[50],
-                  ),
-                ),
-                Container(
-                  color: Colors.grey[50],
-                  child: Row(
-                    children: [
-                      Container(
-                        height: MediaQuery.of(context).size.height / 7,
-                        width: MediaQuery.of(context).size.width / 4,
-                        color: Colors.red,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 5.0),
-                        child: SizedBox(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "ID : ...",
-                                style: TextStyle(
-                                    fontFamily: "newbodyfont", fontSize: 15.sp),
-                              ),
-                              Text(
-                                "Name : ...",
-                                style: TextStyle(
-                                    fontFamily: "newbodyfont", fontSize: 15.sp),
-                              ),
-                              Text(
-                                "Age : ...",
-                                style: TextStyle(
-                                    fontFamily: "newbodyfont", fontSize: 15.sp),
-                              ),
-                              Text(
-                                "ADDRESS : ...",
-                                style: TextStyle(
-                                    fontFamily: "newbodyfont", fontSize: 15.sp),
-                                maxLines: 2,
-                              ),
-                              Text(
-                                "MAP : ...",
-                                style: TextStyle(
-                                    fontFamily: "newbodyfont", fontSize: 15.sp),
-                                maxLines: 2,
-                              )
-                            ],
-                          ),
-                        ),
-                      )
-                    ],
                   ),
                 ),
                 Padding(
@@ -444,7 +381,7 @@ class _dealerpageState extends State<dealerpage> {
                       ),
                     ],
                   ),
-                  alldealerfordisplay[index].notes == "Put your note.."
+                  alldealerfordisplay[index].notes == "Putyournote"
                       ? SizedBox()
                       : Text(
                           "#" + alldealerfordisplay[index].notes,
@@ -510,6 +447,9 @@ class _dealerpageState extends State<dealerpage> {
   Future<List<Getalldealer>> fectalldealerdata() async {
     SharedPreferences preferences1 = await SharedPreferences.getInstance();
     stringpreferences1 = preferences1.getStringList("codestore");
+    setState(() {
+      namestore = stringpreferences1![3];
+    });
     String url = "http://185.78.165.189:3000/nodejsapi/dealer";
     var body = {
       "codestore": stringpreferences1![0],

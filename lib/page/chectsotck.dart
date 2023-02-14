@@ -1,9 +1,6 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
-import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -18,9 +15,6 @@ import 'package:sigma_space/page/substock/orderfromsellandcus.dart';
 import 'package:sigma_space/page/subupdate/addnewproduct.dart';
 import 'package:sigma_space/update.dart';
 import 'package:sizer/sizer.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:badges/badges.dart';
 
 class checkstock extends StatefulWidget {
   List<String> codeorder = [];
@@ -66,7 +60,7 @@ class _checkstock extends State<checkstock> {
   bool click = false;
   int toggle = 0;
   bool clickfav = false;
-
+  String namestore = "";
   @override
   void initState() {
     click = false;
@@ -143,12 +137,11 @@ class _checkstock extends State<checkstock> {
               backgroundColor: ColorConstants.appbarcolor,
             ),
             backgroundColor: ColorConstants.backgroundbody,
-            body: SizedBox(
-              height: MediaQuery.of(context).size.height,
-              child: ListView(children: [
+            body: SingleChildScrollView(
+              child: Column(children: [
                 choosetype(),
                 SizedBox(
-                  height: MediaQuery.of(context).size.height,
+                  height: MediaQuery.of(context).size.height / 1.6,
                   child: ListView.builder(
                     itemBuilder: (context, index) {
                       return listItem(index);
@@ -163,8 +156,8 @@ class _checkstock extends State<checkstock> {
               backgroundColor: ColorConstants.appbarcolor,
               child: noti != 0
                   ? Badge(
-                      badgeColor: Colors.white,
-                      badgeContent: Text(
+                      backgroundColor: Colors.white,
+                      label: Text(
                         '$noti',
                         style: TextStyle(
                             fontSize: 12.0.sp,
@@ -175,132 +168,65 @@ class _checkstock extends State<checkstock> {
                     )
                   : Icon(Icons.list),
             ),
-            drawer: Drawer(
-              backgroundColor: Colors.green[700],
-              child: ListView(
-                // Important: Remove any padding from the ListView.
-                padding: EdgeInsets.zero,
-                children: <Widget>[
-                  DrawerHeader(
-                    child: Column(
-                      children: [
-                        Text(
-                          'ชื่อร้าน',
-                          style: TextStyle(
-                              fontSize: 25.0,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'newtitlefont'),
-                        ),
-                        Text(
-                          'ID:',
-                          style: TextStyle(
-                              fontSize: 25.0,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'newtitlefont'),
-                        ),
-                        Text(
-                          'วันที่ใช้บริการ :',
-                          style: TextStyle(
-                              fontSize: 25.0,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'newtitlefont'),
-                        ),
-                      ],
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[50],
-                    ),
-                  ),
-                  Container(
-                    color: Colors.grey[50],
-                    child: Row(
-                      children: [
-                        Container(
-                          height: MediaQuery.of(context).size.height / 7,
-                          width: MediaQuery.of(context).size.width / 4,
-                          color: Colors.red,
+            drawer: stringpreferences1?[1] != "ADMIN"
+                ? Drawer(
+                    backgroundColor: Colors.green[700],
+                    child: ListView(
+                      // Important: Remove any padding from the ListView.
+                      padding: EdgeInsets.zero,
+                      children: <Widget>[
+                        DrawerHeader(
+                          child: Column(
+                            children: [
+                              Text(
+                                namestore,
+                                style: TextStyle(
+                                    fontSize: 25.0,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'newtitlefont'),
+                              ),
+                            ],
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[50],
+                          ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 5.0),
-                          child: SizedBox(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "ID : ...",
-                                  style: TextStyle(
-                                      fontFamily: "newbodyfont",
-                                      fontSize: 15.sp),
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                    width: 0, color: Colors.grey.shade800),
+                                color: Colors.grey[50],
+                              ),
+                              child: Center(
+                                child: TextButton(
+                                  child: Text(
+                                    "LOG OUT",
+                                    style: TextStyle(
+                                        fontSize: 20.0,
+                                        color: Colors.black,
+                                        fontFamily: 'newtitlefont'),
+                                  ),
+                                  onPressed: () async {
+                                    stringpreferences1![0] = "";
+                                    SharedPreferences preferences1 =
+                                        await SharedPreferences.getInstance();
+                                    preferences1.setStringList(
+                                        "codestore", stringpreferences1!);
+                                    Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute(
+                                            builder: (context) => login()));
+                                  },
                                 ),
-                                Text(
-                                  "Name : ...",
-                                  style: TextStyle(
-                                      fontFamily: "newbodyfont",
-                                      fontSize: 15.sp),
-                                ),
-                                Text(
-                                  "Age : ...",
-                                  style: TextStyle(
-                                      fontFamily: "newbodyfont",
-                                      fontSize: 15.sp),
-                                ),
-                                Text(
-                                  "ADDRESS : ...",
-                                  style: TextStyle(
-                                      fontFamily: "newbodyfont",
-                                      fontSize: 15.sp),
-                                  maxLines: 2,
-                                ),
-                                Text(
-                                  "MAP : ...",
-                                  style: TextStyle(
-                                      fontFamily: "newbodyfont",
-                                      fontSize: 15.sp),
-                                  maxLines: 2,
-                                )
-                              ],
-                            ),
-                          ),
+                              )),
                         )
                       ],
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                        height: 50,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border:
-                              Border.all(width: 0, color: Colors.grey.shade800),
-                          color: Colors.grey[50],
-                        ),
-                        child: Center(
-                          child: TextButton(
-                            child: Text(
-                              "LOG OUT",
-                              style: TextStyle(
-                                  fontSize: 20.0,
-                                  color: Colors.black,
-                                  fontFamily: 'newtitlefont'),
-                            ),
-                            onPressed: () async {
-                              stringpreferences1![0] = "";
-                              SharedPreferences preferences1 =
-                                  await SharedPreferences.getInstance();
-                              preferences1.setStringList(
-                                  "codestore", stringpreferences1!);
-                              Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                      builder: (context) => login()));
-                            },
-                          ),
-                        )),
                   )
-                ],
-              ),
-            ),
+                : null,
           ),
         );
       },
@@ -689,11 +615,25 @@ class _checkstock extends State<checkstock> {
                 Navigator.of(context).pushReplacement(MaterialPageRoute(
                     builder: (context) => updatepage(
                           codeproduct: allproductfordisplay[index].codeproduct,
+                          nameproduct: allproductfordisplay[index].nameproduct,
+                          type: allproductfordisplay[index].alltype,
+                          pdpd: allproductfordisplay[index].productset,
+                          score: allproductfordisplay[index].score,
+                          amount: allproductfordisplay[index].amount,
+                          amountper: allproductfordisplay[index].amountpercrate,
+                          price: allproductfordisplay[index].price,
                         )));
               } else {
                 Navigator.of(context).pushReplacement(MaterialPageRoute(
                     builder: (context) => updatepage(
                           codeproduct: getcodeproduct[0],
+                          nameproduct: getnameproduct[0],
+                          type: gettype[0],
+                          pdpd: getproductset[0],
+                          score: getscore[0],
+                          amount: amountsort[0],
+                          amountper: getamountpercrate[0],
+                          price: allproductfordisplay[index].price,
                         )));
               }
             } else {
@@ -829,9 +769,12 @@ class _checkstock extends State<checkstock> {
     stringpreferences1 = preferences1.getStringList("codestore");
     SharedPreferences preferences2 = await SharedPreferences.getInstance();
     stringpreferences2 = preferences2.getString("dealercode");
+    setState(() {
+      namestore = stringpreferences1![3];
+    });
 
-    String url = "http://185.78.165.189:3000/nodejsapi/codestore";
-    String url1 = "http://185.78.165.189:3000/nodejsapi/getproductfordealer";
+    String url = "http://185.78.165.189:3000/pythonapi/codestore";
+    String url1 = "http://185.78.165.189:3000/pythonapi/getproductfordealer";
 
     List getgrouptype = [];
     List<Getallproduct>? _allproduct = [];

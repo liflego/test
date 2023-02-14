@@ -7,10 +7,8 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
-import 'package:restart_app/restart_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
-
 import '../../classapi/class.dart';
 import 'package:http/http.dart' as http;
 import 'package:sigma_space/login.dart';
@@ -249,7 +247,6 @@ class _googlelogin extends State<googlelogin> {
           builder: (context) => (login()),
         ),
       );
-      Restart.restartApp();
     });
   }
 
@@ -277,45 +274,6 @@ class _googlelogin extends State<googlelogin> {
             body: JsonEncoder().convert(body));
 
         print(body);
-
-        // if (response.statusCode == 200) {
-        //   var jsonRes = json.decode(response.body);
-        //   if (jsonRes["success"] == 1) {
-        //     SharedPreferences preferences =
-        //         await SharedPreferences.getInstance();
-        //     preferences.setInt("userid", jsonRes["results"]["userid"]);
-
-        //     List<String> stringpreferences1 = [
-        //       jsonRes["results"]["codestore"],
-        //       jsonRes["results"]["position"],
-        //     ];
-
-        //     SharedPreferences preferences1 =
-        //         await SharedPreferences.getInstance();
-        //     preferences1.setStringList("codestore", stringpreferences1);
-
-        //     Navigator.of(context)
-        //         .pushReplacement(MaterialPageRoute(builder: (context) {
-        //       return MyApp();
-        //     }));
-        //   } else {
-        //     return showDialog(
-        //         context: context,
-        //         builder: (_) => new AlertDialog(
-        //               content: new Text("Email or password is not correct"),
-        //               actions: <Widget>[
-        //                 TextButton(
-        //                   child: Text('OK'),
-        //                   onPressed: () {
-        //                     Navigator.of(context).pop();
-        //                   },
-        //                 )
-        //               ],
-        //             ));
-        //   }
-        // } else {
-        //   print("Server error");
-        // }
       } catch (error) {
         print(error);
       }
