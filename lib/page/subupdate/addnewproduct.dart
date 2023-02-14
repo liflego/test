@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -94,7 +95,8 @@ class _addnewproductpage extends State<addnewproductpage> {
                       width: MediaQuery.of(context).size.width / 1.5,
                     ),
                     selectimage(),
-                    buttondone()
+                    buttondone(),
+                    showimg()
                   ],
                 ),
               ),
@@ -506,6 +508,18 @@ class _addnewproductpage extends State<addnewproductpage> {
     );
   }
 
+  Widget showimg() {
+    return Padding(
+      padding: EdgeInsets.all(5.0),
+      child: Container(
+        width: 100,
+        height: 100,
+        child: Image.network(
+            "http://185.78.165.189:8000/img/image_picker_57BF24AC-F520-4FC9-89F1-1FBD9718AF84-1730-00000824A670020A.png"),
+      ),
+    );
+  }
+
   Future<void> scanbarcode() async {
     String barcodeScanRes;
     // Platform messages may fail, so we use a try/catch PlatformException.
@@ -592,6 +606,8 @@ class _addnewproductpage extends State<addnewproductpage> {
   Future getImage() async {
     final pickimage = await ImagePicker().getImage(source: ImageSource.gallery);
     selectedImage = io.File(pickimage!.path);
+    int random = Random().nextInt(10);
+
     setState(() {});
   }
 
