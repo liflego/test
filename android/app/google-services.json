@@ -1,20 +1,20 @@
 {
   "project_info": {
-    "project_number": "1060480217780",
-    "project_id": "login-f3dda",
-    "storage_bucket": "login-f3dda.appspot.com"
+    "project_number": "423655092411",
+    "project_id": "sigmaspace-5b32c",
+    "storage_bucket": "sigmaspace-5b32c.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1060480217780:android:f830a7cbd0e5efc8e95de1",
+        "mobilesdk_app_id": "1:423655092411:android:f0f192cde25ece7b88f99e",
         "android_client_info": {
           "package_name": "com.example.sigma_space"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1060480217780-s74thqohkotpb31ftm2bn01goknmbjk7.apps.googleusercontent.com",
+          "client_id": "423655092411-kvp3n03fma1vhi31j8fgg0nnof7fji4r.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.sigma_space",
@@ -22,21 +22,28 @@
           }
         },
         {
-          "client_id": "1060480217780-o6d0jj6fu0j0tgt9us9c5rn02tl346tb.apps.googleusercontent.com",
+          "client_id": "423655092411-68696ra2tsscne8tr82tgrrk8f4nsh4a.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDtK-uCtBD4TTBT6b5evrwBeeWuQ4asiPo"
+          "current_key": "AIzaSyBdgiAi6qA1ic8wqFUS25KRWD9RqTEURbA"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1060480217780-o6d0jj6fu0j0tgt9us9c5rn02tl346tb.apps.googleusercontent.com",
+              "client_id": "423655092411-68696ra2tsscne8tr82tgrrk8f4nsh4a.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "423655092411-2r0vv8u24fnkmb7nn9ckt0de6vpa00j8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.sigmaSpace"
+              }
             }
           ]
         }
