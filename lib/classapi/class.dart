@@ -39,6 +39,8 @@ class Getallproduct {
   int score;
   int price;
   int fav;
+  String pathimg;
+  String nameimg;
 
   Getallproduct(
       this.codeproduct,
@@ -49,7 +51,9 @@ class Getallproduct {
       this.alltype,
       this.score,
       this.price,
-      this.fav);
+      this.fav,
+      this.pathimg,
+      this.nameimg);
 }
 
 class Getallcustomer {
