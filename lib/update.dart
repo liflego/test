@@ -55,10 +55,14 @@ class _updatepage extends State<updatepage> {
   final _formkey = GlobalKey<FormState>();
   List<String>? stringpreferences1;
   io.File? selectedImage;
+  String? getnameiamge;
   var resJson;
   int toggle = 0;
 
   void initState() {
+    score.text = widget.score.toString();
+    amount.text = "0";
+    getnameiamge = widget.nameimg;
     super.initState();
   }
 
@@ -356,7 +360,7 @@ class _updatepage extends State<updatepage> {
                                 ),
                               ],
                             ),
-                            widget.nameimg == null
+                            widget.nameimg == null || widget.nameimg == "null"
                                 ? SizedBox()
                                 : Container(
                                     color: Colors.white,
@@ -383,14 +387,13 @@ class _updatepage extends State<updatepage> {
         SharedPreferences preferences1 = await SharedPreferences.getInstance();
         stringpreferences1 = preferences1.getStringList("codestore");
         String url = "http://185.78.165.189:3000/pythonapi/updateamountproduct";
-
-        if (toggle == 1) {
+        if (getnameiamge == null) {
           var body = {
             "nameproduct": widget.nameproduct,
             "score": score.text.trim(),
             "amount": amount.text.trim(),
             "pathimg": stringpreferences1![0],
-            "nameimg": widget.nameimg,
+            "nameimg": "null",
             // "nameimg": selectedImage!.path.split('/').last,
             "codestore": stringpreferences1![0],
             "codeproduct": widget.codeproduct
@@ -424,11 +427,10 @@ class _updatepage extends State<updatepage> {
         } else {
           var body = {
             "nameproduct": widget.nameproduct,
-            "score": int.parse(score.text.trim()),
-            "amount": int.parse(amount.text.trim()),
+            "score": score.text.trim(),
+            "amount": amount.text.trim(),
             "pathimg": stringpreferences1![0],
-            "nameimg": widget.nameimg,
-            // "nameimg": selectedImage!.path.split('/').last,
+            "nameimg": getnameiamge,
             "codestore": stringpreferences1![0],
             "codeproduct": widget.codeproduct
           };
@@ -447,7 +449,7 @@ class _updatepage extends State<updatepage> {
                         TextButton(
                           child: Text('OK'),
                           onPressed: () {
-                            // onUploadImage();
+                            onUploadImage();
                             Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
                                     builder: (context) => MyApp()));
@@ -470,9 +472,10 @@ class _updatepage extends State<updatepage> {
   Future getImage() async {
     final pickimage = await ImagePicker().getImage(source: ImageSource.gallery);
     selectedImage = io.File(pickimage!.path);
-    print(selectedImage!.path.split('/').last);
 
-    setState(() {});
+    setState(() {
+      getnameiamge = selectedImage!.path.split('/').last.toString();
+    });
   }
 
   onUploadImage() async {
