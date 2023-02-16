@@ -96,7 +96,7 @@ class _addnewproductpage extends State<addnewproductpage> {
                     ),
                     selectimage(),
                     buttondone(),
-                    showimg()
+                    //showimg()
                   ],
                 ),
               ),
@@ -495,7 +495,7 @@ class _addnewproductpage extends State<addnewproductpage> {
           ),
         ),
         child: TextButton(
-          onPressed: onUploadImage,
+          onPressed: insertnewproduct,
           child: Text(
             "DONE",
             style: TextStyle(
@@ -508,17 +508,17 @@ class _addnewproductpage extends State<addnewproductpage> {
     );
   }
 
-  Widget showimg() {
-    return Padding(
-      padding: EdgeInsets.all(5.0),
-      child: Container(
-        width: 100,
-        height: 100,
-        child: Image.network(
-            "http://185.78.165.189:8000/img/image_picker_57BF24AC-F520-4FC9-89F1-1FBD9718AF84-1730-00000824A670020A.png"),
-      ),
-    );
-  }
+  // Widget showimg() {
+  //   return Padding(
+  //     padding: EdgeInsets.all(5.0),
+  //     child: Container(
+  //       width: 100,
+  //       height: 100,
+  //       child: Image.network(
+  //           "http://185.78.165.189:8000/img/image_picker_57BF24AC-F520-4FC9-89F1-1FBD9718AF84-1730-00000824A670020A.png"),
+  //     ),
+  //   );
+  // }
 
   Future<void> scanbarcode() async {
     String barcodeScanRes;
@@ -555,7 +555,7 @@ class _addnewproductpage extends State<addnewproductpage> {
     }
     if (_formkey.currentState!.validate()) {
       try {
-        String url = "http://185.78.165.189:3000/nodejsapi/insertproduct";
+        String url = "http://185.78.165.189:3000/pythonapi/insertproduct";
         var body = {
           "codeproduct": code.text.trim(),
           "nameproduct": name.text.trim(),
@@ -565,7 +565,9 @@ class _addnewproductpage extends State<addnewproductpage> {
           "productset": pdset.trim(),
           "type": type.text.trim(),
           "score": int.parse(score.text.trim()),
-          "price": int.parse(price.text.trim())
+          "price": int.parse(price.text.trim()),
+          "pathimg": stringpreferences1![0],
+          "nameimg": selectedImage!.path.split('/').last
         };
         http.Response response = await http.post(Uri.parse(url),
             headers: {'Content-Type': 'application/json; charset=utf-8'},
@@ -587,6 +589,7 @@ class _addnewproductpage extends State<addnewproductpage> {
                       TextButton(
                         child: Text('OK'),
                         onPressed: () {
+                          onUploadImage();
                           Navigator.of(context).pop();
                         },
                       )
@@ -606,15 +609,17 @@ class _addnewproductpage extends State<addnewproductpage> {
   Future getImage() async {
     final pickimage = await ImagePicker().getImage(source: ImageSource.gallery);
     selectedImage = io.File(pickimage!.path);
-    int random = Random().nextInt(10);
 
     setState(() {});
   }
 
   onUploadImage() async {
+    SharedPreferences preferences1 = await SharedPreferences.getInstance();
+    stringpreferences1 = preferences1.getStringList("codestore");
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse("http://185.78.165.189:3000/pythonapi/upload"),
+      Uri.parse(
+          "http://185.78.165.189:3000/pythonapi/upload/${stringpreferences1![0]}"),
     );
     Map<String, String> headers = {"Content-type": "multipart/form-data"};
     request.files.add(
@@ -631,6 +636,7 @@ class _addnewproductpage extends State<addnewproductpage> {
     http.Response response = await http.Response.fromStream(res);
     setState(() {
       resJson = jsonDecode(response.body);
+      selectedImage = null;
     });
   }
 }
