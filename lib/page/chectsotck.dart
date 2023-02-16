@@ -680,7 +680,7 @@ class _checkstock extends State<checkstock> {
                                           ")",
                                       maxLines: 2,
                                       style: TextStyle(
-                                          fontSize: 20.sp,
+                                          fontSize: 16.sp,
                                           fontWeight: FontWeight.bold,
                                           fontFamily: 'newbodyfont',
                                           color: Colors.black),
@@ -756,6 +756,13 @@ class _checkstock extends State<checkstock> {
                         ],
                       ),
                     ),
+                    SizedBox(
+                      height: 150,
+                      child: allproductfordisplay[index].nameimg == null
+                          ? null
+                          : Image.network(
+                              "http://185.78.165.189:8000/img/${allproductfordisplay[index].pathimg}/${allproductfordisplay[index].nameimg}"),
+                    )
                   ],
                 ),
               ),
@@ -804,7 +811,9 @@ class _checkstock extends State<checkstock> {
             u["type"],
             u["score"],
             u["price"],
-            u["fav"]);
+            u["fav"],
+            u["pathimg"],
+            u["nameimg"]);
         _allproduct.add(data);
         getgrouptype.add(u["type"]);
         getamount.add(u["amount"]);
@@ -826,7 +835,9 @@ class _checkstock extends State<checkstock> {
             u["type"],
             u["score"],
             u["price"],
-            u["fav"]);
+            u["fav"],
+            u["pathimg"],
+            u["nameimg"]);
         _allproduct.add(data);
         getgrouptype.add(u["type"]);
         getamount.add(u["amount"]);
