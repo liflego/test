@@ -624,6 +624,8 @@ class _checkstock extends State<checkstock> {
                           amount: allproductfordisplay[index].amount,
                           amountper: allproductfordisplay[index].amountpercrate,
                           price: allproductfordisplay[index].price,
+                          pathimg: allproductfordisplay[index].pathimg,
+                          nameimg: allproductfordisplay[index].nameimg,
                         )));
               } else {
                 Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -635,7 +637,9 @@ class _checkstock extends State<checkstock> {
                           score: getscore[0],
                           amount: amountsort[0],
                           amountper: getamountpercrate[0],
-                          price: allproductfordisplay[index].price,
+                          price: allproductfordisplay[0].price,
+                          pathimg: allproductfordisplay[index].pathimg,
+                          nameimg: allproductfordisplay[0].nameimg,
                         )));
               }
             } else {
@@ -720,49 +724,61 @@ class _checkstock extends State<checkstock> {
                                     ),
                                   ],
                                 )
-                              : Column(
+                              : Row(
+                                  //row for image and column
                                   crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                      allproductfordisplay[index].codeproduct,
-                                      style: TextConstants.textstyle,
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          allproductfordisplay[index]
+                                              .codeproduct,
+                                          style: TextConstants.textstyle,
+                                        ),
+                                        Text(
+                                          "ประเภท: ${allproductfordisplay[index].alltype}",
+                                          style: TextConstants.textstyle,
+                                        ),
+                                        allproductfordisplay[index].amount == 0
+                                            ? Text(
+                                                "จำนวน : ${allproductfordisplay[index].amount}",
+                                                style: TextStyle(
+                                                    fontSize: 18.sp,
+                                                    fontFamily: 'newbodyfont',
+                                                    color: Colors.red),
+                                              )
+                                            : Text(
+                                                "จำนวน : ${allproductfordisplay[index].amount}" +
+                                                    "(${((allproductfordisplay[index].amount) / allproductfordisplay[index].amountpercrate).toInt()}" +
+                                                    allproductfordisplay[index]
+                                                        .productset +
+                                                    ")",
+                                                style: TextConstants.textstyle,
+                                              ),
+                                        Text(
+                                          "ราคา: ${allproductfordisplay[index].price}",
+                                          style: TextConstants.textstyle,
+                                        ),
+                                      ],
                                     ),
-                                    Text(
-                                      "ประเภท: ${allproductfordisplay[index].alltype}",
-                                      style: TextConstants.textstyle,
-                                    ),
-                                    allproductfordisplay[index].amount == 0
-                                        ? Text(
-                                            "จำนวน : ${allproductfordisplay[index].amount}",
-                                            style: TextStyle(
-                                                fontSize: 18.sp,
-                                                fontFamily: 'newbodyfont',
-                                                color: Colors.red),
-                                          )
-                                        : Text(
-                                            "จำนวน : ${allproductfordisplay[index].amount}" +
-                                                "(${((allproductfordisplay[index].amount) / allproductfordisplay[index].amountpercrate).toInt()}" +
-                                                allproductfordisplay[index]
-                                                    .productset +
-                                                ")",
-                                            style: TextConstants.textstyle,
+                                    allproductfordisplay[index].nameimg == null
+                                        ? SizedBox()
+                                        : Container(
+                                            color: Colors.white,
+                                            height: 100,
+                                            width: 100,
+                                            child: Image.network(
+                                                "http://185.78.165.189:8000/img/${allproductfordisplay[index].pathimg}/${allproductfordisplay[index].nameimg}"),
                                           ),
-                                    Text(
-                                      "ราคา: ${allproductfordisplay[index].price}",
-                                      style: TextConstants.textstyle,
-                                    ),
                                   ],
                                 ),
                         ],
                       ),
                     ),
-                    SizedBox(
-                      height: 150,
-                      child: allproductfordisplay[index].nameimg == null
-                          ? null
-                          : Image.network(
-                              "http://185.78.165.189:8000/img/${allproductfordisplay[index].pathimg}/${allproductfordisplay[index].nameimg}"),
-                    )
                   ],
                 ),
               ),
