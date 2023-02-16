@@ -765,12 +765,22 @@ class _checkstock extends State<checkstock> {
                                         ),
                                       ],
                                     ),
-                                    allproductfordisplay[index].nameimg == null
+                                    allproductfordisplay[index].nameimg ==
+                                                null ||
+                                            allproductfordisplay[index]
+                                                    .nameimg ==
+                                                "null"
                                         ? SizedBox()
                                         : Container(
-                                            color: Colors.white,
-                                            height: 100,
-                                            width: 100,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              // add border
+                                              border: Border.all(
+                                                  width: 2,
+                                                  color: Colors.white),
+                                            ),
+                                            height: 90.sp,
+                                            width: 90.sp,
                                             child: Image.network(
                                                 "http://185.78.165.189:8000/img/${allproductfordisplay[index].pathimg}/${allproductfordisplay[index].nameimg}"),
                                           ),
@@ -871,6 +881,7 @@ class _checkstock extends State<checkstock> {
       groupamountsort[i] = getamount[i];
     }
     groupamountsort.sort();
+    groupamountsort.toList();
 
     groupamountreversed = groupamountsort.reversed.toList();
 
