@@ -26,6 +26,9 @@ class updatepage extends StatefulWidget {
   int amount;
   int amountper;
   int price;
+  String pathimg;
+  String nameimg;
+
   updatepage(
       {Key? key,
       required this.codeproduct,
@@ -35,7 +38,9 @@ class updatepage extends StatefulWidget {
       required this.score,
       required this.amount,
       required this.amountper,
-      required this.price})
+      required this.price,
+      required this.pathimg,
+      required this.nameimg})
       : super(key: key);
 
   @override
@@ -51,6 +56,7 @@ class _updatepage extends State<updatepage> {
   List<String>? stringpreferences1;
   io.File? selectedImage;
   var resJson;
+  int toggle = 0;
 
   void initState() {
     super.initState();
@@ -110,47 +116,72 @@ class _updatepage extends State<updatepage> {
                 fontFamily: 'newbodyfont',
                 color: Colors.black),
           ),
+          //toggle check
+          IconButton(
+              onPressed: () {
+                setState(() {
+                  if (toggle == 0) {
+                    toggle = 1;
+                  } else {
+                    toggle = 0;
+                  }
+
+                  print(toggle);
+                });
+              },
+              icon: Icon(Icons.check_box)),
           Padding(
             padding: const EdgeInsets.only(top: 20, left: 50),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(
-                  "Score :",
-                  style: TextConstants.textstyle,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(30.0),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width / 3,
-                    child: TextFormField(
-                      onChanged: (value) {
-                        setState(() {
-                          score.text = value;
-                        });
-                      },
-                      style: TextStyle(
-                          fontSize: 20.sp,
-                          fontFamily: 'newbodyfont',
-                          color: Colors.black),
-                      textAlign: TextAlign.start,
-                      decoration: InputDecoration(
-                        hintText: "${widget.score}",
-                        hintStyle: TextStyle(fontSize: 20.0.sp),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                          borderSide:
-                              BorderSide(color: HexColor('#39474F'), width: 1),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide(
-                              color: Colors.yellow.shade800, width: 2),
+                toggle == 0
+                    ? SizedBox(
+                        width: MediaQuery.of(context).size.width / 3,
+                      )
+                    : SizedBox(
+                        child: Row(
+                          children: [
+                            Text(
+                              "Score :",
+                              style: TextConstants.textstyle,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(30.0),
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width / 3,
+                                child: TextFormField(
+                                  onChanged: (value) {
+                                    setState(() {
+                                      score.text = value;
+                                    });
+                                  },
+                                  style: TextStyle(
+                                      fontSize: 20.sp,
+                                      fontFamily: 'newbodyfont',
+                                      color: Colors.black),
+                                  textAlign: TextAlign.start,
+                                  decoration: InputDecoration(
+                                    hintText: "${widget.score}",
+                                    hintStyle: TextStyle(fontSize: 20.0.sp),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                      borderSide: BorderSide(
+                                          color: HexColor('#39474F'), width: 1),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      borderSide: BorderSide(
+                                          color: Colors.yellow.shade800,
+                                          width: 2),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
@@ -179,8 +210,7 @@ class _updatepage extends State<updatepage> {
                           color: Colors.black),
                       textAlign: TextAlign.start,
                       decoration: InputDecoration(
-                        hintText: "${widget.amount}",
-                        hintStyle: TextStyle(fontSize: 20.0.sp),
+                        helperText: "จำนวนที่ต้องการเพิ่ม",
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20.0),
                           borderSide:
@@ -284,43 +314,57 @@ class _updatepage extends State<updatepage> {
                                   ")",
                               maxLines: 2,
                               style: TextStyle(
-                                  fontSize: 20.sp,
+                                  fontSize: 16.sp,
                                   fontWeight: FontWeight.bold,
                                   fontFamily: 'newbodyfont',
                                   color: Colors.black),
                             ),
                           ],
                         ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              widget.codeproduct,
-                              style: TextConstants.textstyle,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  widget.codeproduct,
+                                  style: TextConstants.textstyle,
+                                ),
+                                Text(
+                                  "ประเภท: ${widget.type}",
+                                  style: TextConstants.textstyle,
+                                ),
+                                widget.amount == 0
+                                    ? Text(
+                                        "จำนวน : ${widget.amount}",
+                                        style: TextStyle(
+                                            fontSize: 18.sp,
+                                            fontFamily: 'newbodyfont',
+                                            color: Colors.red),
+                                      )
+                                    : Text(
+                                        "จำนวน : ${widget.amount}" +
+                                            "(${((widget.amount) / widget.amountper).toInt()}" +
+                                            widget.pdpd +
+                                            ")",
+                                        style: TextConstants.textstyle,
+                                      ),
+                                Text(
+                                  "ราคา: ${widget.price}",
+                                  style: TextConstants.textstyle,
+                                ),
+                              ],
                             ),
-                            Text(
-                              "ประเภท: ${widget.type}",
-                              style: TextConstants.textstyle,
-                            ),
-                            widget.amount == 0
-                                ? Text(
-                                    "จำนวน : ${widget.amount}",
-                                    style: TextStyle(
-                                        fontSize: 18.sp,
-                                        fontFamily: 'newbodyfont',
-                                        color: Colors.red),
-                                  )
-                                : Text(
-                                    "จำนวน : ${widget.amount}" +
-                                        "(${((widget.amount) / widget.amountper).toInt()}" +
-                                        widget.pdpd +
-                                        ")",
-                                    style: TextConstants.textstyle,
+                            widget.nameimg == null
+                                ? SizedBox()
+                                : Container(
+                                    color: Colors.white,
+                                    height: 100,
+                                    width: 100,
+                                    child: Image.network(
+                                        "http://185.78.165.189:8000/img/${widget.pathimg}/${widget.nameimg}"),
                                   ),
-                            Text(
-                              "ราคา: ${widget.price}",
-                              style: TextConstants.textstyle,
-                            ),
                           ],
                         ),
                       ],
@@ -339,39 +383,81 @@ class _updatepage extends State<updatepage> {
         SharedPreferences preferences1 = await SharedPreferences.getInstance();
         stringpreferences1 = preferences1.getStringList("codestore");
         String url = "http://185.78.165.189:3000/pythonapi/updateamountproduct";
-        var body = {
-          "nameproduct": widget.nameproduct,
-          "score": int.parse(score.text.trim()),
-          "amount": int.parse(amount.text.trim()),
-          "pathimg": stringpreferences1![0],
-          "nameimg": selectedImage!.path.split('/').last,
-          "codestore": stringpreferences1![0],
-          "codeproduct": widget.codeproduct
-        };
 
-        http.Response response = await http.patch(Uri.parse(url),
-            headers: {'Content-Type': 'application/json; charset=utf-8'},
-            body: JsonEncoder().convert(body));
+        if (toggle == 1) {
+          var body = {
+            "nameproduct": widget.nameproduct,
+            "score": score.text.trim(),
+            "amount": amount.text.trim(),
+            "pathimg": stringpreferences1![0],
+            "nameimg": widget.nameimg,
+            // "nameimg": selectedImage!.path.split('/').last,
+            "codestore": stringpreferences1![0],
+            "codeproduct": widget.codeproduct
+          };
+          print(body);
+          http.Response response = await http.patch(Uri.parse(url),
+              headers: {'Content-Type': 'application/json; charset=utf-8'},
+              body: JsonEncoder().convert(body));
 
-        if (response.statusCode == 200) {
-          return showDialog(
-              context: context,
-              // ignore: unnecessary_new
-              builder: (_) => new AlertDialog(
-                    content: new Text("Update success"),
-                    actions: <Widget>[
-                      TextButton(
-                        child: Text('OK'),
-                        onPressed: () {
-                          onUploadImage();
-                          Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(builder: (context) => MyApp()));
-                        },
-                      )
-                    ],
-                  ));
+          if (response.statusCode == 200) {
+            return showDialog(
+                context: context,
+                // ignore: unnecessary_new
+                builder: (_) => new AlertDialog(
+                      content: new Text("Update success"),
+                      actions: <Widget>[
+                        TextButton(
+                          child: Text('OK'),
+                          onPressed: () {
+                            // onUploadImage();
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (context) => MyApp()));
+                          },
+                        )
+                      ],
+                    ));
+          } else {
+            print("server error");
+          }
         } else {
-          print("server error");
+          var body = {
+            "nameproduct": widget.nameproduct,
+            "score": int.parse(score.text.trim()),
+            "amount": int.parse(amount.text.trim()),
+            "pathimg": stringpreferences1![0],
+            "nameimg": widget.nameimg,
+            // "nameimg": selectedImage!.path.split('/').last,
+            "codestore": stringpreferences1![0],
+            "codeproduct": widget.codeproduct
+          };
+          print(body);
+          http.Response response = await http.patch(Uri.parse(url),
+              headers: {'Content-Type': 'application/json; charset=utf-8'},
+              body: JsonEncoder().convert(body));
+
+          if (response.statusCode == 200) {
+            return showDialog(
+                context: context,
+                // ignore: unnecessary_new
+                builder: (_) => new AlertDialog(
+                      content: new Text("Update success"),
+                      actions: <Widget>[
+                        TextButton(
+                          child: Text('OK'),
+                          onPressed: () {
+                            // onUploadImage();
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (context) => MyApp()));
+                          },
+                        )
+                      ],
+                    ));
+          } else {
+            print("server error");
+          }
         }
       } catch (e) {
         print(e);
