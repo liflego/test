@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sigma_space/classapi/class.dart';
 import 'package:sigma_space/login.dart';
@@ -14,6 +15,7 @@ import 'package:sigma_space/page/subupdate/addnewproduct.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:io' as io;
 
 class updatepage extends StatefulWidget {
   String codeproduct;
@@ -47,6 +49,8 @@ class _updatepage extends State<updatepage> {
   TextEditingController amount = TextEditingController();
   final _formkey = GlobalKey<FormState>();
   List<String>? stringpreferences1;
+  io.File? selectedImage;
+  var resJson;
 
   void initState() {
     super.initState();
@@ -57,41 +61,38 @@ class _updatepage extends State<updatepage> {
     return Sizer(
       builder: (context, orientation, deviceType) {
         return SafeArea(
-            top: false,
-            child: Scaffold(
-              appBar: AppBar(
-                toolbarHeight: 7.h,
-                title: Text(
-                  "UPDATE",
-                  style: TextStyle(fontFamily: 'newtitlefont', fontSize: 25.sp),
-                ),
-                backgroundColor: ColorConstants.appbarcolor,
-                leading: IconButton(
-                    onPressed: () {
-                      Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(builder: (context) => MyApp()));
-                    },
-                    icon: Icon(
-                      Icons.arrow_back,
-                      color: Colors.white,
-                      size: 20.sp,
-                    )),
+          top: false,
+          child: Scaffold(
+            appBar: AppBar(
+              toolbarHeight: 7.h,
+              title: Text(
+                "UPDATE",
+                style: TextStyle(fontFamily: 'newtitlefont', fontSize: 25.sp),
               ),
-              backgroundColor: ColorConstants.backgroundbody,
-              body: Form(
-                key: _formkey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        child: listitem()),
-                    update(),
-                    buttondone()
-                  ],
-                ),
-              ),
-            ));
+              backgroundColor: ColorConstants.appbarcolor,
+              leading: IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) => MyApp()));
+                  },
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                    size: 20.sp,
+                  )),
+            ),
+            backgroundColor: ColorConstants.backgroundbody,
+            body: Form(
+              key: _formkey,
+              child: ListView(children: [
+                SizedBox(child: listitem()),
+                update(),
+                selectimage(),
+                buttondone()
+              ]),
+            ),
+          ),
+        );
       },
     );
   }
@@ -200,6 +201,30 @@ class _updatepage extends State<updatepage> {
         ],
       ),
     );
+  }
+
+  Widget selectimage() {
+    return Padding(
+        padding: EdgeInsets.all(5),
+        child: Center(
+            child: Column(children: [
+          selectedImage == null
+              ? Text(
+                  "Select Image for Uploade",
+                  style: TextConstants.textStylenotes,
+                )
+              : Image.file(selectedImage!),
+          TextButton.icon(
+              style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all(ColorConstants.buttoncolor)),
+              onPressed: getImage,
+              icon: Icon(Icons.upload),
+              label: Text(
+                "Upload",
+                style: TextConstants.textstyle,
+              ))
+        ])));
   }
 
   Widget buttondone() {
@@ -318,6 +343,8 @@ class _updatepage extends State<updatepage> {
           "nameproduct": widget.nameproduct,
           "score": int.parse(score.text.trim()),
           "amount": int.parse(amount.text.trim()),
+          "pathimg": stringpreferences1![0],
+          "nameimg": selectedImage!.path.split('/').last,
           "codestore": stringpreferences1![0],
           "codeproduct": widget.codeproduct
         };
@@ -336,6 +363,7 @@ class _updatepage extends State<updatepage> {
                       TextButton(
                         child: Text('OK'),
                         onPressed: () {
+                          onUploadImage();
                           Navigator.of(context).pushReplacement(
                               MaterialPageRoute(builder: (context) => MyApp()));
                         },
@@ -351,5 +379,40 @@ class _updatepage extends State<updatepage> {
     } else {
       print("server error");
     }
+  }
+
+  Future getImage() async {
+    final pickimage = await ImagePicker().getImage(source: ImageSource.gallery);
+    selectedImage = io.File(pickimage!.path);
+    print(selectedImage!.path.split('/').last);
+
+    setState(() {});
+  }
+
+  onUploadImage() async {
+    SharedPreferences preferences1 = await SharedPreferences.getInstance();
+    stringpreferences1 = preferences1.getStringList("codestore");
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse(
+          "http://185.78.165.189:3000/pythonapi/upload/${stringpreferences1![0]}"),
+    );
+    Map<String, String> headers = {"Content-type": "multipart/form-data"};
+    request.files.add(
+      http.MultipartFile(
+        'image',
+        selectedImage!.readAsBytes().asStream(),
+        selectedImage!.lengthSync(),
+        filename: selectedImage!.path.split('/').last,
+      ),
+    );
+    request.headers.addAll(headers);
+    print("request: " + request.toString());
+    var res = await request.send();
+    http.Response response = await http.Response.fromStream(res);
+    setState(() {
+      resJson = jsonDecode(response.body);
+      selectedImage = null;
+    });
   }
 }
