@@ -54,9 +54,9 @@ class _checkstock extends State<checkstock> {
   late int newnums = 0;
   late var grouptype = [];
   late var getfavorite = [];
-  late var groupamountsort = [];
-  late var groupamountreversed = [];
-  late var showlistamount = [];
+  late List<int> groupamountsort = [];
+  late List<int> groupamountreversed = [];
+  late List<int> showlistamount = [];
   bool click = false;
   int toggle = 0;
   bool clickfav = false;
@@ -342,6 +342,7 @@ class _checkstock extends State<checkstock> {
                                 showlistamount = groupamountsort;
                               } else if (toggle == 2) {
                                 showlistamount = groupamountreversed;
+                                print(showlistamount);
                               } else {
                                 toggle = 0;
                               }
@@ -483,6 +484,7 @@ class _checkstock extends State<checkstock> {
     List<String> getproductset = [];
     List<String> getprice = [];
     List<int> getscore = [];
+    List<String> getimg = [];
 
     Iterable<Getallproduct> visiamount = allproductfordisplay.where((am) =>
         am.amount.toString().contains(showlistamount[index].toString()));
@@ -490,49 +492,39 @@ class _checkstock extends State<checkstock> {
 
     Iterable<Getallproduct> visipercrate = allproductfordisplay.where((ampc) =>
         ampc.amount.toString().contains(showlistamount[index].toString()));
-    visiamount.forEach((ampc) => getamountpercrate.add(ampc.amountpercrate));
+    visipercrate.forEach((ampc) => getamountpercrate.add(ampc.amountpercrate));
 
     Iterable<Getallproduct> visicode = allproductfordisplay.where((code) =>
         code.amount.toString().contains(showlistamount[index].toString()));
     visicode.forEach((code) => getcodeproduct.add(code.codeproduct));
 
-    Iterable<Getallproduct> visiname = allproductfordisplay.where((name) =>
-        name.amount.toString().contains(showlistamount[index].toString()));
-    visiname.forEach((name) => getnameproduct.add(name.nameproduct));
+    Iterable<Getallproduct> visiname = allproductfordisplay.where((namepd) =>
+        namepd.amount.toString().contains(showlistamount[index].toString()));
+    visiname.forEach((namepd) => getnameproduct.add(namepd.nameproduct));
 
     Iterable<Getallproduct> visitype = allproductfordisplay.where((type) =>
         type.amount.toString().contains(showlistamount[index].toString()));
-    visiname.forEach((type) => gettype.add(type.nameproduct));
+    visitype.forEach((type) => gettype.add(type.alltype));
 
     Iterable<Getallproduct> visipdset = allproductfordisplay.where((pdset) =>
         pdset.amount.toString().contains(showlistamount[index].toString()));
-    visiname.forEach((pdset) => getproductset.add(pdset.productset));
+    visipdset.forEach((pdset) => getproductset.add(pdset.productset));
 
     Iterable<Getallproduct> visiprice = allproductfordisplay.where((price) =>
         price.amount.toString().contains(showlistamount[index].toString()));
-    visiname.forEach((price) => getprice.add(price.price.toString()));
+    visiprice.forEach((price) => getprice.add(price.price.toString()));
 
     Iterable<Getallproduct> visiscore = allproductfordisplay.where((score) =>
         score.amount.toString().contains(showlistamount[index].toString()));
     visiscore.forEach((score) => getscore.add(score.score));
 
+    Iterable<Getallproduct> visiimg = allproductfordisplay.where((img) =>
+        img.amount.toString().contains(showlistamount[index].toString()));
+    visiimg.forEach((img) => getimg.add(img.nameimg));
+
     return Card(
       elevation: 2,
-      color: toggle == 0
-          ? allproductfordisplay[index].score == 4
-              ? ColorConstants.sc4
-              : allproductfordisplay[index].score == 3
-                  ? ColorConstants.sc3
-                  : allproductfordisplay[index].score == 2
-                      ? ColorConstants.sc2
-                      : Colors.grey[50]
-          : getscore[0] == 4
-              ? ColorConstants.sc4
-              : getscore[0] == 3
-                  ? ColorConstants.sc3
-                  : getscore[0] == 2
-                      ? ColorConstants.sc2
-                      : Colors.grey[50],
+      color: HexColor("#F6D55C"),
       child: Slidable(
         endActionPane: stringpreferences1?[1] == "DEALER"
             ? ActionPane(
@@ -648,19 +640,21 @@ class _checkstock extends State<checkstock> {
           },
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 1.h, vertical: 0.w),
-            child: SingleChildScrollView(
-              child: SizedBox(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Row(
-                            children: [
-                              toggle != 0
-                                  ? Text(
+            child: SizedBox(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          children: [
+                            toggle != 0
+                                ? SizedBox(
+                                    width:
+                                        MediaQuery.of(context).size.width / 1.8,
+                                    child: Text(
                                       getnameproduct[0] +
                                           "(" +
                                           getproductset[0] +
@@ -669,12 +663,16 @@ class _checkstock extends State<checkstock> {
                                           ")",
                                       maxLines: 2,
                                       style: TextStyle(
-                                          fontSize: 20.sp,
+                                          fontSize: 16.sp,
                                           fontWeight: FontWeight.bold,
                                           fontFamily: 'newbodyfont',
                                           color: Colors.black),
-                                    )
-                                  : Text(
+                                    ),
+                                  )
+                                : SizedBox(
+                                    width:
+                                        MediaQuery.of(context).size.width / 1.8,
+                                    child: Text(
                                       allproductfordisplay[index].nameproduct +
                                           "(" +
                                           allproductfordisplay[index]
@@ -689,108 +687,118 @@ class _checkstock extends State<checkstock> {
                                           fontFamily: 'newbodyfont',
                                           color: Colors.black),
                                     ),
-                            ],
-                          ),
-                          toggle != 0
-                              ? Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      getcodeproduct[0],
-                                      style: TextConstants.textstyle,
-                                    ),
-                                    Text(
-                                      "ประเภท: ${gettype[0]}",
-                                      style: TextConstants.textstyle,
-                                    ),
-                                    amountsort[0] == 0
-                                        ? Text(
-                                            "จำนวน : ${amountsort[0]}",
-                                            style: TextStyle(
-                                                fontSize: 18.sp,
-                                                fontFamily: 'newbodyfont',
-                                                color: Colors.red),
-                                          )
-                                        : Text(
-                                            "จำนวน : ${amountsort[0]}" +
-                                                "(${(amountsort[0] / getamountpercrate[0]).toInt()}" +
-                                                getproductset[0] +
-                                                ")",
-                                            style: TextConstants.textstyle,
-                                          ),
-                                    Text(
-                                      "ราคา: ${getprice[0]}",
-                                      style: TextConstants.textstyle,
-                                    ),
-                                  ],
-                                )
-                              : Row(
-                                  //row for image and column
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          allproductfordisplay[index]
-                                              .codeproduct,
+                                  ),
+                          ],
+                        ),
+                        toggle != 0
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    getcodeproduct[0],
+                                    style: TextConstants.textstyle,
+                                  ),
+                                  Text(
+                                    "ประเภท: ${gettype[0]}",
+                                    style: TextConstants.textstyle,
+                                  ),
+                                  amountsort[0] == 0
+                                      ? Text(
+                                          "จำนวน : ${amountsort[0]}",
+                                          style: TextStyle(
+                                              fontSize: 18.sp,
+                                              fontFamily: 'newbodyfont',
+                                              color: Colors.red),
+                                        )
+                                      : Text(
+                                          "จำนวน : ${amountsort[0]}" +
+                                              "(${(amountsort[0] / getamountpercrate[0]).toInt()}" +
+                                              getproductset[0] +
+                                              ")",
                                           style: TextConstants.textstyle,
                                         ),
-                                        Text(
-                                          "ประเภท: ${allproductfordisplay[index].alltype}",
-                                          style: TextConstants.textstyle,
-                                        ),
-                                        allproductfordisplay[index].amount == 0
-                                            ? Text(
-                                                "จำนวน : ${allproductfordisplay[index].amount}",
-                                                style: TextStyle(
-                                                    fontSize: 18.sp,
-                                                    fontFamily: 'newbodyfont',
-                                                    color: Colors.red),
-                                              )
-                                            : Text(
-                                                "จำนวน : ${allproductfordisplay[index].amount}" +
-                                                    "(${((allproductfordisplay[index].amount) / allproductfordisplay[index].amountpercrate).toInt()}" +
-                                                    allproductfordisplay[index]
-                                                        .productset +
-                                                    ")",
-                                                style: TextConstants.textstyle,
-                                              ),
-                                        Text(
-                                          "ราคา: ${allproductfordisplay[index].price}",
-                                          style: TextConstants.textstyle,
-                                        ),
-                                      ],
-                                    ),
-                                    allproductfordisplay[index].nameimg ==
-                                                null ||
-                                            allproductfordisplay[index]
-                                                    .nameimg ==
-                                                "null"
-                                        ? SizedBox()
-                                        : Container(
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              // add border
-                                              border: Border.all(
-                                                  width: 2,
-                                                  color: Colors.white),
+                                  Text(
+                                    "ราคา: ${getprice[0]}",
+                                    style: TextConstants.textstyle,
+                                  ),
+                                ],
+                              )
+                            : Row(
+                                //row for image and column
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        allproductfordisplay[index].codeproduct,
+                                        style: TextConstants.textstyle,
+                                      ),
+                                      Text(
+                                        "ประเภท: ${allproductfordisplay[index].alltype}",
+                                        style: TextConstants.textstyle,
+                                      ),
+                                      allproductfordisplay[index].amount == 0
+                                          ? Text(
+                                              "จำนวน : ${allproductfordisplay[index].amount}",
+                                              style: TextStyle(
+                                                  fontSize: 18.sp,
+                                                  fontFamily: 'newbodyfont',
+                                                  color: Colors.red),
+                                            )
+                                          : Text(
+                                              "จำนวน : ${allproductfordisplay[index].amount}" +
+                                                  "(${((allproductfordisplay[index].amount) / allproductfordisplay[index].amountpercrate).toInt()}" +
+                                                  allproductfordisplay[index]
+                                                      .productset +
+                                                  ")",
+                                              style: TextConstants.textstyle,
                                             ),
-                                            height: 90.sp,
-                                            width: 90.sp,
-                                            child: Image.network(
-                                                "http://185.78.165.189:8000/img/${allproductfordisplay[index].pathimg}/${allproductfordisplay[index].nameimg}"),
-                                          ),
-                                  ],
-                                ),
-                        ],
-                      ),
+                                      Text(
+                                        "ราคา: ${allproductfordisplay[index].price}",
+                                        style: TextConstants.textstyle,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  toggle != 0
+                      ? getimg[0] == null || getimg[0] == "null"
+                          ? SizedBox()
+                          : Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                // add border
+                                border:
+                                    Border.all(width: 2, color: Colors.white),
+                              ),
+                              height: 90.sp,
+                              width: 90.sp,
+                              child: Image.network(
+                                  "http://185.78.165.189:8000/img/${allproductfordisplay[0].pathimg}/${getimg[0]}"),
+                            )
+                      : allproductfordisplay[index].nameimg == null ||
+                              allproductfordisplay[index].nameimg == "null"
+                          ? SizedBox()
+                          : Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                // add border
+                                border:
+                                    Border.all(width: 2, color: Colors.white),
+                              ),
+                              height: 90.sp,
+                              width: 90.sp,
+                              child: Image.network(
+                                  "http://185.78.165.189:8000/img/${allproductfordisplay[index].pathimg}/${allproductfordisplay[index].nameimg}"),
+                            )
+                ],
               ),
             ),
           ),
@@ -880,10 +888,10 @@ class _checkstock extends State<checkstock> {
     for (int i = 0; i < _allproduct.length; i++) {
       groupamountsort[i] = getamount[i];
     }
-    groupamountsort.sort();
-    groupamountsort.toList();
-
-    groupamountreversed = groupamountsort.reversed.toList();
+    setState(() {
+      groupamountsort.sort();
+      groupamountreversed = groupamountsort.reversed.toList();
+    });
 
     return _allproduct;
   }
