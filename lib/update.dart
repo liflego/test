@@ -13,8 +13,6 @@ import 'package:sigma_space/login.dart';
 import 'package:sigma_space/main.dart';
 import 'package:sigma_space/page/subupdate/addnewproduct.dart';
 import 'package:sizer/sizer.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'dart:io' as io;
 
 class updatepage extends StatefulWidget {
@@ -52,10 +50,12 @@ class _updatepage extends State<updatepage> {
   List<dynamic>? allproductfordisplay = [];
   TextEditingController score = TextEditingController();
   TextEditingController amount = TextEditingController();
+  TextEditingController price = TextEditingController();
   final _formkey = GlobalKey<FormState>();
   List<String>? stringpreferences1;
   io.File? selectedImage;
   String? getnameiamge;
+
   var resJson;
   int toggle = 0;
 
@@ -63,6 +63,7 @@ class _updatepage extends State<updatepage> {
     score.text = widget.score.toString();
     amount.text = "0";
     getnameiamge = widget.nameimg;
+    price.text = widget.price.toString();
     super.initState();
   }
 
@@ -387,13 +388,14 @@ class _updatepage extends State<updatepage> {
         SharedPreferences preferences1 = await SharedPreferences.getInstance();
         stringpreferences1 = preferences1.getStringList("codestore");
         String url = "http://185.78.165.189:3000/pythonapi/updateamountproduct";
-        if (getnameiamge == null) {
+        if (getnameiamge != null) {
           var body = {
             "nameproduct": widget.nameproduct,
             "score": score.text.trim(),
             "amount": amount.text.trim(),
+            "price": price.text.trim(),
             "pathimg": stringpreferences1![0],
-            "nameimg": "null",
+            "nameimg": getnameiamge,
             // "nameimg": selectedImage!.path.split('/').last,
             "codestore": stringpreferences1![0],
             "codeproduct": widget.codeproduct
@@ -413,7 +415,6 @@ class _updatepage extends State<updatepage> {
                         TextButton(
                           child: Text('OK'),
                           onPressed: () {
-                            // onUploadImage();
                             Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
                                     builder: (context) => MyApp()));
@@ -429,6 +430,7 @@ class _updatepage extends State<updatepage> {
             "nameproduct": widget.nameproduct,
             "score": score.text.trim(),
             "amount": amount.text.trim(),
+            "price": price.text.trim(),
             "pathimg": stringpreferences1![0],
             "nameimg": getnameiamge,
             "codestore": stringpreferences1![0],
