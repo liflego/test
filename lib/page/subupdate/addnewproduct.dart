@@ -556,47 +556,92 @@ class _addnewproductpage extends State<addnewproductpage> {
     if (_formkey.currentState!.validate()) {
       try {
         String url = "http://185.78.165.189:3000/pythonapi/insertproduct";
-        var body = {
-          "codeproduct": code.text.trim(),
-          "nameproduct": name.text.trim(),
-          "codestore": stringpreferences1![0],
-          "amount": int.parse(numbers.text.trim()),
-          "amountpercrate": int.parse(numberspercrate.text.trim()),
-          "productset": pdset.trim(),
-          "type": type.text.trim(),
-          "score": int.parse(score.text.trim()),
-          "price": int.parse(price.text.trim()),
-          "pathimg": stringpreferences1![0],
-          "nameimg": selectedImage!.path.split('/').last
-        };
-        http.Response response = await http.post(Uri.parse(url),
-            headers: {'Content-Type': 'application/json; charset=utf-8'},
-            body: JsonEncoder().convert(body));
+        if (selectedImage == null || selectedImage == "null") {
+          var body = {
+            "codeproduct": code.text.trim(),
+            "nameproduct": name.text.trim(),
+            "codestore": stringpreferences1![0],
+            "amount": int.parse(numbers.text.trim()),
+            "amountpercrate": int.parse(numberspercrate.text.trim()),
+            "productset": pdset.trim(),
+            "type": type.text.trim(),
+            "score": int.parse(score.text.trim()),
+            "price": int.parse(price.text.trim()),
+            "pathimg": stringpreferences1![0],
+            "nameimg": "null"
+          };
+          http.Response response = await http.post(Uri.parse(url),
+              headers: {'Content-Type': 'application/json; charset=utf-8'},
+              body: JsonEncoder().convert(body));
 
-        if (response.statusCode == 200) {
-          name.clear();
-          score.clear();
-          numbers.clear();
-          numberspercrate.clear();
-          type.clear();
-          code.clear();
-          price.clear();
-          return showDialog(
-              context: context,
-              builder: (_) => new AlertDialog(
-                    content: new Text("Update success"),
-                    actions: <Widget>[
-                      TextButton(
-                        child: Text('OK'),
-                        onPressed: () {
-                          onUploadImage();
-                          Navigator.of(context).pop();
-                        },
-                      )
-                    ],
-                  ));
+          if (response.statusCode == 200) {
+            name.clear();
+            score.clear();
+            numbers.clear();
+            numberspercrate.clear();
+            type.clear();
+            code.clear();
+            price.clear();
+            return showDialog(
+                context: context,
+                builder: (_) => new AlertDialog(
+                      content: new Text("Update success"),
+                      actions: <Widget>[
+                        TextButton(
+                          child: Text('OK'),
+                          onPressed: () {
+                            //onUploadImage();
+                            Navigator.of(context).pop();
+                          },
+                        )
+                      ],
+                    ));
+          } else {
+            print("server error");
+          }
         } else {
-          print("server error");
+          var body = {
+            "codeproduct": code.text.trim(),
+            "nameproduct": name.text.trim(),
+            "codestore": stringpreferences1![0],
+            "amount": int.parse(numbers.text.trim()),
+            "amountpercrate": int.parse(numberspercrate.text.trim()),
+            "productset": pdset.trim(),
+            "type": type.text.trim(),
+            "score": int.parse(score.text.trim()),
+            "price": int.parse(price.text.trim()),
+            "pathimg": stringpreferences1![0],
+            "nameimg": selectedImage!.path.split('/').last
+          };
+          http.Response response = await http.post(Uri.parse(url),
+              headers: {'Content-Type': 'application/json; charset=utf-8'},
+              body: JsonEncoder().convert(body));
+
+          if (response.statusCode == 200) {
+            name.clear();
+            score.clear();
+            numbers.clear();
+            numberspercrate.clear();
+            type.clear();
+            code.clear();
+            price.clear();
+            return showDialog(
+                context: context,
+                builder: (_) => new AlertDialog(
+                      content: new Text("Update success"),
+                      actions: <Widget>[
+                        TextButton(
+                          child: Text('OK'),
+                          onPressed: () {
+                            onUploadImage();
+                            Navigator.of(context).pop();
+                          },
+                        )
+                      ],
+                    ));
+          } else {
+            print("server error");
+          }
         }
       } catch (e) {
         print(e);
