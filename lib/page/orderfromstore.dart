@@ -32,10 +32,11 @@ class _orderfromstoreState extends State<orderfromstore> {
   @override
   void initState() {
     fectalldata().then((value) {
-      setState(() {
-        allorders.addAll(value);
-        allordersfordisplay = allorders;
-      });
+      if (mounted)
+        setState(() {
+          allorders.addAll(value);
+          allordersfordisplay = allorders;
+        });
     });
 
     super.initState();
@@ -307,9 +308,9 @@ class _orderfromstoreState extends State<orderfromstore> {
   Future<List<Getallorders>> fectalldata() async {
     SharedPreferences preferences1 = await SharedPreferences.getInstance();
     stringpreferences1 = preferences1.getStringList("codestore");
-    setState(() {
-      namestore = stringpreferences1![3];
-    });
+
+    namestore = stringpreferences1![3];
+
     String url = "http://185.78.165.189:3000/pythonapi/getallorders";
     var body = {
       "codestore": stringpreferences1![0],
