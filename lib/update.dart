@@ -54,7 +54,7 @@ class _updatepage extends State<updatepage> {
   final _formkey = GlobalKey<FormState>();
   List<String>? stringpreferences1;
   io.File? selectedImage;
-  String? getnameiamge;
+  String? getnameimg;
 
   var resJson;
   int toggle = 0;
@@ -62,7 +62,7 @@ class _updatepage extends State<updatepage> {
   void initState() {
     score.text = widget.score.toString();
     amount.text = "0";
-    getnameiamge = widget.nameimg;
+    getnameimg = widget.nameimg;
     price.text = widget.price.toString();
     super.initState();
   }
@@ -388,14 +388,14 @@ class _updatepage extends State<updatepage> {
         SharedPreferences preferences1 = await SharedPreferences.getInstance();
         stringpreferences1 = preferences1.getStringList("codestore");
         String url = "http://185.78.165.189:3000/pythonapi/updateamountproduct";
-        if (getnameiamge != null) {
+        if (getnameimg != null) {
           var body = {
             "nameproduct": widget.nameproduct,
             "score": score.text.trim(),
             "amount": amount.text.trim(),
             "price": price.text.trim(),
             "pathimg": stringpreferences1![0],
-            "nameimg": getnameiamge,
+            "nameimg": getnameimg,
             // "nameimg": selectedImage!.path.split('/').last,
             "codestore": stringpreferences1![0],
             "codeproduct": widget.codeproduct
@@ -432,7 +432,7 @@ class _updatepage extends State<updatepage> {
             "amount": amount.text.trim(),
             "price": price.text.trim(),
             "pathimg": stringpreferences1![0],
-            "nameimg": getnameiamge,
+            "nameimg": "null",
             "codestore": stringpreferences1![0],
             "codeproduct": widget.codeproduct
           };
@@ -476,7 +476,7 @@ class _updatepage extends State<updatepage> {
     selectedImage = io.File(pickimage!.path);
 
     setState(() {
-      getnameiamge = selectedImage!.path.split('/').last.toString();
+      getnameimg = selectedImage!.path.split('/').last.toString();
     });
   }
 
