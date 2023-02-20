@@ -13,6 +13,8 @@ import 'package:sigma_space/login.dart';
 import 'package:sigma_space/main.dart';
 import 'package:sigma_space/page/subupdate/addnewproduct.dart';
 import 'package:sizer/sizer.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:io' as io;
 
 class updatepage extends StatefulWidget {
@@ -55,15 +57,16 @@ class _updatepage extends State<updatepage> {
   List<String>? stringpreferences1;
   io.File? selectedImage;
   String? getnameimg;
-
   var resJson;
   int toggle = 0;
+  int toggle1 = 0;
+  int toggle2 = 0;
 
   void initState() {
     score.text = widget.score.toString();
     amount.text = "0";
-    getnameimg = widget.nameimg;
     price.text = widget.price.toString();
+    getnameimg = widget.nameimg;
     super.initState();
   }
 
@@ -110,10 +113,8 @@ class _updatepage extends State<updatepage> {
 
   Widget update() {
     return Padding(
-      padding: EdgeInsets.all(8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        padding: EdgeInsets.all(8),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(
             "EDIT :",
             style: TextStyle(
@@ -122,19 +123,25 @@ class _updatepage extends State<updatepage> {
                 color: Colors.black),
           ),
           //toggle check
-          IconButton(
-              onPressed: () {
-                setState(() {
-                  if (toggle == 0) {
-                    toggle = 1;
-                  } else {
-                    toggle = 0;
-                  }
-
-                  print(toggle);
-                });
-              },
-              icon: Icon(Icons.check_box)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                  child: Text("แก้ไขคะแนน :", style: TextConstants.textstyle)),
+              IconButton(
+                  onPressed: () {
+                    setState(() {
+                      if (toggle == 0) {
+                        toggle = 1;
+                      } else {
+                        toggle = 0;
+                      }
+                      print(toggle);
+                    });
+                  },
+                  icon: Icon(Icons.arrow_drop_down)),
+            ],
+          ),
           Padding(
             padding: const EdgeInsets.only(top: 20, left: 50),
             child: Row(
@@ -190,52 +197,154 @@ class _updatepage extends State<updatepage> {
               ],
             ),
           ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                  child: Text("เพิ่มจำนวนสินค้า :",
+                      style: TextConstants.textstyle)),
+              IconButton(
+                  onPressed: () {
+                    setState(() {
+                      if (toggle1 == 0) {
+                        toggle1 = 1;
+                      } else {
+                        toggle1 = 0;
+                      }
+                      print(toggle1);
+                    });
+                  },
+                  icon: Icon(Icons.arrow_drop_down)),
+            ],
+          ),
           Padding(
-            padding: const EdgeInsets.only(top: 5, left: 50),
+            padding: const EdgeInsets.only(top: 20, left: 50),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(
-                  "จำนวน :",
-                  style: TextConstants.textstyle,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(30.0),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width / 3,
-                    child: TextFormField(
-                      onChanged: (value) {
-                        setState(() {
-                          amount.text = value;
-                        });
-                      },
-                      style: TextStyle(
-                          fontSize: 20.sp,
-                          fontFamily: 'newbodyfont',
-                          color: Colors.black),
-                      textAlign: TextAlign.start,
-                      decoration: InputDecoration(
-                        helperText: "จำนวนที่ต้องการเพิ่ม",
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                          borderSide:
-                              BorderSide(color: HexColor('#39474F'), width: 1),
+                toggle1 == 0
+                    ? SizedBox(
+                        width: MediaQuery.of(context).size.width / 3,
+                      )
+                    : SizedBox(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text(
+                              "จำนวน :",
+                              style: TextConstants.textstyle,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(30.0),
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width / 3,
+                                child: TextFormField(
+                                  onChanged: (value) {
+                                    setState(() {
+                                      amount.text = value;
+                                    });
+                                  },
+                                  style: TextStyle(
+                                      fontSize: 20.sp,
+                                      fontFamily: 'newbodyfont',
+                                      color: Colors.black),
+                                  textAlign: TextAlign.start,
+                                  decoration: InputDecoration(
+                                    helperText: "จำนวนที่ต้องการเพิ่ม",
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                      borderSide: BorderSide(
+                                          color: HexColor('#39474F'), width: 1),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                      borderSide: BorderSide(
+                                          color: Colors.yellow.shade800,
+                                          width: 2),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                          borderSide: BorderSide(
-                              color: Colors.yellow.shade800, width: 2),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                      )
               ],
             ),
-          )
-        ],
-      ),
-    );
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                  child: Text("แก้ไขราคา :", style: TextConstants.textstyle)),
+              IconButton(
+                  onPressed: () {
+                    setState(() {
+                      if (toggle2 == 0) {
+                        toggle2 = 1;
+                      } else {
+                        toggle2 = 0;
+                      }
+                      print(toggle2);
+                    });
+                  },
+                  icon: Icon(Icons.arrow_drop_down)),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 20, left: 50),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                toggle2 == 0
+                    ? SizedBox(
+                        width: MediaQuery.of(context).size.width / 3,
+                      )
+                    : SizedBox(
+                        child: Row(
+                          children: [
+                            Text(
+                              "Price :",
+                              style: TextConstants.textstyle,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(30.0),
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width / 3,
+                                child: TextFormField(
+                                  onChanged: (value) {
+                                    setState(() {
+                                      price.text = value;
+                                    });
+                                  },
+                                  style: TextStyle(
+                                      fontSize: 20.sp,
+                                      fontFamily: 'newbodyfont',
+                                      color: Colors.black),
+                                  textAlign: TextAlign.start,
+                                  decoration: InputDecoration(
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                      borderSide: BorderSide(
+                                          color: HexColor('#39474F'), width: 1),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      borderSide: BorderSide(
+                                          color: Colors.yellow.shade800,
+                                          width: 2),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+              ],
+            ),
+          ),
+        ]));
   }
 
   Widget selectimage() {
@@ -388,14 +497,14 @@ class _updatepage extends State<updatepage> {
         SharedPreferences preferences1 = await SharedPreferences.getInstance();
         stringpreferences1 = preferences1.getStringList("codestore");
         String url = "http://185.78.165.189:3000/pythonapi/updateamountproduct";
-        if (getnameimg != null) {
+        if (getnameimg == null || getnameimg == "null") {
           var body = {
             "nameproduct": widget.nameproduct,
             "score": score.text.trim(),
             "amount": amount.text.trim(),
             "price": price.text.trim(),
             "pathimg": stringpreferences1![0],
-            "nameimg": getnameimg,
+            "nameimg": "null",
             // "nameimg": selectedImage!.path.split('/').last,
             "codestore": stringpreferences1![0],
             "codeproduct": widget.codeproduct
@@ -415,6 +524,7 @@ class _updatepage extends State<updatepage> {
                         TextButton(
                           child: Text('OK'),
                           onPressed: () {
+                            //onUploadImage();
                             Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
                                     builder: (context) => MyApp()));
@@ -432,7 +542,7 @@ class _updatepage extends State<updatepage> {
             "amount": amount.text.trim(),
             "price": price.text.trim(),
             "pathimg": stringpreferences1![0],
-            "nameimg": "null",
+            "nameimg": getnameimg,
             "codestore": stringpreferences1![0],
             "codeproduct": widget.codeproduct
           };
@@ -451,7 +561,9 @@ class _updatepage extends State<updatepage> {
                         TextButton(
                           child: Text('OK'),
                           onPressed: () {
-                            onUploadImage();
+                            if (selectedImage != null) {
+                              onUploadImage();
+                            } else {}
                             Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
                                     builder: (context) => MyApp()));
