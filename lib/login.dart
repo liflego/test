@@ -264,7 +264,11 @@ class _loginState extends State<login> {
           }));
         }
       } else {
-        print("Server error");
+        //print("Server error");
+        return Navigator.of(context)
+            .pushReplacement(MaterialPageRoute(builder: (context) {
+          return googlelogin();
+        }));
       }
     } catch (error) {
       print(error);
