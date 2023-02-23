@@ -72,7 +72,6 @@ class _orderfromstoreState extends State<orderfromstore> {
                           // ignore: prefer_const_constructors
                           ? ActionPane(
                               motion: ScrollMotion(),
-
                               // ignore: prefer_const_literals_to_create_immutables
                               children: [
                                 Container(
@@ -113,7 +112,9 @@ class _orderfromstoreState extends State<orderfromstore> {
                                   width: MediaQuery.of(context).size.width / 2,
                                   height: MediaQuery.of(context).size.height,
                                   child: OutlinedButton(
-                                    onPressed: null,
+                                    onPressed: () {
+                                      cancelorder(index);
+                                    },
                                     child: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -206,6 +207,10 @@ class _orderfromstoreState extends State<orderfromstore> {
                               ],
                             ),
                             Text(
+                              "คำสั่งซื้อที่ : ${allordersfordisplay[index].ordernumber}",
+                              style: TextConstants.textstyle,
+                            ),
+                            Text(
                               "วิธีการชำระ : ${allordersfordisplay[index].pay}",
                               style: TextConstants.textstyle,
                             ),
@@ -264,14 +269,18 @@ class _orderfromstoreState extends State<orderfromstore> {
                                 fontFamily: 'newtitlefont'),
                           ),
                           onPressed: () async {
-                            stringpreferences1![0] = "";
+                            stringpreferences1!.clear();
                             SharedPreferences preferences1 =
                                 await SharedPreferences.getInstance();
                             preferences1.setStringList(
                                 "codestore", stringpreferences1!);
-                            Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                    builder: (context) => login()));
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => (login()),
+                              ),
+                            );
+                            ;
                           },
                         ),
                       )),
@@ -308,9 +317,9 @@ class _orderfromstoreState extends State<orderfromstore> {
   Future<List<Getallorders>> fectalldata() async {
     SharedPreferences preferences1 = await SharedPreferences.getInstance();
     stringpreferences1 = preferences1.getStringList("codestore");
-
-    namestore = stringpreferences1![3];
-
+    setState(() {
+      namestore = stringpreferences1![3];
+    });
     String url = "http://185.78.165.189:3000/pythonapi/getallorders";
     var body = {
       "codestore": stringpreferences1![0],
@@ -405,6 +414,55 @@ class _orderfromstoreState extends State<orderfromstore> {
               ),
             ),
           ));
+  void cancelorder(index) => showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          content: SizedBox(
+            height: 80.sp,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                new Text("Cancel order ?"),
+                Padding(padding: EdgeInsets.only(top: 20.0)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    TextButton(
+                        child: Container(
+                            width: 18.w,
+                            height: 5.h,
+                            color: Colors.green,
+                            child: Center(
+                                child: Text(
+                              "Yes",
+                              style: TextStyle(color: Colors.white),
+                            ))),
+                        onPressed: () {
+                          deleteorders(index);
+                        }),
+                    TextButton(
+                        child: Container(
+                            width: 18.w,
+                            height: 5.h,
+                            color: Colors.red,
+                            child: Center(
+                                child: Text(
+                              "No",
+                              style: TextStyle(color: Colors.white),
+                            ))),
+                        onPressed: () {
+                          Navigator.canPop(context)
+                              ? Navigator.pop(context)
+                              : null;
+                        })
+                  ],
+                ),
+                // ignore: unnecessary_new
+              ],
+            ),
+          ),
+        ),
+      );
 
   Future insertdelivery(index) async {
     if (_formkey.currentState!.validate()) {
@@ -480,6 +538,22 @@ class _orderfromstoreState extends State<orderfromstore> {
       } catch (error) {
         print(error);
       }
+    }
+  }
+
+  Future deleteorders(index) async {
+    try {
+      String url = "http://185.78.165.189:3000/pythonapi/deleteorders/" +
+          allordersfordisplay[index].ordernumber.toString();
+
+      http.Response response = await http.delete(Uri.parse(url),
+          headers: {'Content-Type': 'application/json; charset=utf-8'});
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (context) {
+        return MyApp();
+      }));
+    } catch (e) {
+      print(e);
     }
   }
 }
