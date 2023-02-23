@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ffi';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
@@ -43,13 +44,14 @@ class _dealerpageState extends State<dealerpage> {
   final _formkey = GlobalKey<FormState>();
   List<String> list = [];
   String namestore = "";
-
+  bool togglecheck = false;
   @override
   void initState() {
     fectalldealerdata().then((value) {
       setState(() {
         alldealer.addAll(value);
         alldealerfordisplay = alldealer;
+        print(togglecheck);
       });
     });
 
@@ -200,11 +202,12 @@ class _dealerpageState extends State<dealerpage> {
                                 fontFamily: 'newtitlefont'),
                           ),
                           onPressed: () async {
-                            stringpreferences1![0] = "";
+                            stringpreferences1!.clear();
                             SharedPreferences preferences1 =
                                 await SharedPreferences.getInstance();
                             preferences1.setStringList(
                                 "codestore", stringpreferences1!);
+
                             _googleSignIn.signOut().then((value) {
                               Navigator.pushReplacement(
                                 context,
@@ -350,6 +353,7 @@ class _dealerpageState extends State<dealerpage> {
               numorder: [],
               numpercrate: [],
               productset: [],
+              price: [],
             ),
           ));
         },
@@ -447,15 +451,14 @@ class _dealerpageState extends State<dealerpage> {
   Future<List<Getalldealer>> fectalldealerdata() async {
     SharedPreferences preferences1 = await SharedPreferences.getInstance();
     stringpreferences1 = preferences1.getStringList("codestore");
-    setState(() {
-      namestore = stringpreferences1![3];
-    });
-    String url = "http://185.78.165.189:3000/nodejsapi/dealer";
+
+    namestore = stringpreferences1![3];
+
+    String url = "http://185.78.165.189:3000/pythonapi/dealer";
     var body = {
       "codestore": stringpreferences1![0],
     };
 
-    print(body.runtimeType);
     http.Response response = await http.post(Uri.parse(url),
         headers: {'Content-Type': 'application/json; charset=utf-8'},
         body: JsonEncoder().convert(body));
@@ -508,7 +511,7 @@ class _dealerpageState extends State<dealerpage> {
       try {
         SharedPreferences preferences1 = await SharedPreferences.getInstance();
         stringpreferences1 = preferences1.getStringList("codestore");
-        String url = "http://185.78.165.189:3000/nodejsapi/insertintonotice";
+        String url = "http://185.78.165.189:3000/pythonapi/insertintonotice";
 
         for (int i = 0; i < alldealerfordisplay.length; i++) {
           if (toggleselect[i] == true) {
@@ -551,7 +554,7 @@ class _dealerpageState extends State<dealerpage> {
       try {
         SharedPreferences preferences1 = await SharedPreferences.getInstance();
         stringpreferences1 = preferences1.getStringList("codestore");
-        String url = "http://185.78.165.189:3000/nodejsapi/insertintonotice";
+        String url = "http://185.78.165.189:3000/pythonapi/insertintonotice";
 
         for (int i = 0; i < alldealerfordisplay.length; i++) {
           if (toggleselect[i] == true) {
@@ -601,35 +604,59 @@ class _dealerpageState extends State<dealerpage> {
     try {
       SharedPreferences preferences1 = await SharedPreferences.getInstance();
       stringpreferences1 = preferences1.getStringList("codestore");
-      String url = "http://185.78.165.189:3000/nodejsapi/inserttodealer";
+      String url = "http://185.78.165.189:3000/pythonapi/inserttodealer";
 
-      var body = {
-        "dealercode": list[0].trim(),
-        "dealername": list[1].trim(),
-        "phone": list[2].trim(),
-        "codestore": list[3].trim(),
-        "notes": list[4].trim()
-      };
+      for (int i = 0; i < alldealerfordisplay.length; i++) {
+        if (list[0].trim() == alldealerfordisplay[i].dealercode) {
+          togglecheck = true;
+          break;
+        }
+      }
 
-      print(body);
+      if (togglecheck == false) {
+        var body = {
+          "dealercode": list[0].trim(),
+          "dealername": list[1].trim(),
+          "phone": list[2].trim(),
+          "codestore": stringpreferences1![0],
+          "notes": list[3].trim()
+        };
 
-      http.Response response = await http.post(Uri.parse(url),
-          headers: {'Content-Type': 'application/json; charset=utf-8'},
-          body: JsonEncoder().convert(body));
+        http.Response response = await http.post(Uri.parse(url),
+            headers: {'Content-Type': 'application/json; charset=utf-8'},
+            body: JsonEncoder().convert(body));
 
-      return showDialog(
-          context: context,
-          builder: (_) => new AlertDialog(
-                content: new Text("Message send successfully"),
-                actions: <Widget>[
-                  TextButton(
-                    child: Text('OK'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  )
-                ],
-              ));
+        return showDialog(
+            context: context,
+            builder: (_) => new AlertDialog(
+                  content: new Text("Message send successfully"),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text('OK'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                ));
+      } else {
+        return showDialog(
+            context: context,
+            builder: (_) => new AlertDialog(
+                  content: new Text("Duplicate Dealer"),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text('OK'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        setState(() {
+                          togglecheck == false;
+                        });
+                      },
+                    )
+                  ],
+                ));
+      }
     } catch (error) {
       print(error);
     }
