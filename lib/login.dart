@@ -41,7 +41,14 @@ class _loginState extends State<login> {
 
   // Future loginauto() async {
   //   SharedPreferences preferences1 = await SharedPreferences.getInstance();
-  //   status = preferences1.getInt("status");
+
+  //   setState(() {
+  //     stringpreferences1 = preferences1.getStringList("codestore")!;
+  //     Navigator.of(context)
+  //         .pushReplacement(MaterialPageRoute(builder: (context) {
+  //       return MyApp();
+  //     }));
+  //   });
   // }
 
   @override
@@ -180,57 +187,52 @@ class _loginState extends State<login> {
             headers: {'Content-Type': 'application/json; charset=utf-8'},
             body: JsonEncoder().convert(body));
 
-        if (response.statusCode == 200) {
-          var jsonRes = json.decode(response.body);
+        var jsonRes = json.decode(response.body);
+        if (jsonRes["success"] == 1) {
+          stringpreferences1 = [
+            jsonRes["codestore"],
+            jsonRes["position"],
+            jsonRes["userid"].toString(),
+            jsonRes["namestore"]
+          ];
 
-          if (jsonRes["success"] == 1) {
-            stringpreferences1 = [
-              jsonRes["codestore"],
-              jsonRes["position"],
-              jsonRes["userid"].toString(),
-              jsonRes["namestore"]
-            ];
+          SharedPreferences preferences1 =
+              await SharedPreferences.getInstance();
 
-            SharedPreferences preferences1 =
-                await SharedPreferences.getInstance();
-            preferences1.setStringList("codestore", stringpreferences1);
+          preferences1.setStringList("codestore", stringpreferences1);
 
-            Navigator.of(context)
-                .pushReplacement(MaterialPageRoute(builder: (context) {
-              return MyApp();
-            }));
-          } else {
-            return showDialog(
-                context: context,
-                builder: (_) => new AlertDialog(
-                      content: new Text("Email or password is not correct"),
-                      actions: <Widget>[
-                        TextButton(
-                          child: Text('OK'),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        )
-                      ],
-                    ));
-          }
-        } else {
-          print("Server error");
+          Navigator.of(context)
+              .pushReplacement(MaterialPageRoute(builder: (context) {
+            return MyApp();
+          }));
         }
       } catch (error) {
-        print(error);
+        return showDialog(
+            context: context,
+            builder: (_) => new AlertDialog(
+                  content: new Text("Email or password is not correct"),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text('OK'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                ));
       }
     }
   }
 
   Future doLogingg() async {
     try {
-      String url = "http://185.78.165.189:3000/pythonapi/logingoogle";
+      String url = "http://185.78.165.189:3000/pythonapi/login";
 
       var body = {
         "username": FirebaseAuth.instance.currentUser!.email,
         "uid": FirebaseAuth.instance.currentUser!.uid
       };
+      print(body);
 
       http.Response response = await http.post(Uri.parse(url),
           headers: {'Content-Type': 'application/json; charset=utf-8'},
