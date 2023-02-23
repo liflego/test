@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -22,15 +23,17 @@ class checkstock extends StatefulWidget {
   List<String> numorder = [];
   List<String> numpercrate = [];
   List<String> productset = [];
+  List<int> price = [];
 
-  checkstock({
-    Key? key,
-    required this.codeorder,
-    required this.nameorder,
-    required this.numorder,
-    required this.numpercrate,
-    required this.productset,
-  }) : super(key: key);
+  checkstock(
+      {Key? key,
+      required this.codeorder,
+      required this.nameorder,
+      required this.numorder,
+      required this.numpercrate,
+      required this.productset,
+      required this.price})
+      : super(key: key);
 
   @override
   _checkstock createState() => _checkstock();
@@ -45,6 +48,7 @@ class _checkstock extends State<checkstock> {
   List<String> numorder = [];
   List<String> numpercrate = [];
   List<String> productset = [];
+  List<int> price = [];
   List<String>? stringpreferences1;
   String? stringpreferences2;
   String? _scanBarcode = 'Unknown';
@@ -158,77 +162,21 @@ class _checkstock extends State<checkstock> {
                     backgroundColor: ColorConstants.appbarcolor,
                     child: noti != 0
                         ? Badge(
-                            backgroundColor: Colors.white,
-                            label: Text(
+                            badgeContent: Text(
                               '$noti',
                               style: TextStyle(
                                   fontSize: 12.0.sp,
-                                  fontFamily: 'newtitlefont',
+                                  fontFamily: 'newitlefont',
                                   color: Colors.red),
                             ),
-                            child: Icon(Icons.list),
+                            child: Icon(
+                              Icons.list,
+                            ),
+                            badgeColor: Colors.blue,
+                            toAnimate: false,
                           )
                         : Icon(Icons.list),
                   ),
-            drawer: stringpreferences1?[1] != "ADMIN"
-                ? Drawer(
-                    backgroundColor: Colors.green[700],
-                    child: ListView(
-                      // Important: Remove any padding from the ListView.
-                      padding: EdgeInsets.zero,
-                      children: <Widget>[
-                        DrawerHeader(
-                          child: Column(
-                            children: [
-                              Text(
-                                namestore,
-                                style: TextStyle(
-                                    fontSize: 25.0,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'newtitlefont'),
-                              ),
-                            ],
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[50],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                              height: 50,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                    width: 0, color: Colors.grey.shade800),
-                                color: Colors.grey[50],
-                              ),
-                              child: Center(
-                                child: TextButton(
-                                  child: Text(
-                                    "LOG OUT",
-                                    style: TextStyle(
-                                        fontSize: 20.0,
-                                        color: Colors.black,
-                                        fontFamily: 'newtitlefont'),
-                                  ),
-                                  onPressed: () async {
-                                    stringpreferences1![0] = "";
-                                    SharedPreferences preferences1 =
-                                        await SharedPreferences.getInstance();
-                                    preferences1.setStringList(
-                                        "codestore", stringpreferences1!);
-                                    Navigator.of(context).pushReplacement(
-                                        MaterialPageRoute(
-                                            builder: (context) => login()));
-                                  },
-                                ),
-                              )),
-                        )
-                      ],
-                    ),
-                  )
-                : null,
           ),
         );
       },
@@ -988,6 +936,7 @@ class _checkstock extends State<checkstock> {
                             .amountpercrate
                             .toString());
                         productset.add(allproductfordisplay[index].productset);
+                        price.add(allproductfordisplay[index].price);
 
                         numbers.clear();
                         Navigator.pop(context);
@@ -1012,6 +961,7 @@ class _checkstock extends State<checkstock> {
               numorder: numorder,
               numpercrate: numpercrate,
               productset: productset,
+              price: price,
               position: stringpreferences1![1],
             )));
   }
@@ -1023,6 +973,7 @@ class _checkstock extends State<checkstock> {
       numorder = widget.numorder;
       numpercrate = widget.numpercrate;
       productset = widget.productset;
+      price = widget.price;
     } else {}
   }
 
