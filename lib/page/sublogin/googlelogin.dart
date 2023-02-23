@@ -220,13 +220,13 @@ class _googlelogin extends State<googlelogin> {
   }
 
   Future getnewuser() async {
-    String url = "http://185.78.165.189:3000/nodejsapi/getnewuser";
+    String url = "http://185.78.165.189:3000/pythonapi/getnewuser";
 
     http.Response response = await http.get(Uri.parse(url),
         headers: {'Content-Type': 'application/json; charset=utf-8'});
     var jsonRes = await json.decode(response.body);
 
-    String text = jsonRes[0]["codestore"];
+    String text = jsonRes["codestore"];
     String txt = text.substring(1);
     ttt = int.parse(txt);
 
@@ -235,6 +235,9 @@ class _googlelogin extends State<googlelogin> {
 
       s = ttt.toString();
       codestore = "A" + ttt.toRadixString(16);
+
+      print(s);
+      print(codestore);
     });
   }
 
@@ -254,7 +257,7 @@ class _googlelogin extends State<googlelogin> {
     getnewuser();
     if (_formkey.currentState!.validate()) {
       try {
-        String url = "http://185.78.165.189:3000/nodejsapi/createuserwithgg";
+        String url = "http://185.78.165.189:3000/pythonapi/createuserwithgg";
         var body = {
           "username": FirebaseAuth.instance.currentUser!.email,
           "uid": FirebaseAuth.instance.currentUser!.uid,
