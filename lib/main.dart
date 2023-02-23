@@ -14,8 +14,15 @@ import 'package:sizer/sizer.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(
-      new MaterialApp(debugShowCheckedModeBanner: false, home: new showlogo()));
+  // final preferences1 = await SharedPreferences.getInstance();
+  // final isLoggedIn = preferences1.getBool('isLoggedIn') ?? false;
+  final preferences1 = await SharedPreferences.getInstance();
+
+  final stringpreferences1 = preferences1.getStringList("codestore")!;
+  runApp(new MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: new showlogo(),
+  ));
 }
 
 class MyApp extends StatefulWidget {
@@ -24,6 +31,14 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> {
+  bool isloggedIn = false;
+
+  // initSharedPrefs() async {
+  //   SharedPreferences preferences = await SharedPreferences.getInstance();
+
+  //   isloggedIn = preferences.getBool('isLoggedIn') ?? false;
+  // }
+
   List<String>? position;
   List<String>? stringpreferences1;
   @override
@@ -44,6 +59,7 @@ class MyAppState extends State<MyApp> {
       numorder: [],
       numpercrate: [],
       productset: [],
+      price: [],
     )
   ];
   final _pageOption2 = [
@@ -54,6 +70,7 @@ class MyAppState extends State<MyApp> {
       numorder: [],
       numpercrate: [],
       productset: [],
+      price: [],
     ),
     customer()
   ];
