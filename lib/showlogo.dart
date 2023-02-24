@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sigma_space/classapi/class.dart';
 import 'package:sigma_space/login.dart';
 import 'package:sigma_space/main.dart';
+import 'package:sizer/sizer.dart';
 
 class showlogo extends StatefulWidget {
   showlogo({Key? key}) : super(key: key);
@@ -36,19 +38,33 @@ class _showlogoState extends State<showlogo> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: HexColor('#39474F'),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(50.0),
-              child: Image.asset("assets/images/logo.png"),
-            ),
-          ],
+    return Sizer(builder: (context, orientation, deviceType) {
+      return Scaffold(
+        backgroundColor: ColorConstants.appbarcolor,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(50.0),
+                child: Image.asset("assets/images/logo.png"),
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width / 2,
+                child: Center(
+                  child: Text(
+                    "SIGB.",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 70.0.sp,
+                        fontFamily: 'newbodyfont'),
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 }
