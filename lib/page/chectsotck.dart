@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
-import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -20,7 +19,7 @@ import 'package:sizer/sizer.dart';
 class checkstock extends StatefulWidget {
   List<String> codeorder = [];
   List<String> nameorder = [];
-  List<String> numorder = [];
+  List<int> numorder = [];
   List<String> numpercrate = [];
   List<String> productset = [];
   List<int> price = [];
@@ -45,7 +44,7 @@ class _checkstock extends State<checkstock> {
   TextEditingController numbers = TextEditingController();
   List<String> codeorder = [];
   List<String> nameorder = [];
-  List<String> numorder = [];
+  List<int> numorder = [];
   List<String> numpercrate = [];
   List<String> productset = [];
   List<int> price = [];
@@ -162,18 +161,15 @@ class _checkstock extends State<checkstock> {
                     backgroundColor: ColorConstants.appbarcolor,
                     child: noti != 0
                         ? Badge(
-                            badgeContent: Text(
+                            backgroundColor: Colors.white,
+                            label: Text(
                               '$noti',
                               style: TextStyle(
                                   fontSize: 12.0.sp,
-                                  fontFamily: 'newitlefont',
+                                  fontFamily: 'newtitlefont',
                                   color: Colors.red),
                             ),
-                            child: Icon(
-                              Icons.list,
-                            ),
-                            badgeColor: Colors.blue,
-                            toAnimate: false,
+                            child: Icon(Icons.list),
                           )
                         : Icon(Icons.list),
                   ),
@@ -931,7 +927,7 @@ class _checkstock extends State<checkstock> {
 
                         codeorder.add(allproductfordisplay[index].codeproduct);
                         nameorder.add(allproductfordisplay[index].nameproduct);
-                        numorder.add(numbers.text);
+                        numorder.add(int.parse(numbers.text.toString()));
                         numpercrate.add(allproductfordisplay[index]
                             .amountpercrate
                             .toString());
