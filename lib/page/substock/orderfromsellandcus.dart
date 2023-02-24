@@ -13,15 +13,15 @@ import 'package:sigma_space/main.dart';
 import 'package:sigma_space/page/chectsotck.dart';
 import 'package:sizer/sizer.dart';
 import 'package:textfield_search/textfield_search.dart';
-import 'package:sigma_space/classapi/class.dart';
 import 'package:http/http.dart' as http;
 
 class orderfromsellandcus extends StatefulWidget {
   List<String> codeorder = [];
   List<String> nameorder = [];
-  List<String> numorder = [];
+  List<int> numorder = [];
   List<String> numpercrate = [];
   List<String> productset = [];
+  List<int> price = [];
   String position;
 
   orderfromsellandcus(
@@ -31,6 +31,7 @@ class orderfromsellandcus extends StatefulWidget {
       required this.numorder,
       required this.numpercrate,
       required this.productset,
+      required this.price,
       required this.position})
       : super(key: key);
 
@@ -42,14 +43,14 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
   @override
   TextEditingController mysearh = TextEditingController();
   TextEditingController notes = TextEditingController();
+  TextEditingController step1 = TextEditingController();
+  TextEditingController step2 = TextEditingController();
+  TextEditingController step3 = TextEditingController();
   final _formkey = GlobalKey<FormState>();
   late String pay;
-
-  @override
-  void initState() {
-    mysearh.addListener(_printLatestValue);
-    super.initState();
-  }
+  List<double>? listgetprice = [];
+  List<double>? listgetpricevat = [];
+  final numformat = new NumberFormat("#,##0.00", "en_US");
 
   _printLatestValue() {
     print("text field: ${mysearh.text}");
@@ -57,10 +58,26 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
 
   bool toggle1 = false;
   bool toggle2 = false;
+  bool togglecal = false;
+  bool togglevat = false;
+  bool togglechooseall = false;
+  int toggleaddstep = 0;
+  List<bool>? togglechoose = [];
   List<String>? stringpreferences1;
 
   List<Getcustomerstore> alldata = [];
   late int lastorder;
+
+  @override
+  void initState() {
+    mysearh.addListener(_printLatestValue);
+    for (int i = 0; i < widget.codeorder.length; i++) {
+      togglechoose!.add(false);
+    }
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Sizer(builder: (context, orientation, deviceType) {
@@ -80,6 +97,25 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
                     )),
                 actions: [
                   IconButton(
+                      onPressed: () {
+                        if (togglecal == false) {
+                          setState(() {
+                            togglecal = true;
+                          });
+                        } else {
+                          setState(() {
+                            togglecal = false;
+                            listgetprice!.clear();
+                            listgetpricevat!.clear();
+                          });
+                        }
+                      },
+                      icon: Icon(
+                        Icons.calculate_rounded,
+                        size: 20.sp,
+                        color: Colors.white,
+                      )),
+                  IconButton(
                       onPressed: backtostock,
                       icon: Icon(
                         Icons.add_circle,
@@ -90,7 +126,7 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
                 toolbarHeight: 7.h,
                 title: widget.position == "DEALER"
                     ? Text(
-                        "ORDERS",
+                        "ORDER",
                         style: TextConstants.appbartextsyle,
                       )
                     : Container(
@@ -106,15 +142,322 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
               ),
               body: ListView(
                 children: [
+                  togglecal == true ? chooseall() : SizedBox(),
                   Container(
                     color: Colors.amber,
                     height: MediaQuery.of(context).size.height / 2,
                     child: listitems(),
                   ),
+                  togglecal == true ? textpriceall() : SizedBox(),
                   data()
                 ],
               )));
     });
+  }
+
+  Widget chooseall() {
+    return Padding(
+      padding: EdgeInsets.all(2),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                  onPressed: () {
+                    setState(() {
+                      if (toggleaddstep == 0) {
+                        setState(() {
+                          toggleaddstep = 0;
+                        });
+                      } else {
+                        setState(() {
+                          toggleaddstep = toggleaddstep - 1;
+                        });
+                      }
+                      print(toggleaddstep);
+                    });
+                  },
+                  icon: Icon(
+                    Icons.remove_circle_outline_outlined,
+                    color: Colors.black,
+                  )),
+              SizedBox(
+                  width: 50.sp,
+                  height: 25.sp,
+                  child: TextFormField(
+                    onChanged: (String value) {
+                      setState(() {
+                        step1.text = value;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: HexColor('#39474F'), width: 2),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: Colors.yellow.shade800, width: 2),
+                      ),
+                    ),
+                  )),
+              Text(
+                "%",
+                style: TextConstants.textstyleforheader,
+              ),
+              IconButton(
+                  onPressed: () {
+                    if (toggleaddstep >= 3) {
+                      setState(() {
+                        toggleaddstep = 3;
+                      });
+                    } else {
+                      setState(() {
+                        toggleaddstep = toggleaddstep + 1;
+                      });
+                    }
+                    print(toggleaddstep);
+                  },
+                  icon: Icon(
+                    Icons.add_box_outlined,
+                    color: Colors.black,
+                  )),
+            ],
+          ),
+          toggleaddstep >= 1
+              ? Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                            width: 50.sp,
+                            height: 25.sp,
+                            child: TextFormField(
+                              onChanged: (String value) {
+                                setState(() {
+                                  step2.text = value;
+                                });
+                              },
+                              decoration: InputDecoration(
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: HexColor('#39474F'), width: 2),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Colors.yellow.shade800, width: 2),
+                                ),
+                              ),
+                            )),
+                        Text(
+                          "%",
+                          style: TextConstants.textstyleforheader,
+                        ),
+                      ],
+                    ),
+                  ],
+                )
+              : SizedBox(),
+          toggleaddstep >= 2
+              ? Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                              width: 50.sp,
+                              height: 25.sp,
+                              child: TextFormField(
+                                onChanged: (String value) {
+                                  setState(() {
+                                    step3.text = value;
+                                  });
+                                },
+                                decoration: InputDecoration(
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: HexColor('#39474F'), width: 2),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors.yellow.shade800,
+                                        width: 2),
+                                  ),
+                                ),
+                              )),
+                          Text(
+                            "%",
+                            style: TextConstants.textstyleforheader,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
+              : SizedBox(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "VAT",
+                style: TextConstants.textstyle,
+              ),
+              IconButton(
+                  onPressed: () {
+                    setState(() {
+                      if (togglevat == false) {
+                        togglevat = true;
+                        if (listgetprice!.isEmpty) {
+                          return;
+                        } else {
+                          for (int i = 0; i < listgetprice!.length; i++) {
+                            setState(() {
+                              listgetpricevat!.add(listgetprice![i] +
+                                  (listgetprice![i] * 7 / 100));
+                            });
+                          }
+                        }
+                      } else {
+                        togglevat = false;
+                        setState(() {
+                          listgetpricevat!.clear();
+                        });
+                      }
+                    });
+                  },
+                  icon: togglevat == true
+                      ? Icon(
+                          Icons.check_box_outlined,
+                          color: Colors.black,
+                        )
+                      : Icon(
+                          Icons.check_box_outline_blank,
+                          color: Colors.black,
+                        ))
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                "เลือกทั้งหมด",
+                style: TextConstants.textstyle,
+              ),
+              IconButton(
+                  onPressed: () {
+                    setState(() {
+                      if (togglechooseall == false) {
+                        togglechooseall = true;
+                        for (int i = 0; i < widget.codeorder.length; i++) {
+                          setState(() {
+                            togglechoose![i] = true;
+                          });
+                        }
+
+                        listgetprice!.clear();
+                        listgetpricevat!.clear();
+                        //แอดราคาทั้งหมดใน listgetprice
+                        if (toggleaddstep == 1) {
+                          for (int i = 0; i < widget.codeorder.length; i++) {
+                            var value = ((double.parse(
+                                    widget.price[i].toStringAsFixed(2)) -
+                                (double.parse((widget.price[i])
+                                            .toStringAsFixed(2)) *
+                                        int.parse(step1.text)) /
+                                    100));
+
+                            var value2 =
+                                ((double.parse(value.toStringAsFixed(2)) -
+                                    (double.parse((value).toStringAsFixed(2)) *
+                                            int.parse(step2.text)) /
+                                        100));
+
+                            setState(() {
+                              listgetprice!.add(value2 * widget.numorder[i]);
+                            });
+                          }
+                        } else if (toggleaddstep == 2) {
+                          for (int i = 0; i < widget.codeorder.length; i++) {
+                            var value = ((double.parse(
+                                    widget.price[i].toStringAsFixed(2)) -
+                                (double.parse((widget.price[i])
+                                            .toStringAsFixed(2)) *
+                                        int.parse(step1.text)) /
+                                    100));
+
+                            var value2 =
+                                ((double.parse(value.toStringAsFixed(2)) -
+                                    (double.parse((value).toStringAsFixed(2)) *
+                                            int.parse(step2.text)) /
+                                        100));
+                            var value3 =
+                                ((double.parse(value2.toStringAsFixed(2)) -
+                                    (double.parse((value2).toStringAsFixed(2)) *
+                                            int.parse(step3.text)) /
+                                        100));
+
+                            setState(() {
+                              listgetprice!.add(value3 * widget.numorder[i]);
+                            });
+                          }
+                        } else {
+                          //togglestep != 1
+                          for (int i = 0; i < widget.codeorder.length; i++) {
+                            var value = ((double.parse(
+                                    widget.price[i].toStringAsFixed(2)) -
+                                (double.parse((widget.price[i])
+                                            .toStringAsFixed(2)) *
+                                        int.parse(step1.text)) /
+                                    100));
+                            listgetprice!.add(value * widget.numorder[i]);
+                          }
+                        }
+                        if (togglevat == true) {
+                          for (int i = 0; i < listgetprice!.length; i++) {
+                            setState(() {
+                              listgetpricevat!.add(listgetprice![i] +
+                                  (listgetprice![i] * 7 / 100));
+                            });
+                          }
+                        } else {
+                          return;
+                        }
+                      } else {
+                        togglechooseall = false;
+                        listgetprice!.clear();
+                        listgetpricevat!.clear();
+                        for (int i = 0; i < widget.codeorder.length; i++) {
+                          setState(() {
+                            togglechoose![i] = false;
+                          });
+                        }
+                        listgetprice!.clear();
+                        listgetpricevat!.clear();
+                        for (int i = 0; i < widget.codeorder.length; i++) {
+                          listgetprice!.add(0);
+                          listgetpricevat!.add(0);
+                        }
+                      }
+                    });
+                  },
+                  icon: togglechooseall == true
+                      ? Icon(
+                          Icons.check_box_outlined,
+                          color: Colors.black,
+                        )
+                      : Icon(
+                          Icons.check_box_outline_blank,
+                          color: Colors.black,
+                        ))
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   Widget tabsearch() {
@@ -144,15 +487,15 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
       child: ListView.builder(
         itemCount: widget.codeorder.length,
         itemBuilder: (BuildContext context, int index) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width,
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Column(
+          return SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -165,43 +508,192 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
                               fontFamily: 'newbodyfont',
                               fontSize: 18.sp,
                             )),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          child: TextFormField(
+                        //exvat
+                        Text(
+                            "จำนวน ${widget.numorder[index]}" +
+                                "("
+                                    "${(widget.numorder[index] / int.parse(widget.numpercrate[index])).toInt().toString()}" +
+                                "${widget.productset[index]})",
                             style: TextStyle(
-                                fontFamily: 'newbodyfont',
-                                fontSize: 18.sp,
-                                color: Colors.black),
-                            textAlign: TextAlign.start,
-                            decoration: InputDecoration(
-                                hintText: widget.numorder[index] +
-                                    "(" +
-                                    // ignore: division_optimization
-                                    (int.parse("${widget.numorder[index]}") /
-                                            int.parse(
-                                                "${widget.numpercrate[index]}"))
-                                        .toInt()
-                                        .toString() +
-                                    widget.productset[index] +
-                                    ")",
-                                hintStyle: TextStyle(
+                              fontFamily: 'newbodyfont',
+                              fontSize: 18.sp,
+                            )),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width / 1.5,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                  "ราคา " +
+                                      widget.price[index].toStringAsFixed(2),
+                                  style: TextStyle(
                                     fontFamily: 'newbodyfont',
                                     fontSize: 18.sp,
-                                    color: Colors.black)),
-                            onChanged: (text) => setState(() {
-                              widget.numorder[index] = text;
-                            }),
+                                  )),
+                              togglecal == true &&
+                                      listgetprice!.isNotEmpty &&
+                                      togglevat == false &&
+                                      togglechooseall == true
+                                  ? Text(
+                                      "รวม " +
+                                          listgetprice![index]
+                                              .toStringAsFixed(2),
+                                      style: TextStyle(
+                                        fontFamily: 'newbodyfont',
+                                        fontSize: 18.sp,
+                                      ))
+                                  : togglevat == true &&
+                                          togglecal == true &&
+                                          listgetpricevat!.isNotEmpty &&
+                                          togglechooseall == true
+                                      ? Text(
+                                          "รวม " +
+                                              listgetpricevat![index]
+                                                  .toString(),
+                                          style: TextStyle(
+                                            fontFamily: 'newbodyfont',
+                                            fontSize: 18.sp,
+                                          ))
+                                      : togglecal == true &&
+                                              listgetprice!.isNotEmpty &&
+                                              togglevat == false &&
+                                              togglechooseall == false &&
+                                              togglechoose![index] == true
+                                          //แสดงค่าหน้าแอพ ส่วนของการเลือกทีละอัน
+                                          ? Text(
+                                              "รวม " +
+                                                  listgetprice![index]
+                                                      .toStringAsFixed(2),
+                                              style: TextStyle(
+                                                fontFamily: 'newbodyfont',
+                                                fontSize: 18.sp,
+                                              ))
+                                          : togglecal == true &&
+                                                  listgetprice!.isNotEmpty &&
+                                                  togglevat == true &&
+                                                  togglechooseall == false &&
+                                                  togglechoose![index] == true
+                                              ? Text(
+                                                  "รวม " +
+                                                      listgetpricevat![index]
+                                                          .toStringAsFixed(2),
+                                                  style: TextStyle(
+                                                    fontFamily: 'newbodyfont',
+                                                    fontSize: 18.sp,
+                                                  ))
+                                              : SizedBox(),
+                            ],
                           ),
                         ),
                       ],
                     ),
-                  ),
+                    togglecal == true
+                        ? IconButton(
+                            onPressed: () {
+                              //ส่วนของการเลือกทีละอัน
+                              if (togglechoose![index] == false) {
+                                setState(() {
+                                  //when select bool will be true
+                                  if (listgetprice!.isEmpty) {
+                                    for (int i = 0;
+                                        i < widget.codeorder.length;
+                                        i++) {
+                                      listgetprice!.add(0);
+                                      listgetpricevat!.add(0);
+                                    }
+                                  }
+
+                                  var value = (double.parse(widget.price[index]
+                                          .toStringAsFixed(2)) -
+                                      (double.parse((widget.price[index])
+                                                  .toStringAsFixed(2)) *
+                                              int.parse(step1.text)) /
+                                          100);
+                                  togglechoose![index] = true;
+                                  listgetprice![index] = value *
+                                      double.parse(widget.numorder[index]
+                                          .toStringAsFixed(2));
+
+                                  if (toggleaddstep == 1) {
+                                    var value2 = ((double.parse(
+                                            value.toStringAsFixed(2)) -
+                                        (double.parse((value)
+                                                    .toStringAsFixed(2)) *
+                                                int.parse(step2.text)) /
+                                            100));
+
+                                    setState(() {
+                                      listgetprice![index] =
+                                          value2 * widget.numorder[index];
+                                    });
+                                  } else {
+                                    setState(() {
+                                      listgetprice![index] = 0;
+                                      listgetprice![index] =
+                                          value * widget.numorder[index];
+                                    });
+                                  }
+                                  if (listgetpricevat!.isNotEmpty) {
+                                    listgetpricevat![index] =
+                                        (listgetprice![index] +
+                                            (listgetprice![index] * 7 / 100));
+                                  }
+                                });
+                              } else {
+                                setState(() {
+                                  togglechoose![index] = false;
+                                  listgetprice![index] = 0;
+                                  if (listgetpricevat!.isNotEmpty) {
+                                    listgetpricevat![index] = 0;
+                                  }
+                                });
+                              }
+                            },
+                            icon: togglechoose![index] == true
+                                ? Icon(
+                                    Icons.check_box_outlined,
+                                    color: Colors.black,
+                                  )
+                                : Icon(
+                                    Icons.check_box_outline_blank,
+                                    color: Colors.black,
+                                  ))
+                        : SizedBox()
+                  ],
                 ),
-              )
-            ],
+              ),
+            ),
           );
         },
       ),
+    );
+  }
+
+  Widget textpriceall() {
+    return Padding(
+      padding: const EdgeInsets.all(6.0),
+      child: Center(
+          child: togglecal == false
+              ? SizedBox()
+              : togglevat == true
+                  ? listgetpricevat!.length > 1
+                      ? Text(
+                          "ราคารวม " +
+                              listgetpricevat!
+                                  .reduce((value, element) => (value) + element)
+                                  .toStringAsFixed(2),
+                          style: TextConstants.textstyle,
+                        )
+                      : Text("ราคารวม", style: TextConstants.textstyle)
+                  : listgetprice!.length > 1
+                      ? Text(
+                          "ราคารวม " +
+                              listgetprice!
+                                  .reduce((value, element) => (value) + element)
+                                  .toStringAsFixed(2),
+                          style: TextConstants.textstyle,
+                        )
+                      : Text("ราคารวม", style: TextConstants.textstyle)),
     );
   }
 
@@ -304,7 +796,7 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
     List<String> stringpreferences1;
     SharedPreferences preferences1 = await SharedPreferences.getInstance();
     stringpreferences1 = preferences1.getStringList("codestore")!;
-    String url = "http://185.78.165.189:3000/nodejsapi/customer";
+    String url = "http://185.78.165.189:3000/pythonapi/customer";
     var body = {
       "codestore": stringpreferences1[0],
     };
@@ -387,7 +879,7 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
           "ordernumber": lastorder,
           "codeproduct": widget.codeorder[i].trim(),
           "nameproduct": widget.nameorder[i].trim(),
-          "amount": int.parse(widget.numorder[i].trim()),
+          "amount": "${widget.numorder[i]}",
           "amountpercrate": int.parse(widget.numpercrate[i].trim()),
           "saleconfirm": 1,
           "codestore": stringpreferences1![0],
@@ -431,6 +923,7 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
               numorder: widget.numorder,
               numpercrate: widget.numpercrate,
               productset: widget.productset,
+              price: widget.price,
             )));
   }
 
@@ -441,7 +934,7 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
       stringpreferences1 = preferences1.getStringList("codestore");
       for (var i = 0; i < widget.codeorder.length; i++) {
         var body = {
-          "amount": int.parse(widget.numorder[i]),
+          "amount": "${widget.numorder[i]}",
           "codeproduct": widget.codeorder[i].trim(),
           "codestore": stringpreferences1![0],
         };
