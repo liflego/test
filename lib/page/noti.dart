@@ -109,18 +109,9 @@ class _notipage extends State<notipage> {
                                     style: TextConstants.textstyle,
                                   ),
                                   Text(
-                                    "เมื่อ(" +
-                                        DateFormat("dd/MM/yyyy HH:mm:ss")
-                                            .format(DateTime.parse(
-                                                allnoticefordisplay[index]
-                                                    .date))
-                                            .substring(0, 6) +
-                                        DateFormat("dd/MM/yyyy HH:mm:ss")
-                                            .format(DateTime.parse(
-                                                allnoticefordisplay[index]
-                                                    .date))
-                                            .substring(8, 16) +
-                                        ")",
+                                    allnoticefordisplay[index]
+                                        .date
+                                        .substring(5, 25),
                                     style: TextConstants.textstyle,
                                   ),
                                 ],
@@ -137,31 +128,25 @@ class _notipage extends State<notipage> {
                                 "วิธีการชำระ ${allnoticefordisplay[index].pay}",
                                 style: TextConstants.textstyle,
                               ),
-                              allnoticefordisplay[index].priceall == null
-                                  ? SizedBox()
-                                  : Text(
-                                      "จำนวนเงิน ${allnoticefordisplay[index].priceall} บาท",
-                                      style: TextConstants.textstyle,
-                                    )
                             ],
                           ),
                         )
                       ],
                     )
-                  : allnoticefordisplay[index].message == "order" &&
-                          allnoticefordisplay[index].company != ""
+                  : allnoticefordisplay[index].message == "adminconfirm" &&
+                          allnoticefordisplay[index].priceall != null
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Center(
                               child: Container(
                                 width: MediaQuery.of(context).size.width / 2.5,
-                                color: Colors.red[900],
+                                color: Colors.lightGreen[900],
                                 child: Padding(
                                   padding: const EdgeInsets.all(5.0),
                                   child: Center(
                                     child: Text(
-                                      "ส่งของแล้ว",
+                                      "แอดมินยืนยัน",
                                       style: TextConstants.textstyleheadnotice,
                                     ),
                                   ),
@@ -177,113 +162,168 @@ class _notipage extends State<notipage> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        "คำสั่งซื้อของ : " +
+                                        "คำสั่งซื้อของ " +
                                             "${allnoticefordisplay[index].namestore}",
                                         style: TextConstants.textstyle,
                                       ),
                                       Text(
-                                        "เมื่อ(" +
-                                            DateFormat("dd/MM/yyyy HH:mm:ss")
-                                                .format(DateTime.parse(
-                                                    allnoticefordisplay[index]
-                                                        .date))
-                                                .substring(0, 6) +
-                                            DateFormat("dd/MM/yyyy HH:mm:ss")
-                                                .format(DateTime.parse(
-                                                    allnoticefordisplay[index]
-                                                        .date))
-                                                .substring(8, 16) +
-                                            ")",
+                                        allnoticefordisplay[index]
+                                            .date
+                                            .substring(5, 25),
                                         style: TextConstants.textstyle,
                                       ),
                                     ],
                                   ),
                                   Text(
-                                    "ออเดอร์ที่ : ${allnoticefordisplay[index].ordernumber}",
+                                    "ออเดอร์ที่ ${allnoticefordisplay[index].ordernumber}",
                                     style: TextConstants.textstyle,
                                   ),
                                   Text(
-                                    "จำนวนรายการ : ${allnoticefordisplay[index].countorder}",
+                                    "จำนวนรายการ ${allnoticefordisplay[index].countorder}",
                                     style: TextConstants.textstyle,
                                   ),
                                   Text(
-                                    "วิธีการชำระ: ${allnoticefordisplay[index].pay}",
+                                    "วิธีการชำระ ${allnoticefordisplay[index].pay}",
                                     style: TextConstants.textstyle,
                                   ),
                                   allnoticefordisplay[index].priceall == null
                                       ? SizedBox()
                                       : Text(
-                                          "จำนวนเงิน : ${allnoticefordisplay[index].priceall} บาท",
+                                          "จำนวนเงิน ${allnoticefordisplay[index].priceall} บาท",
                                           style: TextConstants.textstyle,
-                                        ),
-                                  Text(
-                                    "บริษัทขนส่ง : ${allnoticefordisplay[index].company}",
-                                    style: TextConstants.textstyle,
-                                  ),
-                                  Text(
-                                    "TRACK : ${allnoticefordisplay[index].company}",
-                                    style: TextConstants.textstyle,
-                                  ),
+                                        )
                                 ],
                               ),
                             )
                           ],
                         )
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Center(
-                              child: Container(
-                                width: MediaQuery.of(context).size.width / 2.5,
-                                color: Colors.lightBlue[900],
-                                child: Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: Center(
-                                    child: Text(
-                                      "ข้อความ",
-                                      style: TextConstants.textstyleheadnotice,
+                      : allnoticefordisplay[index].message == "order" &&
+                              allnoticefordisplay[index].company != ""
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Center(
+                                  child: Container(
+                                    width:
+                                        MediaQuery.of(context).size.width / 2.5,
+                                    color: Colors.red[900],
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: Center(
+                                        child: Text(
+                                          "ส่งของแล้ว",
+                                          style:
+                                              TextConstants.textstyleheadnotice,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ),
-                            SizedBox(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                SizedBox(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "คำสั่งซื้อของ : " +
+                                                "${allnoticefordisplay[index].namestore}",
+                                            style: TextConstants.textstyle,
+                                          ),
+                                          Text(
+                                            allnoticefordisplay[index]
+                                                .date
+                                                .substring(5, 25),
+                                            style: TextConstants.textstyle,
+                                          ),
+                                        ],
+                                      ),
                                       Text(
-                                        "บริษัท " +
-                                            "${allnoticefordisplay[index].namestore}",
+                                        "ออเดอร์ที่ : ${allnoticefordisplay[index].ordernumber}",
                                         style: TextConstants.textstyle,
                                       ),
                                       Text(
-                                        DateFormat("dd/MM/yyyy HH:mm:ss")
-                                                .format(DateTime.parse(
-                                                    allnoticefordisplay[index]
-                                                        .date))
-                                                .substring(0, 6) +
-                                            DateFormat("dd/MM/yyyy HH:mm:ss")
-                                                .format(DateTime.parse(
-                                                    allnoticefordisplay[index]
-                                                        .date))
-                                                .substring(8, 16),
+                                        "จำนวนรายการ : ${allnoticefordisplay[index].countorder}",
+                                        style: TextConstants.textstyle,
+                                      ),
+                                      Text(
+                                        "วิธีการชำระ: ${allnoticefordisplay[index].pay}",
+                                        style: TextConstants.textstyle,
+                                      ),
+                                      allnoticefordisplay[index].priceall ==
+                                              null
+                                          ? SizedBox()
+                                          : Text(
+                                              "จำนวนเงิน : ${allnoticefordisplay[index].priceall} บาท",
+                                              style: TextConstants.textstyle,
+                                            ),
+                                      Text(
+                                        "บริษัทขนส่ง : ${allnoticefordisplay[index].company}",
+                                        style: TextConstants.textstyle,
+                                      ),
+                                      Text(
+                                        "TRACK : ${allnoticefordisplay[index].company}",
                                         style: TextConstants.textstyle,
                                       ),
                                     ],
                                   ),
-                                  Text(
-                                    "${allnoticefordisplay[index].message}",
-                                    style: TextConstants.textstyle,
-                                  ),
-                                ],
-                              ),
+                                )
+                              ],
                             )
-                          ],
-                        )),
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Center(
+                                  child: Container(
+                                    width:
+                                        MediaQuery.of(context).size.width / 2.5,
+                                    color: Colors.lightBlue[900],
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: Center(
+                                        child: Text(
+                                          "ข้อความ",
+                                          style:
+                                              TextConstants.textstyleheadnotice,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "บริษัท " +
+                                                "${allnoticefordisplay[index].namestore}",
+                                            style: TextConstants.textstyle,
+                                          ),
+                                          Text(
+                                            allnoticefordisplay[index]
+                                                .date
+                                                .substring(5, 25),
+                                            style: TextConstants.textstyle,
+                                          ),
+                                        ],
+                                      ),
+                                      Text(
+                                        "${allnoticefordisplay[index].message}",
+                                        style: TextConstants.textstyle,
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            )),
         ),
       ),
     );
@@ -293,7 +333,7 @@ class _notipage extends State<notipage> {
     SharedPreferences preferences1 = await SharedPreferences.getInstance();
     stringpreferences1 = preferences1.getStringList("codestore");
 
-    String url = "http://185.78.165.189:3000/nodejsapi/getnoticefordealer";
+    String url = "http://185.78.165.189:3000/pythonapi/getnoticefordealer";
     var body = {"towho": stringpreferences1![0]};
 
     List<Getnotifordealer>? _allnotice = [];

@@ -326,7 +326,7 @@ class _customerState extends State<customer> {
   Future<List<Getallcustomer>> fectallcustomerdata() async {
     SharedPreferences preferences1 = await SharedPreferences.getInstance();
     stringpreferences1 = preferences1.getStringList("codestore");
-    String url = "http://185.78.165.189:3000/nodejsapi/customer";
+    String url = "http://185.78.165.189:3000/pythonapi/customer";
     var body = {
       "codestore": stringpreferences1![0],
     };
@@ -383,7 +383,7 @@ class _customerState extends State<customer> {
       try {
         SharedPreferences preferences1 = await SharedPreferences.getInstance();
         stringpreferences1 = preferences1.getStringList("codestore");
-        String url = "http://185.78.165.189:3000/nodejsapi/insertintonotice";
+        String url = "http://185.78.165.189:3000/pythonapi/insertintonotice";
 
         for (int i = 0; i < allcustomerfordisplay.length; i++) {
           if (toggleselect[i] == true) {
