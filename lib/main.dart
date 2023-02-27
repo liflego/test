@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hex_color/flutter_hex_color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sigma_space/classapi/class.dart';
 import 'package:sigma_space/page/chectsotck.dart';
@@ -14,6 +13,7 @@ import 'package:sizer/sizer.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  final preferences1 = await SharedPreferences.getInstance();
   runApp(
       new MaterialApp(debugShowCheckedModeBanner: false, home: new showlogo()));
 }
