@@ -1,5 +1,9 @@
+/*หน้าที่แก้
+showlogo Checkstock subcheckstock login update addnerproduct
+main dealer noti
+*/
+
 import 'package:flutter/material.dart';
-import 'package:flutter_hex_color/flutter_hex_color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sigma_space/classapi/class.dart';
 import 'package:sigma_space/login.dart';
@@ -14,12 +18,13 @@ class showlogo extends StatefulWidget {
 }
 
 class _showlogoState extends State<showlogo> {
-  List<String>? strintpre;
+  List<String> strintpre = [];
   @override
   void initState() {
     autologin();
+
     Future.delayed(const Duration(seconds: 2), () async {
-      if (strintpre!.isEmpty) {
+      if (strintpre.isEmpty) {
         Navigator.of(context)
             .pushReplacement(MaterialPageRoute(builder: (context) => login()));
       } else {
@@ -31,9 +36,11 @@ class _showlogoState extends State<showlogo> {
     super.initState();
   }
 
-  Future autologin() async {
+  autologin() async {
     final preferences1 = await SharedPreferences.getInstance();
-    strintpre = await preferences1.getStringList("codestore")!;
+    if (preferences1.getStringList("codestore") != null) {
+      strintpre = preferences1.getStringList("codestore")!;
+    }
   }
 
   @override
@@ -53,10 +60,10 @@ class _showlogoState extends State<showlogo> {
                 width: MediaQuery.of(context).size.width / 2,
                 child: Center(
                   child: Text(
-                    "SIGB.",
+                    "SIGB",
                     style: TextStyle(
                         color: Colors.white,
-                        fontSize: 70.0.sp,
+                        fontSize: 60.0.sp,
                         fontFamily: 'newbodyfont'),
                   ),
                 ),
