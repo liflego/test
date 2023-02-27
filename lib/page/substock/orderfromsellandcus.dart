@@ -1,11 +1,6 @@
-// ignore_for_file: no_logic_in_create_state, unnecessary_string_interpolations, prefer_const_constructors, unnecessary_new
-
 import 'dart:convert';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
-import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sigma_space/classapi/class.dart';
@@ -64,6 +59,7 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
   int toggleaddstep = 0;
   List<bool>? togglechoose = [];
   List<String>? stringpreferences1;
+  String? stringpreferences2;
 
   List<Getcustomerstore> alldata = [];
   late int lastorder;
@@ -839,6 +835,8 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
     //insert to orders
     SharedPreferences preferences1 = await SharedPreferences.getInstance();
     stringpreferences1 = preferences1.getStringList("codestore");
+    SharedPreferences preferences2 = await SharedPreferences.getInstance();
+    stringpreferences2 = preferences2.getString("dealercode");
 
     try {
       String url = "http://185.78.165.189:3000/pythonapi/insertorders";
@@ -872,10 +870,18 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
           notes.text = "-";
         });
       }
-      String cuscode = "";
-      Iterable<Getcustomerstore> visi = alldata.where(
-          (customercode) => customercode.name.contains(mysearh.text.trim()));
-      visi.forEach((customercode) => cuscode = customercode.code);
+      String getcuscode = "";
+      String getcodestore = "";
+      if (stringpreferences1![1] == "DEALER") {
+        getcodestore = stringpreferences2!;
+        getcuscode = stringpreferences1![0];
+      } else {
+        getcodestore = stringpreferences1![0];
+        Iterable<Getcustomerstore> visi = alldata.where(
+            (customercode) => customercode.name.contains(mysearh.text.trim()));
+        visi.forEach((customercode) => getcuscode = customercode.code);
+      }
+
       for (var i = 0; i < widget.codeorder.length; i++) {
         var body = {
           "ordernumber": lastorder,
@@ -884,8 +890,8 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
           "amount": "${widget.numorder[i]}",
           "amountpercrate": int.parse(widget.numpercrate[i].trim()),
           "saleconfirm": 1,
-          "codestore": stringpreferences1![0],
-          "cuscode": cuscode.trim(),
+          "codestore": getcodestore,
+          "cuscode": getcuscode.trim(),
           "date": DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()),
           "pay": pay.trim(),
           "notes": notes.text.trim()
