@@ -676,7 +676,7 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
           child: togglecal == false
               ? SizedBox()
               : togglevat == true
-                  ? listgetpricevat!.length > 1
+                  ? listgetpricevat!.isNotEmpty
                       ? Text(
                           "ราคารวม " +
                               listgetpricevat!
@@ -685,7 +685,7 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
                           style: TextConstants.textstyle,
                         )
                       : Text("ราคารวม", style: TextConstants.textstyle)
-                  : listgetprice!.length > 1
+                  : listgetprice!.isNotEmpty
                       ? Text(
                           "ราคารวม " +
                               listgetprice!
@@ -818,15 +818,17 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
     return _list;
   }
 
+//สร้างเงื่อนไขสำหรับร้านค้าสั่งของเอง
   Future done() async {
-    //getlastorder
-    String url = "http://185.78.165.189:3000/nodejsapi/getlastorders";
-
+    // getlastorder();
+    String url = "http://185.78.165.189:3000/pythonapi/getlastorders";
+//test api
     http.Response response = await http.get(Uri.parse(url));
     dynamic jsonres = json.decode(response.body);
     try {
       setState(() {
-        lastorder = jsonres[0]["ordernumber"] + 1;
+        lastorder = jsonres["ordernumber"] + 1;
+        print(lastorder);
       });
     } catch (e) {
       setState(() {
@@ -839,7 +841,7 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
     stringpreferences1 = preferences1.getStringList("codestore");
 
     try {
-      String url = "http://185.78.165.189:3000/nodejsapi/insertorders";
+      String url = "http://185.78.165.189:3000/pythonapi/insertorders";
 
       if ((toggle1 == true) & (toggle2 == false)) {
         setState(() {
@@ -929,7 +931,7 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
 
   Future deleteamount() async {
     try {
-      String url = "http://185.78.165.189:3000/nodejsapi/deleteamount";
+      String url = "http://185.78.165.189:3000/pythonapi/deleteamount";
       SharedPreferences preferences1 = await SharedPreferences.getInstance();
       stringpreferences1 = preferences1.getStringList("codestore");
       for (var i = 0; i < widget.codeorder.length; i++) {
@@ -950,7 +952,7 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
 
   Future insertintonotice() async {
     try {
-      String url = "http://185.78.165.189:3000/nodejsapi/insertintonotice";
+      String url = "http://185.78.165.189:3000/pythonapi/insertintonotice";
 
       String cuscode = "";
       Iterable<Getcustomerstore> visi = alldata.where(
