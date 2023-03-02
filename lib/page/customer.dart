@@ -1,9 +1,13 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
+import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sigma_space/main.dart';
+import 'package:sigma_space/page/orderfromstore.dart';
 import 'package:sigma_space/page/substore/customerhis.dart';
 import 'package:sizer/sizer.dart';
 import 'package:textfield_search/textfield_search.dart';
@@ -249,84 +253,183 @@ class _customerState extends State<customer> {
   }
 
   Widget listItem(index) {
-    return Card(
-      color: ColorConstants.colorcardorder,
-      child: OutlinedButton(
-        onPressed: () => gotosubstore(index),
-        child: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    allcustomerfordisplay[index].cusname,
-                    style: TextConstants.textstyle,
-                  ),
-                  Text(
-                    allcustomerfordisplay[index].address,
-                    style: TextConstants.textstyle,
-                  ),
-                  Row(
+    return allcustomerfordisplay[index].sconfrim == 1
+        ? Card(
+            color: ColorConstants.colorcardorder,
+            child: OutlinedButton(
+              onPressed: () => gotosubstore(index),
+              child: Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          allcustomerfordisplay[index].cusname,
+                          style: TextConstants.textstyle,
+                        ),
+                        Text(
+                          allcustomerfordisplay[index].address,
+                          style: TextConstants.textstyle,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                                onPressed: () {
+                                  _launchPhoneURL(index);
+                                },
+                                icon: Icon(
+                                  Icons.call,
+                                  color: Colors.black,
+                                )),
+                            Text(
+                              allcustomerfordisplay[index].phone,
+                              style: TextConstants.textstyle,
+                            ),
+                          ],
+                        ),
+                        allcustomerfordisplay[index].notes == "Put your note.."
+                            ? SizedBox()
+                            : Text(
+                                "#" + allcustomerfordisplay[index].notes,
+                                style: TextConstants.textStylenotes,
+                              ),
+                      ],
+                    ),
+                    toggle == false
+                        ? SizedBox(
+                            height: 10,
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.only(left: 20.0),
+                            child: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    toggleselect[index] = !toggleselect[index];
+                                    toggleall = false;
+                                  });
+                                },
+                                icon: toggleselect[index] == false
+                                    ? Icon(
+                                        Icons.check_box_outline_blank,
+                                        size: 20.sp,
+                                      )
+                                    : Icon(
+                                        Icons.check_box_outlined,
+                                        size: 20.sp,
+                                      )),
+                          )
+                  ],
+                ),
+              ),
+            ),
+          )
+        : allcustomer[index].sconfrim == null
+            ? Card(
+                color: Colors.grey[50],
+                child: Center(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      IconButton(
-                          onPressed: () {
-                            _launchPhoneURL(index);
-                          },
-                          icon: Icon(
-                            Icons.call,
-                            color: Colors.black,
-                          )),
-                      Text(
-                        allcustomerfordisplay[index].phone,
-                        style: TextConstants.textstyle,
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            allcustomerfordisplay[index].cusname,
+                            style: TextConstants.textstyle,
+                          ),
+                          Text(
+                            allcustomerfordisplay[index].address,
+                            style: TextConstants.textstyle,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              IconButton(
+                                  onPressed: () {
+                                    _launchPhoneURL(index);
+                                  },
+                                  icon: Icon(
+                                    Icons.call,
+                                    color: Colors.black,
+                                  )),
+                              Text(
+                                allcustomerfordisplay[index].phone,
+                                style: TextConstants.textstyle,
+                              ),
+                            ],
+                          ),
+                          allcustomerfordisplay[index].notes ==
+                                  "Put your note.."
+                              ? SizedBox()
+                              : Text(
+                                  "#" + allcustomerfordisplay[index].notes,
+                                  style: TextConstants.textStylenotes,
+                                ),
+                        ],
                       ),
+                      Padding(
+                          padding: const EdgeInsets.only(top: 10, left: 50)),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(
+                              onPressed: () {
+                                updatesconfirm(index);
+                              },
+                              icon: Icon(
+                                Icons.check_circle,
+                                color: Colors.green,
+                                size: 50,
+                              )),
+                          IconButton(
+                              onPressed: () {
+                                updatecancelsconfirm(index);
+                              },
+                              icon: Icon(
+                                Icons.cancel,
+                                color: Colors.red,
+                                size: 50,
+                              )),
+                        ],
+                      ),
+                      toggle == false
+                          ? SizedBox(
+                              height: 10,
+                            )
+                          : Padding(
+                              padding: const EdgeInsets.only(left: 20.0),
+                              child: IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      toggleselect[index] =
+                                          !toggleselect[index];
+                                      toggleall = false;
+                                    });
+                                  },
+                                  icon: toggleselect[index] == false
+                                      ? Icon(
+                                          Icons.check_box_outline_blank,
+                                          size: 20.sp,
+                                        )
+                                      : Icon(
+                                          Icons.check_box_outlined,
+                                          size: 20.sp,
+                                        )),
+                            )
                     ],
                   ),
-                  allcustomerfordisplay[index].notes == "Put your note.."
-                      ? SizedBox()
-                      : Text(
-                          "#" + allcustomerfordisplay[index].notes,
-                          style: TextConstants.textStylenotes,
-                        ),
-                ],
-              ),
-              toggle == false
-                  ? SizedBox(
-                      height: 10,
-                    )
-                  : Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: IconButton(
-                          onPressed: () {
-                            setState(() {
-                              toggleselect[index] = !toggleselect[index];
-                              toggleall = false;
-                            });
-                          },
-                          icon: toggleselect[index] == false
-                              ? Icon(
-                                  Icons.check_box_outline_blank,
-                                  size: 20.sp,
-                                )
-                              : Icon(
-                                  Icons.check_box_outlined,
-                                  size: 20.sp,
-                                )),
-                    )
-            ],
-          ),
-        ),
-      ),
-    );
+                ),
+              )
+            : SizedBox();
   }
 
   Future<List<Getallcustomer>> fectallcustomerdata() async {
     SharedPreferences preferences1 = await SharedPreferences.getInstance();
     stringpreferences1 = preferences1.getStringList("codestore");
-    String url = "http://185.78.165.189:3000/pythonapi/customer";
+    String url = "http://185.78.165.189:3000/pythonapi/fullcustomer";
     var body = {
       "codestore": stringpreferences1![0],
     };
@@ -339,8 +442,16 @@ class _customerState extends State<customer> {
     List<Getallcustomer>? _allcustomer = [];
 
     for (var u in jsonres) {
-      Getallcustomer data = Getallcustomer(u["cuscode"], u["cusname"],
-          u["phone"], u["address"], u["codestore"], u["notes"], u["score"]);
+      Getallcustomer data = Getallcustomer(
+        u["MAX(c.cuscode)"],
+        u["MAX(c.cusname)"],
+        u["MAX(c.phone)"],
+        u["MAX(c.address)"],
+        u["MAX(c.codestore)"],
+        u["MAX(c.notes)"],
+        u["MAX(c.score)"],
+        u["MAX(c.sconfirm)"],
+      );
       _allcustomer.add(data);
     }
 
@@ -367,7 +478,8 @@ class _customerState extends State<customer> {
       allcustomerfordisplay[index].address,
       allcustomerfordisplay[index].phone,
       allcustomerfordisplay[index].notes,
-      allcustomerfordisplay[index].score.toString()
+      allcustomerfordisplay[index].score.toString(),
+      allcustomerfordisplay[index].sconfrim.toString()
     ];
 
     SharedPreferences prefercustomer = await SharedPreferences.getInstance();
@@ -418,6 +530,76 @@ class _customerState extends State<customer> {
       } catch (error) {
         print(error);
       }
+    }
+  }
+
+  Future updatesconfirm(index) async {
+    try {
+      String url = "http://185.78.165.189:3000/pythonapi/updatesconfirm";
+
+      var body = {
+        "cuscode": allcustomerfordisplay[index].cuscode,
+        "codestore": allcustomerfordisplay[index].codestore,
+      };
+      print(body);
+
+      http.Response response = await http.patch(Uri.parse(url),
+          headers: {'Content-Type': 'application/json; charset=utf-8'},
+          body: JsonEncoder().convert(body));
+
+      return showDialog(
+          context: context,
+          builder: (_) => new AlertDialog(
+                content: new Text("ยืนยันเรียบร้อย"),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (context) {
+                        return MyApp();
+                      }));
+                    },
+                  )
+                ],
+              ));
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future updatecancelsconfirm(index) async {
+    try {
+      String url = "http://185.78.165.189:3000/pythonapi/updatecancelsconfirm";
+
+      var body = {
+        "cuscode": allcustomerfordisplay[index].cuscode,
+        "codestore": allcustomerfordisplay[index].codestore,
+      };
+      print(body);
+
+      http.Response response = await http.patch(Uri.parse(url),
+          headers: {'Content-Type': 'application/json; charset=utf-8'},
+          body: JsonEncoder().convert(body));
+
+      return showDialog(
+          context: context,
+          builder: (_) => new AlertDialog(
+                content: new Text("ยกเลิกแล้ว"),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (context) {
+                        return MyApp();
+                      }));
+                    },
+                  )
+                ],
+              ));
+    } catch (e) {
+      print(e);
     }
   }
 }
