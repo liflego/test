@@ -64,18 +64,31 @@ class Getallcustomer {
   String codestore;
   String notes;
   int score;
-  Getallcustomer(this.cuscode, this.cusname, this.phone, this.address,
-      this.codestore, this.notes, this.score);
+  int sconfrim;
+  Getallcustomer(
+    this.cuscode,
+    this.cusname,
+    this.phone,
+    this.address,
+    this.codestore,
+    this.notes,
+    this.score,
+    this.sconfrim,
+  );
 }
 
 class Getalldealer {
-  String dealercode;
-  String dealername;
+  String cuscode;
+  String cusname;
   String phone;
+  String address;
   String codestore;
   String notes;
-  Getalldealer(
-      this.dealercode, this.dealername, this.phone, this.codestore, this.notes);
+  int score;
+  int sconfrim;
+  String companyname;
+  Getalldealer(this.cuscode, this.cusname, this.phone, this.address,
+      this.codestore, this.notes, this.score, this.sconfrim, this.companyname);
 }
 
 //get data from table order by codestore and customer code
@@ -193,4 +206,3 @@ class Getnotifordealer {
       this.track);
 }
 
-// uusadfiybh
