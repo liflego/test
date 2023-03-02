@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:ffi';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
@@ -158,7 +160,7 @@ class _dealerpageState extends State<dealerpage> {
             ]),
           ),
           drawer: Drawer(
-            backgroundColor: Colors.grey[300],
+            backgroundColor: Colors.green[700],
             child: ListView(
               // Important: Remove any padding from the ListView.
               padding: EdgeInsets.zero,
@@ -181,35 +183,30 @@ class _dealerpageState extends State<dealerpage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Center(
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: TextButton(
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(Colors.white),
-                        ),
-                        child: Text(
-                          "LOG OUT",
-                          style: TextStyle(
-                              fontSize: 20.0,
-                              color: Colors.black,
-                              fontFamily: 'newtitlefont'),
-                        ),
-                        onPressed: () async {
-                          stringpreferences1 != [];
-                          SharedPreferences preferences1 =
-                              await SharedPreferences.getInstance();
-                          preferences1.setStringList(
-                              "codestore", stringpreferences1!);
-                          if (_googleSignIn.currentUser == null) {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => (login()),
-                              ),
-                            );
-                          } else {
+                  child: Container(
+                      height: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border:
+                            Border.all(width: 0, color: Colors.grey.shade800),
+                        color: Colors.grey[50],
+                      ),
+                      child: Center(
+                        child: TextButton(
+                          child: Text(
+                            "LOG OUT",
+                            style: TextStyle(
+                                fontSize: 20.0,
+                                color: Colors.black,
+                                fontFamily: 'newtitlefont'),
+                          ),
+                          onPressed: () async {
+                            stringpreferences1!.clear();
+                            SharedPreferences preferences1 =
+                                await SharedPreferences.getInstance();
+                            preferences1.setStringList(
+                                "codestore", stringpreferences1!);
+
                             _googleSignIn.signOut().then((value) {
                               Navigator.pushReplacement(
                                 context,
@@ -218,11 +215,9 @@ class _dealerpageState extends State<dealerpage> {
                                 ),
                               );
                             });
-                          }
-                        },
-                      ),
-                    ),
-                  ),
+                          },
+                        ),
+                      )),
                 )
               ],
             ),
@@ -261,7 +256,7 @@ class _dealerpageState extends State<dealerpage> {
 
                   setState(() {
                     alldealerfordisplay = alldealer.where((_allproduct) {
-                      var cusname = _allproduct.dealername.toLowerCase();
+                      var cusname = _allproduct.cusname.toLowerCase();
                       return cusname.contains(text);
                     }).toList();
                   });
@@ -341,90 +336,146 @@ class _dealerpageState extends State<dealerpage> {
   }
 
   Widget listItem(index) {
-    return Card(
-      color: ColorConstants.colorcardorder,
-      child: OutlinedButton(
-        onPressed: () async {
-          SharedPreferences stringpreferences2 =
-              await SharedPreferences.getInstance();
-          stringpreferences2.setString(
-              "dealercode", alldealerfordisplay[index].dealercode);
-
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) => checkstock(
-              codeorder: [],
-              nameorder: [],
-              numorder: [],
-              numpercrate: [],
-              productset: [],
-              price: [],
-            ),
-          ));
-        },
-        child: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    alldealerfordisplay[index].dealername,
-                    style: TextConstants.textstyle,
+    return alldealerfordisplay[index].sconfrim == 1
+        ? Card(
+            color: ColorConstants.colorcardorder,
+            child: OutlinedButton(
+              onPressed: () async {
+                SharedPreferences stringpreferences2 =
+                    await SharedPreferences.getInstance();
+                stringpreferences2.setString(
+                    "dealercode", alldealerfordisplay[index].codestore);
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (context) => checkstock(
+                    codeorder: [],
+                    nameorder: [],
+                    numorder: [],
+                    numpercrate: [],
+                    productset: [],
+                    price: [],
                   ),
-                  Row(
+                ));
+              },
+              child: Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          alldealerfordisplay[index].companyname,
+                          style: TextConstants.textstyle,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                                onPressed: () {
+                                  _launchPhoneURL(index);
+                                },
+                                icon: Icon(
+                                  Icons.call,
+                                  color: Colors.black,
+                                )),
+                            Text(
+                              alldealerfordisplay[index].phone,
+                              style: TextConstants.textstyle,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    toggle == false
+                        ? SizedBox(
+                            height: 10,
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.only(left: 20.0),
+                            child: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    toggleselect[index] = !toggleselect[index];
+                                    toggleall = false;
+                                  });
+                                },
+                                icon: toggleselect[index] == false
+                                    ? Icon(
+                                        Icons.check_box_outline_blank,
+                                        size: 20.sp,
+                                      )
+                                    : Icon(
+                                        Icons.check_box_outlined,
+                                        size: 20.sp,
+                                      )),
+                          )
+                  ],
+                ),
+              ),
+            ),
+          )
+        : alldealerfordisplay[index].sconfrim == null
+            ? Card(
+                color: Colors.grey[50],
+                child: Center(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      IconButton(
-                          onPressed: () {
-                            _launchPhoneURL(index);
-                          },
-                          icon: Icon(
-                            Icons.call,
-                            color: Colors.black,
-                          )),
-                      Text(
-                        alldealerfordisplay[index].phone,
-                        style: TextConstants.textstyle,
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            alldealerfordisplay[index].companyname,
+                            style: TextConstants.textstyle,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              IconButton(
+                                  onPressed: () {
+                                    _launchPhoneURL(index);
+                                  },
+                                  icon: Icon(
+                                    Icons.call,
+                                    color: Colors.black,
+                                  )),
+                              Text(
+                                alldealerfordisplay[index].phone,
+                                style: TextConstants.textstyle,
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
+                      toggle == false
+                          ? SizedBox(
+                              height: 10,
+                            )
+                          : Padding(
+                              padding: const EdgeInsets.only(left: 20.0),
+                              child: IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      toggleselect[index] =
+                                          !toggleselect[index];
+                                      toggleall = false;
+                                    });
+                                  },
+                                  icon: toggleselect[index] == false
+                                      ? Icon(
+                                          Icons.check_box_outline_blank,
+                                          size: 20.sp,
+                                        )
+                                      : Icon(
+                                          Icons.check_box_outlined,
+                                          size: 20.sp,
+                                        )),
+                            )
                     ],
                   ),
-                  alldealerfordisplay[index].notes == "Putyournote"
-                      ? SizedBox()
-                      : Text(
-                          "#" + alldealerfordisplay[index].notes,
-                          style: TextConstants.textStylenotes,
-                        ),
-                ],
-              ),
-              toggle == false
-                  ? SizedBox(
-                      height: 10,
-                    )
-                  : Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: IconButton(
-                          onPressed: () {
-                            setState(() {
-                              toggleselect[index] = !toggleselect[index];
-                              toggleall = false;
-                            });
-                          },
-                          icon: toggleselect[index] == false
-                              ? Icon(
-                                  Icons.check_box_outline_blank,
-                                  size: 20.sp,
-                                )
-                              : Icon(
-                                  Icons.check_box_outlined,
-                                  size: 20.sp,
-                                )),
-                    )
-            ],
-          ),
-        ),
-      ),
-    );
+                ),
+              )
+            : SizedBox();
   }
 
   Future<void> scanbarcode() async {
@@ -437,7 +488,7 @@ class _dealerpageState extends State<dealerpage> {
         _scanBarcode = barcodeScanRes;
         list = _scanBarcode.split(" ");
       });
-      insertintodealer();
+      insertdealertocustomer();
     } on PlatformException {
       barcodeScanRes = 'Failed to get platform version.';
     }
@@ -458,9 +509,9 @@ class _dealerpageState extends State<dealerpage> {
 
     namestore = stringpreferences1![3];
 
-    String url = "http://185.78.165.189:3000/pythonapi/dealer";
+    String url = "http://185.78.165.189:3000/pythonapi/fulldealer";
     var body = {
-      "codestore": stringpreferences1![0],
+      "cuscode": stringpreferences1![0],
     };
 
     http.Response response = await http.post(Uri.parse(url),
@@ -471,8 +522,16 @@ class _dealerpageState extends State<dealerpage> {
     List<Getalldealer>? _alldealer = [];
 
     for (var u in jsonres) {
-      Getalldealer data = Getalldealer(u["dealercode"], u["dealername"],
-          u["phone"], u["codestore"], u["notes"]);
+      Getalldealer data = Getalldealer(
+          u["MAX(c.cuscode)"],
+          u["MAX(c.cusname)"],
+          u["MAX(c.phone)"],
+          u["MAX(c.address)"],
+          u["MAX(c.codestore)"],
+          u["MAX(c.notes)"],
+          u["MAX(c.score)"],
+          u["MAX(c.sconfirm)"],
+          u["companyname"]);
       _alldealer.add(data);
     }
 
@@ -524,7 +583,7 @@ class _dealerpageState extends State<dealerpage> {
               "ordernumber": 0.toString(),
               "fromwho": stringpreferences1![0],
               "fromposition": stringpreferences1![1],
-              "towho": alldealerfordisplay[i].dealercode,
+              "towho": alldealerfordisplay[i].cuscode,
               "toposition": "DEALER",
               "message": message.text.trim()
             };
@@ -566,11 +625,10 @@ class _dealerpageState extends State<dealerpage> {
               "ordernumber": 0.toString(),
               "fromwho": stringpreferences1![0],
               "fromposition": stringpreferences1![1],
-              "towho": alldealerfordisplay[i].dealercode,
+              "towho": alldealerfordisplay[i].cuscode,
               "toposition": "SALE",
               "message": message.text.trim()
             };
-
             http.Response response = await http.post(Uri.parse(url),
                 headers: {'Content-Type': 'application/json; charset=utf-8'},
                 body: JsonEncoder().convert(body));
@@ -604,14 +662,79 @@ class _dealerpageState extends State<dealerpage> {
     }
   }
 
-  Future insertintodealer() async {
+  // Future insertintodealer() async {
+  //   try {
+  //     SharedPreferences preferences1 = await SharedPreferences.getInstance();
+  //     stringpreferences1 = preferences1.getStringList("codestore");
+  //     String url = "http://185.78.165.189:3000/pythonapi/inserttodealer";
+
+  //     for (int i = 0; i < alldealerfordisplay.length; i++) {
+  //       if (list[0].trim() == alldealerfordisplay[i].dealercode) {
+  //         togglecheck = true;
+  //         break;
+  //       }
+  //     }
+
+  //     if (togglecheck == false) {
+  //       var body = {
+  //         "dealercode": list[0].trim(),
+  //         "dealername": list[1].trim(),
+  //         "phone": list[2].trim(),
+  //         "codestore": stringpreferences1![0],
+  //         "notes": list[3].trim()
+  //       };
+
+  //       http.Response response = await http.post(Uri.parse(url),
+  //           headers: {'Content-Type': 'application/json; charset=utf-8'},
+  //           body: JsonEncoder().convert(body));
+
+  //       return showDialog(
+  //           context: context,
+  //           builder: (_) => new AlertDialog(
+  //                 content: new Text("Message send successfully"),
+  //                 actions: <Widget>[
+  //                   TextButton(
+  //                     child: Text('OK'),
+  //                     onPressed: () {
+  //                       Navigator.of(context).pop();
+  //                     },
+  //                   )
+  //                 ],
+  //               ));
+  //     } else {
+  //       return showDialog(
+  //           context: context,
+  //           builder: (_) => new AlertDialog(
+  //                 content: new Text("Duplicate Dealer"),
+  //                 actions: <Widget>[
+  //                   TextButton(
+  //                     child: Text('OK'),
+  //                     onPressed: () {
+  //                       Navigator.of(context).pop();
+  //                       setState(() {
+  //                         togglecheck == false;
+  //                       });
+  //                     },
+  //                   )
+  //                 ],
+  //               ));
+  //     }
+  //   } catch (error) {
+  //     print(error);
+  //   }
+  // }
+
+//------------------------------------------------------new--------------------------------------------------//
+
+  Future insertdealertocustomer() async {
     try {
       SharedPreferences preferences1 = await SharedPreferences.getInstance();
       stringpreferences1 = preferences1.getStringList("codestore");
-      String url = "http://185.78.165.189:3000/pythonapi/inserttodealer";
+      String url =
+          "http://185.78.165.189:3000/pythonapi/insertdealertocustomer";
 
       for (int i = 0; i < alldealerfordisplay.length; i++) {
-        if (list[0].trim() == alldealerfordisplay[i].dealercode) {
+        if (list[0].trim() == alldealerfordisplay[i].cuscode) {
           togglecheck = true;
           break;
         }
@@ -619,12 +742,15 @@ class _dealerpageState extends State<dealerpage> {
 
       if (togglecheck == false) {
         var body = {
-          "dealercode": list[0].trim(),
-          "dealername": list[1].trim(),
-          "phone": list[2].trim(),
-          "codestore": stringpreferences1![0],
-          "notes": list[3].trim()
+          "cuscode": stringpreferences1![0],
+          "cusname": stringpreferences1![3],
+          "phone": list[0].trim(),
+          "address": list[1].trim(),
+          "codestore": list[2].trim(),
+          "notes": "Putyournote",
+          "score": 3
         };
+        print(body);
 
         http.Response response = await http.post(Uri.parse(url),
             headers: {'Content-Type': 'application/json; charset=utf-8'},
