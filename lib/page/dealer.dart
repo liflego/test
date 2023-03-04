@@ -160,7 +160,7 @@ class _dealerpageState extends State<dealerpage> {
             ]),
           ),
           drawer: Drawer(
-            backgroundColor: Colors.green[700],
+            backgroundColor: Colors.grey[300],
             child: ListView(
               // Important: Remove any padding from the ListView.
               padding: EdgeInsets.zero,
@@ -183,41 +183,46 @@ class _dealerpageState extends State<dealerpage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                      height: 50,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border:
-                            Border.all(width: 0, color: Colors.grey.shade800),
-                        color: Colors.grey[50],
+                  child: Center(
+                      child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: TextButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.white),
                       ),
-                      child: Center(
-                        child: TextButton(
-                          child: Text(
-                            "LOG OUT",
-                            style: TextStyle(
-                                fontSize: 20.0,
-                                color: Colors.black,
-                                fontFamily: 'newtitlefont'),
-                          ),
-                          onPressed: () async {
-                            stringpreferences1!.clear();
-                            SharedPreferences preferences1 =
-                                await SharedPreferences.getInstance();
-                            preferences1.setStringList(
-                                "codestore", stringpreferences1!);
+                      child: Text(
+                        "LOG OUT",
+                        style: TextStyle(
+                            fontSize: 20.0,
+                            color: Colors.black,
+                            fontFamily: 'newtitlefont'),
+                      ),
+                      onPressed: () async {
+                        stringpreferences1 != [];
+                        SharedPreferences preferences1 =
+                            await SharedPreferences.getInstance();
+                        preferences1.setStringList(
+                            "codestore", stringpreferences1!);
 
-                            _googleSignIn.signOut().then((value) {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => (login()),
-                                ),
-                              );
-                            });
-                          },
-                        ),
-                      )),
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => (login()),
+                          ),
+                        );
+
+                        _googleSignIn.signOut().then((value) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => (login()),
+                            ),
+                          );
+                        });
+                      },
+                    ),
+                  )),
                 )
               ],
             ),
