@@ -27,6 +27,7 @@ class _customerState extends State<customer> {
   List<Getallcustomer> allcustomer = [];
   List<Getallcustomer> allcustomerfordisplay = [];
   TextEditingController message = TextEditingController();
+  TextEditingController messageurl = TextEditingController();
   List<String>? stringpreferences1;
   late List<String> cusdata;
   TextEditingController mysearh = TextEditingController();
@@ -269,12 +270,18 @@ class _customerState extends State<customer> {
                           allcustomerfordisplay[index].cusname,
                           style: TextConstants.textstyle,
                         ),
-                        Text(
-                          allcustomerfordisplay[index].address,
-                          style: TextConstants.textstyle,
-                        ),
+                        // allcustomer[index].address == null
+                        //     ? TextButton(
+                        //         child: Text('Add Location'),
+                        //         onPressed: () {
+                        //           Navigator.of(context).pop();
+                        //         },
+                        //       )
+                        //     : Text(
+                        //         allcustomerfordisplay[index].address,
+                        //         style: TextConstants.textstyle,
+                        //       ),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             IconButton(
                                 onPressed: () {
@@ -282,7 +289,8 @@ class _customerState extends State<customer> {
                                 },
                                 icon: Icon(
                                   Icons.call,
-                                  color: Colors.black,
+                                  color: Colors.blue,
+                                  size: 20.sp,
                                 )),
                             Text(
                               allcustomerfordisplay[index].phone,
@@ -290,6 +298,34 @@ class _customerState extends State<customer> {
                             ),
                           ],
                         ),
+                        allcustomer[index].address == null
+                            ? Row(
+                                children: [
+                                  Icon(Icons.location_on_outlined),
+                                  TextButton(
+                                    child: Text('Add Location'),
+                                    onPressed: () {
+                                      inputlocation(index);
+                                    },
+                                  ),
+                                ],
+                              )
+                            : Row(
+                                children: [
+                                  IconButton(
+                                      onPressed: () {
+                                        _openmap(index);
+                                      },
+                                      icon: Icon(
+                                        Icons.location_on_outlined,
+                                        size: 25.sp,
+                                      )),
+                                  Text(
+                                    "Google map",
+                                    style: TextConstants.textstyle,
+                                  ),
+                                ],
+                              ),
                         allcustomerfordisplay[index].notes == "Put your note.."
                             ? SizedBox()
                             : Text(
@@ -298,6 +334,14 @@ class _customerState extends State<customer> {
                               ),
                       ],
                     ),
+                    // Padding(
+                    //   padding: const EdgeInsets.only(bottom: 100.0, left: 60),
+                    //   child: Container(
+                    //     color: Colors.red,
+                    //     child: IconButton(
+                    //         onPressed: () {}, icon: Icon(Icons.location_on)),
+                    //   ),
+                    // ),
                     toggle == false
                         ? SizedBox(
                             height: 10,
@@ -596,6 +640,113 @@ class _customerState extends State<customer> {
                       }));
                     },
                   )
+                ],
+              ));
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future inputlocation(index) => showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+            content: SizedBox(
+              // width: 20.w,
+              // height: 20.h,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  new Text("วิธีใส่ที่อยู่"
+                      "\n"
+                      "1.ให้เข้าแอพ google map "),
+                  SizedBox(
+                      //height: 5.h,
+                      width: MediaQuery.of(context).size.width,
+                      child: Center(
+                        child: TextFormField(
+                          textAlign: TextAlign.center,
+                          onFieldSubmitted: (String value) {
+                            setState(() {
+                              messageurl.text == value;
+                            });
+                          },
+                          autofocus: true,
+                          decoration: InputDecoration(hintText: "ใส่ Url"),
+                          controller: messageurl,
+                        ),
+                      )),
+                ],
+              ),
+            ),
+            actions: [
+              Padding(padding: EdgeInsets.all(10.0)),
+              TextButton(
+                  onPressed: () {
+                    //_openmap();
+                  },
+                  child: Container(
+                      width: 18.w,
+                      height: 5.h,
+                      color: ColorConstants.buttoncolor,
+                      child: Center(
+                          child: Text(
+                        "google map ",
+                        style: TextStyle(color: Colors.white),
+                      )))),
+              TextButton(
+                  onPressed: () {
+                    if (messageurl.text.toString() == "") {
+                      Navigator.pop(context);
+                    } else {
+                      updateurl(index);
+                      Navigator.pop(context);
+                    }
+                    print(messageurl.text.toString());
+                  },
+                  child: Container(
+                      width: 15.w,
+                      height: 5.h,
+                      color: ColorConstants.buttoncolor,
+                      child: Center(
+                          child: Text(
+                        "DONE",
+                        style: TextStyle(color: Colors.white),
+                      ))))
+            ],
+          ));
+
+  Future<void> _openmap(Index) async {
+    String googleURL = allcustomerfordisplay[Index].address;
+    await canLaunch(googleURL)
+        ? await launch(googleURL)
+        : throw 'Could not launch $googleURL';
+  }
+
+  Future updateurl(index) async {
+    try {
+      String url = "http://185.78.165.189:3000/pythonapi/updateurl";
+
+      var body = {
+        "address": messageurl.text.toString(),
+        "cuscode": allcustomerfordisplay[index].cuscode,
+        "codestore": allcustomerfordisplay[index].codestore,
+      };
+      print(body);
+
+      http.Response response = await http.patch(Uri.parse(url),
+          headers: {'Content-Type': 'application/json; charset=utf-8'},
+          body: JsonEncoder().convert(body));
+
+      return showDialog(
+          context: context,
+          builder: (_) => new AlertDialog(
+                content: new Text("เพิ่มแล้ว"),
+                actions: <Widget>[
+                  TextButton(
+                      child: Text('OK'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      })
                 ],
               ));
     } catch (e) {
