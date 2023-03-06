@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
 import 'package:flutter_launcher_icons/xml_templates.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sigma_space/main.dart';
@@ -258,117 +259,155 @@ class _customerState extends State<customer> {
         ? Card(
             color: ColorConstants.colorcardorder,
             child: OutlinedButton(
-              onPressed: () => gotosubstore(index),
-              child: Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Column(
+                onPressed: null,
+                child: Slidable(
+                  endActionPane: ActionPane(
+                    motion: ScrollMotion(),
+                    children: [
+                      Container(
+                        color: Colors.blue[900],
+                        width: MediaQuery.of(context).size.width / 2,
+                        height: MediaQuery.of(context).size.height,
+                        child: OutlinedButton(
+                          onPressed: () => gotosubstore(index),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.history_rounded,
+                                color: Colors.white,
+                                size: 22.sp,
+                              ),
+                              Text(
+                                "HISTORY",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: 'newbodyfont',
+                                    fontSize: 15.sp),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          allcustomerfordisplay[index].cusname,
-                          style: TextConstants.textstyle,
-                        ),
-                        // allcustomer[index].address == null
-                        //     ? TextButton(
-                        //         child: Text('Add Location'),
-                        //         onPressed: () {
-                        //           Navigator.of(context).pop();
-                        //         },
-                        //       )
-                        //     : Text(
-                        //         allcustomerfordisplay[index].address,
-                        //         style: TextConstants.textstyle,
-                        //       ),
-                        Row(
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            IconButton(
-                                onPressed: () {
-                                  _launchPhoneURL(index);
-                                },
-                                icon: Icon(
-                                  Icons.call,
-                                  color: Colors.blue,
-                                  size: 20.sp,
-                                )),
                             Text(
-                              allcustomerfordisplay[index].phone,
+                              allcustomerfordisplay[index].cusname,
                               style: TextConstants.textstyle,
                             ),
+                            // allcustomer[index].address == null
+                            //     ? TextButton(
+                            //         child: Text('Add Location'),
+                            //         onPressed: () {
+                            //           Navigator.of(context).pop();
+                            //         },
+                            //       )
+                            //     : Text(
+                            //         allcustomerfordisplay[index].address,
+                            //         style: TextConstants.textstyle,
+                            //       ),
+                            Row(
+                              children: [
+                                IconButton(
+                                    onPressed: () {
+                                      _launchPhoneURL(index);
+                                    },
+                                    icon: Icon(
+                                      Icons.call,
+                                      color: Colors.blue,
+                                      size: 20.sp,
+                                    )),
+                                Text(
+                                  allcustomerfordisplay[index].phone,
+                                  style: TextConstants.textstyle,
+                                ),
+                              ],
+                            ),
+                            allcustomer[index].address == null
+                                ? Row(
+                                    children: [
+                                      Icon(Icons.location_on_outlined),
+                                      TextButton(
+                                        child: Text('Add Location'),
+                                        onPressed: () {
+                                          inputlocation(index);
+                                        },
+                                      ),
+                                    ],
+                                  )
+                                : Row(
+                                    children: [
+                                      IconButton(
+                                          onPressed: () {
+                                            _openmap(index);
+                                          },
+                                          icon: Icon(
+                                            Icons.location_on_outlined,
+                                            size: 25.sp,
+                                          )),
+                                      TextButton(
+                                        child: Text(
+                                          "Google map",
+                                          style: TextConstants.textstyle,
+                                        ),
+                                        onPressed: () {
+                                          _openmap(index);
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                            allcustomerfordisplay[index].notes ==
+                                    "Put your note.."
+                                ? SizedBox()
+                                : Text(
+                                    "#" + allcustomerfordisplay[index].notes,
+                                    style: TextConstants.textStylenotes,
+                                  ),
                           ],
                         ),
-                        allcustomer[index].address == null
-                            ? Row(
-                                children: [
-                                  Icon(Icons.location_on_outlined),
-                                  TextButton(
-                                    child: Text('Add Location'),
-                                    onPressed: () {
-                                      inputlocation(index);
-                                    },
-                                  ),
-                                ],
+                        // Padding(
+                        //   padding: const EdgeInsets.only(bottom: 100.0, left: 60),
+                        //   child: Container(
+                        //     color: Colors.red,
+                        //     child: IconButton(
+                        //         onPressed: () {}, icon: Icon(Icons.location_on)),
+                        //   ),
+                        // ),
+                        toggle == false
+                            ? SizedBox(
+                                height: 10,
                               )
-                            : Row(
-                                children: [
-                                  IconButton(
-                                      onPressed: () {
-                                        _openmap(index);
-                                      },
-                                      icon: Icon(
-                                        Icons.location_on_outlined,
-                                        size: 25.sp,
-                                      )),
-                                  Text(
-                                    "Google map",
-                                    style: TextConstants.textstyle,
-                                  ),
-                                ],
-                              ),
-                        allcustomerfordisplay[index].notes == "Put your note.."
-                            ? SizedBox()
-                            : Text(
-                                "#" + allcustomerfordisplay[index].notes,
-                                style: TextConstants.textStylenotes,
-                              ),
+                            : Padding(
+                                padding: const EdgeInsets.only(left: 20.0),
+                                child: IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        toggleselect[index] =
+                                            !toggleselect[index];
+                                        toggleall = false;
+                                      });
+                                    },
+                                    icon: toggleselect[index] == false
+                                        ? Icon(
+                                            Icons.check_box_outline_blank,
+                                            size: 20.sp,
+                                          )
+                                        : Icon(
+                                            Icons.check_box_outlined,
+                                            size: 20.sp,
+                                          )),
+                              )
                       ],
                     ),
-                    // Padding(
-                    //   padding: const EdgeInsets.only(bottom: 100.0, left: 60),
-                    //   child: Container(
-                    //     color: Colors.red,
-                    //     child: IconButton(
-                    //         onPressed: () {}, icon: Icon(Icons.location_on)),
-                    //   ),
-                    // ),
-                    toggle == false
-                        ? SizedBox(
-                            height: 10,
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(left: 20.0),
-                            child: IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    toggleselect[index] = !toggleselect[index];
-                                    toggleall = false;
-                                  });
-                                },
-                                icon: toggleselect[index] == false
-                                    ? Icon(
-                                        Icons.check_box_outline_blank,
-                                        size: 20.sp,
-                                      )
-                                    : Icon(
-                                        Icons.check_box_outlined,
-                                        size: 20.sp,
-                                      )),
-                          )
-                  ],
-                ),
-              ),
-            ),
+                  ),
+                )),
           )
         : allcustomer[index].sconfrim == null
             ? Card(
