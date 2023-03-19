@@ -98,7 +98,10 @@ class _loginState extends State<login> {
       child: TextFormField(
         decoration: InputDecoration(
           hintText: "Username",
-          hintStyle: TextStyle(fontFamily: "newbodyfont", fontSize: 15.sp),
+          hintStyle: TextStyle(
+              fontFamily: "newbodyfont",
+              fontSize: 15.sp,
+              color: Colors.black45),
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(color: Colors.amber, width: 2),
           ),
@@ -124,7 +127,10 @@ class _loginState extends State<login> {
         decoration: InputDecoration(
           filled: false,
           hintText: "Password",
-          hintStyle: TextStyle(fontFamily: "newbodyfont", fontSize: 15.sp),
+          hintStyle: TextStyle(
+              fontFamily: "newbodyfont",
+              fontSize: 15.sp,
+              color: Colors.black45),
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(color: Colors.amber, width: 2),
           ),
