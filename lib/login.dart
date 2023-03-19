@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
 import 'package:sigma_space/page/sublogin/googlelogin.dart';
-import 'package:sigma_space/showlogo.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'classapi/class.dart';
 import 'main.dart';
 import 'package:sizer/sizer.dart';
@@ -34,6 +34,10 @@ class _loginState extends State<login> {
   final auth = FirebaseAuth.instance;
   List<String> stringpreferences1 = [];
   List<String> stringpreferences2 = [];
+  String location = 'Current';
+  late String lat;
+  late String long;
+
   @override
   void initState() {
     super.initState();
@@ -57,6 +61,7 @@ class _loginState extends State<login> {
       return Scaffold(
         backgroundColor: ColorConstants.backgroundbody,
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           centerTitle: true,
           toolbarHeight: 10.h,
           title: Text(
@@ -76,7 +81,8 @@ class _loginState extends State<login> {
                 usernametext(),
                 passwordtext(),
                 buttonlogin(),
-                googleloginbutton()
+                register(),
+                googleloginbutton(),
               ],
             ),
           ),
@@ -88,16 +94,16 @@ class _loginState extends State<login> {
   ///for usename tab
   Widget usernametext() {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 3.h, horizontal: 4.h),
+      padding: EdgeInsets.only(top: 50, left: 40, right: 40),
       child: TextFormField(
         decoration: InputDecoration(
           hintText: "Username",
           hintStyle: TextStyle(fontFamily: "newbodyfont", fontSize: 15.sp),
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: HexColor('#39474F'), width: 2),
+            borderSide: BorderSide(color: Colors.amber, width: 2),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.yellow.shade800, width: 2),
+            borderSide: BorderSide(color: Colors.amber, width: 2),
           ),
         ),
         controller: usernameString,
@@ -113,25 +119,26 @@ class _loginState extends State<login> {
 
   Widget passwordtext() {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 4.h),
+      padding: EdgeInsets.only(top: 5, left: 40, right: 40),
       child: TextFormField(
         decoration: InputDecoration(
           filled: false,
           hintText: "Password",
           hintStyle: TextStyle(fontFamily: "newbodyfont", fontSize: 15.sp),
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: HexColor('#39474F'), width: 2),
+            borderSide: BorderSide(color: Colors.amber, width: 2),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.yellow.shade800, width: 2),
+            borderSide: BorderSide(color: Colors.amber, width: 2),
           ),
         ),
         obscureText: true,
         controller: passwordString,
         validator: (input) {
-          if (input!.length < 1) {
+          if (input!.isEmpty) {
             return "Please enter password";
           }
+          return null;
         },
       ),
     );
@@ -139,18 +146,41 @@ class _loginState extends State<login> {
 
   Widget buttonlogin() {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.h),
+      padding: EdgeInsets.only(top: 60, left: 40, right: 40),
       // ignore: deprecated_member_use
+      child: Container(
+        decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(width: 2, color: Colors.amber)),
+        child: TextButton(
+          onPressed: doLogin,
+          child: Center(
+            child: Text(
+              "Sign in",
+              style: TextStyle(
+                  fontSize: 20.0.sp,
+                  color: ColorConstants.buttoncolor,
+                  fontFamily: 'newbodyfont'),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget register() {
+    return Padding(
+      padding: EdgeInsets.only(top: 5, left: 40, right: 40),
       child: TextButton(
         style: ButtonStyle(
             backgroundColor:
                 MaterialStateProperty.all(ColorConstants.buttoncolor)),
-        onPressed: doLogin,
+        onPressed: null,
         child: Center(
           child: Text(
-            "Sign in",
+            "Register",
             style: TextStyle(
-                fontSize: 25.0.sp,
+                fontSize: 20.0.sp,
                 color: Colors.white,
                 fontFamily: 'newbodyfont'),
           ),
@@ -161,12 +191,17 @@ class _loginState extends State<login> {
 
   Widget googleloginbutton() {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 1.h),
+      padding: EdgeInsets.only(top: 80),
       // ignore: deprecated_member_use
       child: SizedBox(
         child: Center(
           child: SignInButton(Buttons.GoogleDark, onPressed: () {
-            signInWithGoogle();
+            Navigator.of(context)
+                .pushReplacement(MaterialPageRoute(builder: (context) {
+              return googlelogin();
+            }));
+
+            // signInWithGoogle();
           }),
         ),
       ),
@@ -304,5 +339,13 @@ class _loginState extends State<login> {
             return login();
           }
         });
+  }
+
+  Future<void> _openmap(double lat, double long) async {
+    String googleURL =
+        'https://www.google.com/maps/search/?api=1&query=$lat,$long';
+    await canLaunch(googleURL)
+        ? await launch(googleURL)
+        : throw 'Could not launch $googleURL';
   }
 }
