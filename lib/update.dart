@@ -13,8 +13,6 @@ import 'package:sigma_space/login.dart';
 import 'package:sigma_space/main.dart';
 import 'package:sigma_space/page/subupdate/addnewproduct.dart';
 import 'package:sizer/sizer.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'dart:io' as io;
 
 class updatepage extends StatefulWidget {

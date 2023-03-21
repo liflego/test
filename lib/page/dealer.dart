@@ -45,6 +45,7 @@ class _dealerpageState extends State<dealerpage> {
   List<String> list = [];
   String namestore = "";
   bool togglecheck = false;
+  List<String> getdatatocheckstock = [];
   @override
   void initState() {
     fectalldealerdata().then((value) {
@@ -189,6 +190,30 @@ class _dealerpageState extends State<dealerpage> {
                     child: TextButton(
                       style: ButtonStyle(
                         backgroundColor:
+                            MaterialStateProperty.all(Colors.greenAccent[700]),
+                      ),
+                      child: Text(
+                        "รับการแจ้งเตือนผ่าน LINE",
+                        style: TextStyle(
+                            fontSize: 20.0,
+                            color: Colors.black,
+                            fontFamily: 'newtitlefont'),
+                      ),
+                      onPressed: () {
+                        insertlineuid();
+                      },
+                    ),
+                  )),
+                ),
+                Padding(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 60.h, horizontal: 1.h),
+                  child: Center(
+                      child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: TextButton(
+                      style: ButtonStyle(
+                        backgroundColor:
                             MaterialStateProperty.all(Colors.white),
                       ),
                       child: Text(
@@ -199,7 +224,7 @@ class _dealerpageState extends State<dealerpage> {
                             fontFamily: 'newtitlefont'),
                       ),
                       onPressed: () async {
-                        stringpreferences1 != [];
+                        stringpreferences1!.clear();
                         SharedPreferences preferences1 =
                             await SharedPreferences.getInstance();
                         preferences1.setStringList(
@@ -346,10 +371,23 @@ class _dealerpageState extends State<dealerpage> {
             color: ColorConstants.colorcardorder,
             child: OutlinedButton(
               onPressed: () async {
+                setState(() {
+                  if (alldealerfordisplay[index].auth == null) {
+                    getdatatocheckstock = [
+                      alldealerfordisplay[index].codestore,
+                      "null"
+                    ];
+                  } else {
+                    getdatatocheckstock = [
+                      alldealerfordisplay[index].codestore,
+                      alldealerfordisplay[index].auth
+                    ];
+                  }
+                });
                 SharedPreferences stringpreferences2 =
                     await SharedPreferences.getInstance();
-                stringpreferences2.setString(
-                    "dealercode", alldealerfordisplay[index].codestore);
+                stringpreferences2.setStringList(
+                    "dealercode", getdatatocheckstock);
                 Navigator.of(context).pushReplacement(MaterialPageRoute(
                   builder: (context) => checkstock(
                     codeorder: [],
@@ -536,7 +574,8 @@ class _dealerpageState extends State<dealerpage> {
           u["MAX(c.notes)"],
           u["MAX(c.score)"],
           u["MAX(c.sconfirm)"],
-          u["companyname"]);
+          u["companyname"],
+          u["auth"]);
       _alldealer.add(data);
     }
 
@@ -753,7 +792,8 @@ class _dealerpageState extends State<dealerpage> {
           "address": list[1].trim(),
           "codestore": list[2].trim(),
           "notes": "Putyournote",
-          "score": 3
+          "score": 3,
+          "saleid": list[3].trim()
         };
         print(body);
 
@@ -792,6 +832,22 @@ class _dealerpageState extends State<dealerpage> {
                   ],
                 ));
       }
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  Future insertlineuid() async {
+    try {
+      String url = "http://185.78.165.189:3000/pythonapi/insertlineuid";
+
+      var body = {
+        "userid": stringpreferences1![2],
+      };
+
+      http.Response response = await http.post(Uri.parse(url),
+          headers: {'Content-Type': 'application/json; charset=utf-8'},
+          body: JsonEncoder().convert(body));
     } catch (error) {
       print(error);
     }

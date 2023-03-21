@@ -15,6 +15,7 @@ import 'package:sigma_space/page/substock/orderfromsellandcus.dart';
 import 'package:sigma_space/page/subupdate/addnewproduct.dart';
 import 'package:sigma_space/update.dart';
 import 'package:sizer/sizer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class checkstock extends StatefulWidget {
   List<String> codeorder = [];
@@ -49,7 +50,7 @@ class _checkstock extends State<checkstock> {
   List<String> productset = [];
   List<int> price = [];
   List<String>? stringpreferences1;
-  String? stringpreferences2;
+  List<String>? stringpreferences2;
   String? _scanBarcode = 'Unknown';
   final scaffoldKey = GlobalKey<ScaffoldState>();
   late int noti = 0;
@@ -64,6 +65,7 @@ class _checkstock extends State<checkstock> {
   int toggle = 0;
   bool clickfav = false;
   String namestore = "";
+  String auth = "";
   @override
   void initState() {
     click = false;
@@ -74,10 +76,12 @@ class _checkstock extends State<checkstock> {
     getdatafromorderpage();
 
     fectalldata().then((value) {
-      setState(() {
-        allproduct.addAll(value);
-        allproductfordisplay = allproduct;
-      });
+      if (mounted) {
+        setState(() {
+          allproduct.addAll(value);
+          allproductfordisplay = allproduct;
+        });
+      }
     });
 
     super.initState();
@@ -91,6 +95,7 @@ class _checkstock extends State<checkstock> {
           top: false,
           child: Scaffold(
             appBar: AppBar(
+              automaticallyImplyLeading: true,
               toolbarHeight: 7.h,
               title: Text(
                 "STOCK",
@@ -105,26 +110,7 @@ class _checkstock extends State<checkstock> {
                                   builder: (context) => addnewproductpage()));
                         },
                         icon: Icon(Icons.add_circle))
-                    : PopupMenuButton(
-                        icon: Icon(Icons.notifications_none_outlined),
-                        color: Colors.grey[50],
-                        itemBuilder: (context) => [
-                          PopupMenuItem<int>(
-                            value: 0,
-                            child: Text(
-                              "Setting",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                          PopupMenuItem<int>(
-                              value: 1,
-                              child: Text(
-                                "Privacy Policy page",
-                                style: TextStyle(color: Colors.white),
-                              )),
-                        ],
-                        onSelected: (item) => {print(item)},
-                      )
+                    : SizedBox()
               ],
               leading: stringpreferences1?[1] == "DEALER"
                   ? IconButton(
@@ -153,6 +139,109 @@ class _checkstock extends State<checkstock> {
                   ),
                 ),
               ]),
+            ),
+            drawer: Drawer(
+              backgroundColor: Colors.grey[300],
+              child: ListView(
+                // Important: Remove any padding from the ListView.
+                padding: EdgeInsets.zero,
+                children: <Widget>[
+                  DrawerHeader(
+                    child: Column(
+                      children: [
+                        Text(
+                          namestore,
+                          style: TextStyle(
+                              fontSize: 25.0,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'newtitlefont'),
+                        ),
+                      ],
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[50],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                        child: SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            child: auth == "null"
+                                ? TextButton(
+                                    style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              Colors.greenAccent[700]),
+                                    ),
+                                    child: Text(
+                                      "รับการแจ้งเตือนผ่าน LINE",
+                                      style: TextStyle(
+                                          fontSize: 20.0,
+                                          color: Colors.black,
+                                          fontFamily: 'newtitlefont'),
+                                    ),
+                                    onPressed: () {
+                                      insertlineuid();
+                                      _openline();
+                                    },
+                                  )
+                                : TextButton(
+                                    style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              Colors.red[400]),
+                                    ),
+                                    child: Text(
+                                      "ยกเลิกรับการแจ้งเตือนผ่าน LINE",
+                                      style: TextStyle(
+                                          fontSize: 20.0,
+                                          color: Colors.white,
+                                          fontFamily: 'newtitlefont'),
+                                    ),
+                                    onPressed: () {
+                                      //showdialog
+                                      //cancle
+                                    },
+                                  ))),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 400.0, left: 8.0, right: 8.0),
+                    child: Center(
+                        child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: TextButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.white),
+                        ),
+                        child: Text(
+                          "LOG OUT",
+                          style: TextStyle(
+                              fontSize: 20.0,
+                              color: Colors.black,
+                              fontFamily: 'newtitlefont'),
+                        ),
+                        onPressed: () async {
+                          stringpreferences1!.clear();
+                          SharedPreferences preferences1 =
+                              await SharedPreferences.getInstance();
+                          preferences1.setStringList(
+                              "codestore", stringpreferences1!);
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => (login()),
+                            ),
+                          );
+                          ;
+                        },
+                      ),
+                    )),
+                  )
+                ],
+              ),
             ),
             floatingActionButton: stringpreferences1?[1] == "ADMIN"
                 ? null
@@ -755,9 +844,10 @@ class _checkstock extends State<checkstock> {
     SharedPreferences preferences1 = await SharedPreferences.getInstance();
     stringpreferences1 = preferences1.getStringList("codestore");
     SharedPreferences preferences2 = await SharedPreferences.getInstance();
-    stringpreferences2 = preferences2.getString("dealercode");
+    stringpreferences2 = preferences2.getStringList("dealercode");
     setState(() {
       namestore = stringpreferences1![3];
+      auth = stringpreferences1![4];
     });
 
     String url = "http://185.78.165.189:3000/pythonapi/codestore";
@@ -770,7 +860,7 @@ class _checkstock extends State<checkstock> {
     if (stringpreferences1![1] == "DEALER") {
       var body = {
         "dealercode": stringpreferences1![0],
-        "codestore": stringpreferences2!
+        "codestore": stringpreferences2![0]
       };
 
       getgrouptype.add("FAVORITE");
@@ -832,10 +922,12 @@ class _checkstock extends State<checkstock> {
     for (int i = 0; i < _allproduct.length; i++) {
       groupamountsort[i] = getamount[i];
     }
-    setState(() {
-      groupamountsort.sort();
-      groupamountreversed = groupamountsort.reversed.toList();
-    });
+    if (mounted) {
+      setState(() {
+        groupamountsort.sort();
+        groupamountreversed = groupamountsort.reversed.toList();
+      });
+    }
 
     return _allproduct;
   }
@@ -950,7 +1042,7 @@ class _checkstock extends State<checkstock> {
           ));
 
   Future gotoorder() async {
-    Navigator.of(context).pushReplacement(MaterialPageRoute(
+    Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => orderfromsellandcus(
               codeorder: codeorder,
               nameorder: nameorder,
@@ -975,7 +1067,7 @@ class _checkstock extends State<checkstock> {
 
   Future insertfavorite(index) async {
     SharedPreferences preferences2 = await SharedPreferences.getInstance();
-    stringpreferences2 = preferences2.getString("dealercode");
+    stringpreferences2 = preferences2.getStringList("dealercode");
     SharedPreferences preferences = await SharedPreferences.getInstance();
     stringpreferences1 = preferences.getStringList("codestore");
     try {
@@ -1010,5 +1102,28 @@ class _checkstock extends State<checkstock> {
     } catch (e) {
       print(e);
     }
+  }
+
+  Future insertlineuid() async {
+    try {
+      String url = "http://185.78.165.189:3000/pythonapi/insertlineuid";
+
+      var body = {
+        "userid": stringpreferences1![2],
+      };
+
+      http.Response response = await http.post(Uri.parse(url),
+          headers: {'Content-Type': 'application/json; charset=utf-8'},
+          body: JsonEncoder().convert(body));
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  Future<void> _openline() async {
+    String LineURL = 'https://page.line.me/962ekjzu';
+    await canLaunch(LineURL)
+        ? await launch(LineURL)
+        : throw 'Could not launch $LineURL';
   }
 }

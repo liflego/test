@@ -229,13 +229,25 @@ class _loginState extends State<login> {
             body: JsonEncoder().convert(body));
 
         var jsonRes = json.decode(response.body);
+
         if (jsonRes["success"] == 1) {
-          stringpreferences1 = [
-            jsonRes["codestore"],
-            jsonRes["position"],
-            jsonRes["userid"].toString(),
-            jsonRes["namestore"]
-          ];
+          if (jsonRes["auth"] == null) {
+            stringpreferences1 = [
+              jsonRes["codestore"],
+              jsonRes["position"],
+              jsonRes["userid"].toString(),
+              jsonRes["namestore"],
+              "null",
+            ];
+          } else {
+            stringpreferences1 = [
+              jsonRes["codestore"],
+              jsonRes["position"],
+              jsonRes["userid"].toString(),
+              jsonRes["namestore"],
+              jsonRes["auth"],
+            ];
+          }
 
           SharedPreferences preferences1 =
               await SharedPreferences.getInstance();
@@ -283,13 +295,23 @@ class _loginState extends State<login> {
         var jsonRes = json.decode(response.body);
 
         if (jsonRes["success"] == 1) {
-          List<String> stringpreferences1 = [
-            jsonRes["codestore"],
-            jsonRes["position"],
-            jsonRes["userid"].toString(),
-            jsonRes["namestore"]
-          ];
-
+          if (jsonRes["auth"] == null) {
+            stringpreferences1 = [
+              jsonRes["codestore"],
+              jsonRes["position"],
+              jsonRes["userid"].toString(),
+              jsonRes["namestore"],
+              "null",
+            ];
+          } else {
+            stringpreferences1 = [
+              jsonRes["codestore"],
+              jsonRes["position"],
+              jsonRes["userid"].toString(),
+              jsonRes["namestore"],
+              jsonRes["auth"],
+            ];
+          }
           SharedPreferences preferences1 =
               await SharedPreferences.getInstance();
           preferences1.setStringList("codestore", stringpreferences1);

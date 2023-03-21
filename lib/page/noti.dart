@@ -46,6 +46,7 @@ class _notipage extends State<notipage> {
           top: false,
           child: Scaffold(
             appBar: AppBar(
+              automaticallyImplyLeading: false,
               backgroundColor: ColorConstants.appbarcolor,
               toolbarHeight: 7.h,
               title: Text(

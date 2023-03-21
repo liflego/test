@@ -90,91 +90,179 @@ class _storehisState extends State<storehis> {
   }
 
   Widget showdata() {
-    return Card(
-      elevation: 5,
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height / 4.25,
-        child: Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.cusdata[1],
-                  style: TextConstants.textstyleforheader,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(widget.cusdata[2], style: TextConstants.textstyle),
-                    SizedBox(
-                      width: 22.w,
-                      height: 3.h,
-                      child: TextFormField(
-                        controller: score,
-                        onFieldSubmitted: (value) => {
-                          setState(() {
-                            score.text = value;
-                            updatescore();
-                          })
-                        },
-                        maxLines: 1,
-                        decoration: InputDecoration(
-                            labelText:
-                                "Score : " + widget.cusdata[5].toString(),
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide.none)),
+    return widget.cusdata[2] != null
+        ? Card(
+            elevation: 5,
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height / 4.25,
+              child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.cusdata[1],
+                        style: TextConstants.textstyleforheader,
                       ),
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.cusdata[3],
-                      style: TextConstants.textstyle,
-                    ),
-                    Transform.scale(
-                      scaleX: -1,
-                      child: IconButton(
-                          onPressed: () {
-                            _launchPhoneURL();
-                          },
-                          icon: Icon(
-                            Icons.call,
-                            color: Colors.blue,
-                            size: 15.sp,
-                          )),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  height: 7.h,
-                  child: Center(
-                    child: TextFormField(
-                      controller: notes,
-                      onFieldSubmitted: (value) => {
-                        setState(() {
-                          notes.text = value;
-                        })
-                      },
-                      maxLines: 1,
-                      maxLength: 30,
-                      decoration: InputDecoration(
-                          hintStyle: TextConstants.textstyle,
-                          hintText: widget.cusdata[4],
-                          enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(width: 1))),
-                    ),
-                  ),
-                ),
-              ],
-            )),
-      ),
-    );
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(widget.cusdata[2],
+                              style: TextConstants.textstyle),
+                          SizedBox(
+                            width: 5.w,
+                            height: 3.h,
+                            child: TextFormField(
+                              controller: score,
+                              onFieldSubmitted: (value) => {
+                                setState(() {
+                                  score.text = value;
+                                  updatescore();
+                                })
+                              },
+                              maxLines: 1,
+                              decoration: InputDecoration(
+                                  labelText:
+                                      "Score : " + widget.cusdata[5].toString(),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide.none)),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.cusdata[3],
+                            style: TextConstants.textstyle,
+                          ),
+                          Transform.scale(
+                            scaleX: -1,
+                            child: IconButton(
+                                onPressed: () {
+                                  _launchPhoneURL();
+                                },
+                                icon: Icon(
+                                  Icons.call,
+                                  color: Colors.blue,
+                                  size: 15.sp,
+                                )),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: 7.h,
+                        child: Center(
+                          child: TextFormField(
+                            controller: notes,
+                            onFieldSubmitted: (value) => {
+                              setState(() {
+                                notes.text = value;
+                              })
+                            },
+                            maxLines: 1,
+                            maxLength: 30,
+                            decoration: InputDecoration(
+                                hintStyle: TextConstants.textstyle,
+                                hintText: widget.cusdata[4],
+                                enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(width: 1))),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )),
+            ),
+          )
+        : Card(
+            elevation: 5,
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height / 4.25,
+              child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.cusdata[1],
+                        style: TextConstants.textstyleforheader,
+                      ),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //   children: [
+                      //     Text(widget.cusdata[2],
+                      //         style: TextConstants.textstyle),
+                      //     SizedBox(
+                      //       width: 5.w,
+                      //       height: 3.h,
+                      //       child: TextFormField(
+                      //         controller: score,
+                      //         onFieldSubmitted: (value) => {
+                      //           setState(() {
+                      //             score.text = value;
+                      //             updatescore();
+                      //           })
+                      //         },
+                      //         maxLines: 1,
+                      //         decoration: InputDecoration(
+                      //             labelText:
+                      //                 "Score : " + widget.cusdata[5].toString(),
+                      //             enabledBorder: OutlineInputBorder(
+                      //                 borderSide: BorderSide.none)),
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.cusdata[3],
+                            style: TextConstants.textstyle,
+                          ),
+                          Transform.scale(
+                            scaleX: -1,
+                            child: IconButton(
+                                onPressed: () {
+                                  _launchPhoneURL();
+                                },
+                                icon: Icon(
+                                  Icons.call,
+                                  color: Colors.blue,
+                                  size: 15.sp,
+                                )),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: 7.h,
+                        child: Center(
+                          child: TextFormField(
+                            controller: notes,
+                            onFieldSubmitted: (value) => {
+                              setState(() {
+                                notes.text = value;
+                              })
+                            },
+                            maxLines: 1,
+                            maxLength: 30,
+                            decoration: InputDecoration(
+                                hintStyle: TextConstants.textstyle,
+                                hintText: widget.cusdata[4],
+                                enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(width: 1))),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )),
+            ),
+          );
   }
 
   Widget listItem(index) {
@@ -234,12 +322,7 @@ class _storehisState extends State<storehis> {
                               style: TextConstants.textstyle,
                             ),
                             Text(
-                              DateFormat("dd/MM/yyyy HH:mm:ss")
-                                      .format(DateTime.parse(datelist[0]))
-                                      .substring(0, 6) +
-                                  DateFormat("dd/MM/yyyy HH:mm:ss")
-                                      .format(DateTime.parse(datelist[0]))
-                                      .substring(8, 16),
+                              datelist[0].substring(5, 25),
                               style: TextConstants.textstyle,
                             ),
                           ],
@@ -307,7 +390,7 @@ class _storehisState extends State<storehis> {
     stringpreferences1 = preferences1.getStringList("codestore");
 
     String url =
-        "http://185.78.165.189:3000/nodejsapi/getordersBycodestoreandcuscode";
+        "http://185.78.165.189:3000/pythonapi/getordersbycodestoreandcuscode";
     var body = {
       "codestore": stringpreferences1![0],
       "cuscode": widget.cusdata[0],
@@ -325,15 +408,15 @@ class _storehisState extends State<storehis> {
     for (var u in jsonres) {
       GetorderBycodestoreandcuscodeandordernumber data =
           GetorderBycodestoreandcuscodeandordernumber(
-        u["ordernumber"],
-        u["codeproduct"],
-        u["nameproduct"],
-        u["amount"],
-        u["pay"],
-        u["notes"],
-        u["date"],
-        u["price"],
-      );
+              u["ordernumber"],
+              u["codeproduct"],
+              u["nameproduct"],
+              u["amount"],
+              u["getprice"],
+              u["pay"],
+              u["notes"],
+              u["date"],
+              u["price"]);
       aaa.add(data);
       getgrouptype.add(u["ordernumber"]);
     }
@@ -357,7 +440,7 @@ class _storehisState extends State<storehis> {
       SharedPreferences preferences1 = await SharedPreferences.getInstance();
       stringpreferences1 = preferences1.getStringList("codestore");
 
-      String url = "http://185.78.165.189:3000/nodejsapi/updatecustomerscore";
+      String url = "http://185.78.165.189:3000/pythonapi/updatecustomerscore";
       var body = {
         "score": score.text.trim(),
         "cuscode": widget.cusdata[0],

@@ -1,13 +1,9 @@
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import '../../classapi/class.dart';
 import 'package:http/http.dart' as http;
@@ -58,7 +54,7 @@ class _googlelogin extends State<googlelogin> {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 70.0),
+                  padding: const EdgeInsets.only(top: 20.0),
                 ),
                 showname(),
                 namestore(),
@@ -76,22 +72,17 @@ class _googlelogin extends State<googlelogin> {
 
   Widget showname() {
     return Padding(
-        padding: EdgeInsets.symmetric(vertical: 0.h, horizontal: 0.h),
+        padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 4.h),
         child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text("Hello Welcom",
-                  style: TextStyle(
-                      fontFamily: "newbodyfont",
-                      fontSize: 45,
-                      color: Colors.purple)),
-              Text(FirebaseAuth.instance.currentUser!.email!,
+              Text("FirebaseAuth.instance.currentUser!.email!",
                   style: TextStyle(
                       fontFamily: "newbodyfont",
                       fontSize: 35,
                       color: Colors.purple)),
-              Text(FirebaseAuth.instance.currentUser!.displayName!,
+              Text("FirebaseAuth.instance.currentUser!.displayName!",
                   style: TextStyle(
                       fontFamily: "newbodyfont",
                       fontSize: 30,
@@ -101,7 +92,7 @@ class _googlelogin extends State<googlelogin> {
 
   Widget namestore() {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 3.h, horizontal: 4.h),
+      padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 4.h),
       child: TextFormField(
         decoration: InputDecoration(
           hintText: "Namestore",
@@ -126,7 +117,7 @@ class _googlelogin extends State<googlelogin> {
 
   Widget productype() {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 3.h, horizontal: 4.h),
+      padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 4.h),
       child: TextFormField(
         decoration: InputDecoration(
           hintText: "Productype",
@@ -151,7 +142,7 @@ class _googlelogin extends State<googlelogin> {
 
   Widget phonenumber() {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 3.h, horizontal: 4.h),
+      padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 4.h),
       child: TextFormField(
         decoration: InputDecoration(
           hintText: "Phonenumber",
@@ -176,43 +167,56 @@ class _googlelogin extends State<googlelogin> {
 
   Widget buttonregister() {
     return Padding(
-        padding: EdgeInsets.symmetric(vertical: 0.h, horizontal: 10.h),
-        // ignore: deprecated_member_use
-        child: TextButton(
-          style: ButtonStyle(
-              backgroundColor:
-                  MaterialStateProperty.all(ColorConstants.buttoncolor)),
-          onPressed: doLogin,
-          child: Center(
-            child: Text(
-              "Register",
-              style: TextStyle(
-                  fontSize: 25.0.sp,
-                  color: Colors.white,
-                  fontFamily: 'newbodyfont'),
+      padding: EdgeInsets.all(5),
+      // ignore: deprecated_member_use
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width / 2,
+        child: Center(
+          child: TextButton(
+            style: ButtonStyle(
+                backgroundColor:
+                    MaterialStateProperty.all(ColorConstants.buttoncolor)),
+            onPressed: () {
+              createuser();
+            },
+            child: Center(
+              child: Text(
+                "Register",
+                style: TextStyle(
+                    fontSize: 20.0.sp,
+                    color: Colors.white,
+                    fontFamily: 'newbodyfont'),
+              ),
             ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   Widget goout1() {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 3.h, horizontal: 20.h),
+      padding: EdgeInsets.all(10),
       // ignore: deprecated_member_use
-      child: TextButton(
-        style: ButtonStyle(
-            backgroundColor:
-                MaterialStateProperty.all(ColorConstants.buttoncolor)),
-        onPressed: () {
-          signOut();
-        },
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width / 2,
         child: Center(
-          child: Text(
-            "Logout",
-            style: TextStyle(
-                fontSize: 25.0.sp,
-                color: Colors.white,
-                fontFamily: 'newbodyfont'),
+          child: TextButton(
+            style: ButtonStyle(
+                backgroundColor:
+                    MaterialStateProperty.all(ColorConstants.buttoncolor)),
+            onPressed: () {
+              signOut();
+            },
+            child: Center(
+              child: Text(
+                "Logout",
+                style: TextStyle(
+                    fontSize: 20.0.sp,
+                    color: Colors.white,
+                    fontFamily: 'newbodyfont'),
+              ),
+            ),
           ),
         ),
       ),
@@ -226,7 +230,7 @@ class _googlelogin extends State<googlelogin> {
         headers: {'Content-Type': 'application/json; charset=utf-8'});
     var jsonRes = await json.decode(response.body);
 
-    String text = jsonRes["codestore"];
+    String text = jsonRes[0]["codestore"];
     String txt = text.substring(1);
     ttt = int.parse(txt);
 
@@ -235,9 +239,6 @@ class _googlelogin extends State<googlelogin> {
 
       s = ttt.toString();
       codestore = "A" + ttt.toRadixString(16);
-
-      print(s);
-      print(codestore);
     });
   }
 
@@ -253,7 +254,7 @@ class _googlelogin extends State<googlelogin> {
     });
   }
 
-  Future doLogin() async {
+  Future createuser() async {
     getnewuser();
     if (_formkey.currentState!.validate()) {
       try {
@@ -261,7 +262,6 @@ class _googlelogin extends State<googlelogin> {
         var body = {
           "username": FirebaseAuth.instance.currentUser!.email,
           "uid": FirebaseAuth.instance.currentUser!.uid,
-          "name": FirebaseAuth.instance.currentUser!.displayName,
           "codestore": codestore,
           "namestore": namestoreString.text.trim(),
           "producttype": productypString.text.trim(),

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sigma_space/classapi/class.dart';
@@ -60,6 +61,7 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
   List<bool>? togglechoose = [];
   List<String>? stringpreferences1;
   String? stringpreferences2;
+  List<String>? getdatatocheckstock;
 
   List<Getcustomerstore> alldata = [];
   late int lastorder;
@@ -485,177 +487,219 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
         itemBuilder: (BuildContext context, int index) {
           return SizedBox(
             width: MediaQuery.of(context).size.width,
-            child: Card(
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(widget.nameorder[index],
-                            maxLines: 3,
-                            style: TextStyle(
-                                fontFamily: 'newbodyfont', fontSize: 18.sp)),
-                        Text(widget.codeorder[index],
-                            style: TextStyle(
-                              fontFamily: 'newbodyfont',
-                              fontSize: 18.sp,
-                            )),
-                        //exvat
-                        Text(
-                            "จำนวน ${widget.numorder[index]}" +
-                                "("
-                                    "${(widget.numorder[index] / int.parse(widget.numpercrate[index])).toInt().toString()}" +
-                                "${widget.productset[index]})",
-                            style: TextStyle(
-                              fontFamily: 'newbodyfont',
-                              fontSize: 18.sp,
-                            )),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width / 1.5,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                  "ราคา " +
-                                      widget.price[index].toStringAsFixed(2),
-                                  style: TextStyle(
-                                    fontFamily: 'newbodyfont',
-                                    fontSize: 18.sp,
-                                  )),
-                              togglecal == true &&
-                                      listgetprice!.isNotEmpty &&
-                                      togglevat == false &&
-                                      togglechooseall == true
-                                  ? Text(
-                                      "รวม " +
-                                          listgetprice![index]
-                                              .toStringAsFixed(2),
-                                      style: TextStyle(
-                                        fontFamily: 'newbodyfont',
-                                        fontSize: 18.sp,
-                                      ))
-                                  : togglevat == true &&
-                                          togglecal == true &&
-                                          listgetpricevat!.isNotEmpty &&
-                                          togglechooseall == true
-                                      ? Text(
-                                          "รวม " +
-                                              listgetpricevat![index]
-                                                  .toString(),
-                                          style: TextStyle(
-                                            fontFamily: 'newbodyfont',
-                                            fontSize: 18.sp,
-                                          ))
-                                      : togglecal == true &&
-                                              listgetprice!.isNotEmpty &&
-                                              togglevat == false &&
-                                              togglechooseall == false &&
-                                              togglechoose![index] == true
-                                          //แสดงค่าหน้าแอพ ส่วนของการเลือกทีละอัน
-                                          ? Text(
-                                              "รวม " +
-                                                  listgetprice![index]
-                                                      .toStringAsFixed(2),
-                                              style: TextStyle(
-                                                fontFamily: 'newbodyfont',
-                                                fontSize: 18.sp,
-                                              ))
-                                          : togglecal == true &&
-                                                  listgetprice!.isNotEmpty &&
-                                                  togglevat == true &&
-                                                  togglechooseall == false &&
-                                                  togglechoose![index] == true
-                                              ? Text(
-                                                  "รวม " +
-                                                      listgetpricevat![index]
-                                                          .toStringAsFixed(2),
-                                                  style: TextStyle(
-                                                    fontFamily: 'newbodyfont',
-                                                    fontSize: 18.sp,
-                                                  ))
-                                              : SizedBox(),
-                            ],
+            child: Slidable(
+              endActionPane: ActionPane(
+                motion: ScrollMotion(),
+                children: [
+                  Container(
+                    color: Colors.red[900],
+                    width: MediaQuery.of(context).size.width / 2.25,
+                    height: MediaQuery.of(context).size.height,
+                    child: OutlinedButton(
+                      onPressed: () {
+                        setState(() {
+                          widget.codeorder.removeAt(index);
+                          widget.nameorder.removeAt(index);
+                          widget.numorder.removeAt(index);
+                          widget.numpercrate.removeAt(index);
+                          widget.productset.removeAt(index);
+                          widget.price.removeAt(index);
+                        });
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.delete,
+                            color: Colors.white,
+                            size: 22.sp,
                           ),
-                        ),
-                      ],
+                          Text(
+                            "delete",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'newbodyfont',
+                                fontSize: 15.sp),
+                          )
+                        ],
+                      ),
                     ),
-                    togglecal == true
-                        ? IconButton(
-                            onPressed: () {
-                              //ส่วนของการเลือกทีละอัน
-                              if (togglechoose![index] == false) {
-                                setState(() {
-                                  //when select bool will be true
-                                  if (listgetprice!.isEmpty) {
-                                    for (int i = 0;
-                                        i < widget.codeorder.length;
-                                        i++) {
-                                      listgetprice!.add(0);
-                                      listgetpricevat!.add(0);
+                  ),
+                ],
+              ),
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(widget.nameorder[index],
+                              maxLines: 3,
+                              style: TextStyle(
+                                  fontFamily: 'newbodyfont', fontSize: 18.sp)),
+                          Text(widget.codeorder[index],
+                              style: TextStyle(
+                                fontFamily: 'newbodyfont',
+                                fontSize: 18.sp,
+                              )),
+                          //exvat
+                          Text(
+                              "จำนวน ${widget.numorder[index]}" +
+                                  "("
+                                      "${(widget.numorder[index] / int.parse(widget.numpercrate[index])).toInt().toString()}" +
+                                  "${widget.productset[index]})",
+                              style: TextStyle(
+                                fontFamily: 'newbodyfont',
+                                fontSize: 18.sp,
+                              )),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 1.5,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                    "ราคา " +
+                                        widget.price[index].toStringAsFixed(2),
+                                    style: TextStyle(
+                                      fontFamily: 'newbodyfont',
+                                      fontSize: 18.sp,
+                                    )),
+                                togglecal == true &&
+                                        listgetprice!.isNotEmpty &&
+                                        togglevat == false &&
+                                        togglechooseall == true
+                                    ? Text(
+                                        "รวม " +
+                                            listgetprice![index]
+                                                .toStringAsFixed(2),
+                                        style: TextStyle(
+                                          fontFamily: 'newbodyfont',
+                                          fontSize: 18.sp,
+                                        ))
+                                    : togglevat == true &&
+                                            togglecal == true &&
+                                            listgetpricevat!.isNotEmpty &&
+                                            togglechooseall == true
+                                        ? Text(
+                                            "รวม " +
+                                                listgetpricevat![index]
+                                                    .toStringAsFixed(2),
+                                            style: TextStyle(
+                                              fontFamily: 'newbodyfont',
+                                              fontSize: 18.sp,
+                                            ))
+                                        : togglecal == true &&
+                                                listgetprice!.isNotEmpty &&
+                                                togglevat == false &&
+                                                togglechooseall == false &&
+                                                togglechoose![index] == true
+                                            //แสดงค่าหน้าแอพ ส่วนของการเลือกทีละอัน
+                                            ? Text(
+                                                "รวม " +
+                                                    listgetprice![index]
+                                                        .toStringAsFixed(2),
+                                                style: TextStyle(
+                                                  fontFamily: 'newbodyfont',
+                                                  fontSize: 18.sp,
+                                                ))
+                                            : togglecal == true &&
+                                                    listgetprice!.isNotEmpty &&
+                                                    togglevat == true &&
+                                                    togglechooseall == false &&
+                                                    togglechoose![index] == true
+                                                ? Text(
+                                                    "รวม " +
+                                                        listgetpricevat![index]
+                                                            .toStringAsFixed(2),
+                                                    style: TextStyle(
+                                                      fontFamily: 'newbodyfont',
+                                                      fontSize: 18.sp,
+                                                    ))
+                                                : SizedBox(),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      togglecal == true
+                          ? IconButton(
+                              onPressed: () {
+                                //ส่วนของการเลือกทีละอัน
+                                if (togglechoose![index] == false) {
+                                  setState(() {
+                                    //when select bool will be true
+                                    if (listgetprice!.isEmpty) {
+                                      for (int i = 0;
+                                          i < widget.codeorder.length;
+                                          i++) {
+                                        listgetprice!.add(0);
+                                        listgetpricevat!.add(0);
+                                      }
                                     }
-                                  }
 
-                                  var value = (double.parse(widget.price[index]
-                                          .toStringAsFixed(2)) -
-                                      (double.parse((widget.price[index])
-                                                  .toStringAsFixed(2)) *
-                                              int.parse(step1.text)) /
-                                          100);
-                                  togglechoose![index] = true;
-                                  listgetprice![index] = value *
-                                      double.parse(widget.numorder[index]
-                                          .toStringAsFixed(2));
-
-                                  if (toggleaddstep == 1) {
-                                    var value2 = ((double.parse(
-                                            value.toStringAsFixed(2)) -
-                                        (double.parse((value)
+                                    var value = (double.parse(widget
+                                            .price[index]
+                                            .toStringAsFixed(2)) -
+                                        (double.parse((widget.price[index])
                                                     .toStringAsFixed(2)) *
-                                                int.parse(step2.text)) /
-                                            100));
+                                                int.parse(step1.text)) /
+                                            100);
+                                    togglechoose![index] = true;
+                                    listgetprice![index] = value *
+                                        double.parse(widget.numorder[index]
+                                            .toStringAsFixed(2));
 
-                                    setState(() {
-                                      listgetprice![index] =
-                                          value2 * widget.numorder[index];
-                                    });
-                                  } else {
-                                    setState(() {
-                                      listgetprice![index] = 0;
-                                      listgetprice![index] =
-                                          value * widget.numorder[index];
-                                    });
-                                  }
-                                  if (listgetpricevat!.isNotEmpty) {
-                                    listgetpricevat![index] =
-                                        (listgetprice![index] +
-                                            (listgetprice![index] * 7 / 100));
-                                  }
-                                });
-                              } else {
-                                setState(() {
-                                  togglechoose![index] = false;
-                                  listgetprice![index] = 0;
-                                  if (listgetpricevat!.isNotEmpty) {
-                                    listgetpricevat![index] = 0;
-                                  }
-                                });
-                              }
-                            },
-                            icon: togglechoose![index] == true
-                                ? Icon(
-                                    Icons.check_box_outlined,
-                                    color: Colors.black,
-                                  )
-                                : Icon(
-                                    Icons.check_box_outline_blank,
-                                    color: Colors.black,
-                                  ))
-                        : SizedBox()
-                  ],
+                                    if (toggleaddstep == 1) {
+                                      var value2 = ((double.parse(
+                                              value.toStringAsFixed(2)) -
+                                          (double.parse((value)
+                                                      .toStringAsFixed(2)) *
+                                                  int.parse(step2.text)) /
+                                              100));
+
+                                      setState(() {
+                                        listgetprice![index] =
+                                            value2 * widget.numorder[index];
+                                      });
+                                    } else {
+                                      setState(() {
+                                        listgetprice![index] = 0;
+                                        listgetprice![index] =
+                                            value * widget.numorder[index];
+                                      });
+                                    }
+                                    if (listgetpricevat!.isNotEmpty) {
+                                      listgetpricevat![index] =
+                                          (listgetprice![index] +
+                                              (listgetprice![index] * 7 / 100));
+                                    }
+                                  });
+                                } else {
+                                  setState(() {
+                                    togglechoose![index] = false;
+                                    listgetprice![index] = 0;
+                                    if (listgetpricevat!.isNotEmpty) {
+                                      listgetpricevat![index] = 0;
+                                    }
+                                  });
+                                }
+                              },
+                              icon: togglechoose![index] == true
+                                  ? Icon(
+                                      Icons.check_box_outlined,
+                                      color: Colors.black,
+                                    )
+                                  : Icon(
+                                      Icons.check_box_outline_blank,
+                                      color: Colors.black,
+                                    ))
+                          : SizedBox()
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -889,6 +933,7 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
           "nameproduct": widget.nameorder[i].trim(),
           "amount": "${widget.numorder[i]}",
           "amountpercrate": int.parse(widget.numpercrate[i].trim()),
+          "getprice": widget.price[i],
           "saleconfirm": 1,
           "codestore": getcodestore,
           "cuscode": getcuscode.trim(),
@@ -899,7 +944,9 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
         http.Response response = await http.post(Uri.parse(url),
             headers: {'Content-Type': 'application/json; charset=utf-8'},
             body: JsonEncoder().convert(body));
+        print(body);
       }
+
       insertintonotice();
       return showDialog(
           context: context,
@@ -910,10 +957,11 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
                     child: Text('OK'),
                     onPressed: () {
                       deleteamount();
-                      Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(builder: (context) {
-                        return MyApp();
-                      }));
+                      Navigator.pop(context);
+                      // Navigator.of(context).pushReplacement(
+                      //     MaterialPageRoute(builder: (context) {
+                      //   return MyApp();
+                      // }));
                     },
                   )
                 ],
@@ -994,6 +1042,46 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
       }
     } catch (error) {
       print(error);
+    }
+  }
+
+  Future notiorderforsale() async {
+    try {
+      SharedPreferences preferences2 = await SharedPreferences.getInstance();
+      getdatatocheckstock = preferences2.getStringList("dealercode");
+      String url = "https://api.line.me/v2/bot/message/push";
+
+      var body = {
+        "to": "Ub3a212f44fa2801444da5a89a4443eab",
+        "messages": [
+          {
+            "type": "text",
+            "text": "ร้าน " + stringpreferences1![3] + " สั่งสินค้าเข้ามา"
+          }
+        ]
+      };
+
+      http.Response response = await http.post(Uri.parse(url),
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            "Authorization":
+                "Bearer Udr/QZCEGnv1Ylq05t7fuQqCMK9OSuoN5dIUWI/l+t8LEa3hiv+9l4Z/BhdtGJKd0dlXvWxrot5y4M3s5ID9r091xsS32x6/td+PzuZF2cPU8p633PaPQ4+nFwvCcjua109piyIgCJ4C7BbJ1DAblwdB04t89/1O/w1cDnyilFU="
+          },
+          body: JsonEncoder().convert(body));
+    } catch (error) {
+      return showDialog(
+          context: context,
+          builder: (_) => new AlertDialog(
+                content: new Text("Email or password is not correct"),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              ));
     }
   }
 }

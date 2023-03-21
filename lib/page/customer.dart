@@ -32,7 +32,6 @@ class _customerState extends State<customer> {
   List<String>? stringpreferences1;
   late List<String> cusdata;
   TextEditingController mysearh = TextEditingController();
-  List<Getcustomerstore> alldata = [];
   bool toggle = false;
   bool toggleall = false;
   List<bool> toggleselect = [];
@@ -57,12 +56,17 @@ class _customerState extends State<customer> {
         top: false,
         child: Scaffold(
           appBar: AppBar(
+            automaticallyImplyLeading: false,
             backgroundColor: ColorConstants.appbarcolor,
             toolbarHeight: 7.h,
             title: Text(
               "CUSTOMER",
               style: TextStyle(fontFamily: 'newtitlefont', fontSize: 25.sp),
             ),
+            actions: [
+              IconButton(
+                  onPressed: () {}, icon: Icon(Icons.location_history_rounded))
+            ],
           ),
           backgroundColor: ColorConstants.backgroundbody,
           body: Form(
@@ -423,10 +427,39 @@ class _customerState extends State<customer> {
                             allcustomerfordisplay[index].cusname,
                             style: TextConstants.textstyle,
                           ),
-                          Text(
-                            allcustomerfordisplay[index].address,
-                            style: TextConstants.textstyle,
-                          ),
+                          allcustomerfordisplay[index].address == null
+                              ? Row(
+                                  children: [
+                                    Icon(Icons.location_on_outlined),
+                                    TextButton(
+                                      child: Text('Add Location'),
+                                      onPressed: () {
+                                        inputlocation(index);
+                                      },
+                                    ),
+                                  ],
+                                )
+                              : Row(
+                                  children: [
+                                    IconButton(
+                                        onPressed: () {
+                                          _openmap(index);
+                                        },
+                                        icon: Icon(
+                                          Icons.location_on_outlined,
+                                          size: 25.sp,
+                                        )),
+                                    TextButton(
+                                      child: Text(
+                                        "Google map",
+                                        style: TextConstants.textstyle,
+                                      ),
+                                      onPressed: () {
+                                        _openmap(index);
+                                      },
+                                    ),
+                                  ],
+                                ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -534,6 +567,7 @@ class _customerState extends State<customer> {
         u["MAX(c.notes)"],
         u["MAX(c.score)"],
         u["MAX(c.sconfirm)"],
+        u["MAX(c.saleid)"],
       );
       _allcustomer.add(data);
     }
@@ -697,7 +731,7 @@ class _customerState extends State<customer> {
                 children: [
                   new Text("วิธีใส่ที่อยู่"
                       "\n"
-                      "1.ให้เข้าแอพ google map "),
+                      "1.ให้เข้าแอพ google map และ copy URL "),
                   SizedBox(
                       //height: 5.h,
                       width: MediaQuery.of(context).size.width,

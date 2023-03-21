@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_hex_color/flutter_hex_color.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -49,6 +50,7 @@ class _orderfromstoreState extends State<orderfromstore> {
         top: false,
         child: Scaffold(
           appBar: AppBar(
+            automaticallyImplyLeading: false,
             backgroundColor: ColorConstants.appbarcolor,
             toolbarHeight: 7.h,
             title: Text(
@@ -65,225 +67,168 @@ class _orderfromstoreState extends State<orderfromstore> {
                 return Padding(
                   padding: const EdgeInsets.only(top: 4.0),
                   child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: Slidable(
-                      endActionPane: stringpreferences1?[1] == "ADMIN" &&
-                              allordersfordisplay[index].price != null
-                          // ignore: prefer_const_constructors
-                          ? ActionPane(
-                              motion: ScrollMotion(),
-                              // ignore: prefer_const_literals_to_create_immutables
-                              children: [
-                                Container(
-                                  color: Colors.green,
-                                  width: MediaQuery.of(context).size.width / 2,
-                                  height: MediaQuery.of(context).size.height,
-                                  child: OutlinedButton(
-                                    onPressed: () {
-                                      inputnumber(index);
-                                    },
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.fire_truck,
-                                          color: Colors.white,
-                                          size: 22.sp,
-                                        ),
-                                        Text(
-                                          "ADD TRACK",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontFamily: 'newbodyfont',
-                                              fontSize: 15.sp),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            )
-                          : ActionPane(
-                              motion: ScrollMotion(),
-                              children: [
-                                Container(
-                                  color: Colors.red,
-                                  width: MediaQuery.of(context).size.width / 2,
-                                  height: MediaQuery.of(context).size.height,
-                                  child: OutlinedButton(
-                                    onPressed: () {
-                                      cancelorder(index);
-                                    },
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.cancel,
-                                          color: Colors.white,
-                                          size: 22.sp,
-                                        ),
-                                        Text(
-                                          "Cancel",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontFamily: 'newbodyfont',
-                                              fontSize: 15.sp),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                      // The child of the Slidable is what the user sees when the
-                      // component is not dragged.
-                      child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                            backgroundColor:
+                      width: MediaQuery.of(context).size.width,
+                      child: Slidable(
+                        endActionPane: stringpreferences1?[1] == "ADMIN" &&
                                 allordersfordisplay[index].price != null
-                                    ? Colors.lime[500]
-                                    : ColorConstants.colorcardorder),
-                        onPressed: () {
-                          if (stringpreferences1?[1] == "ADMIN") {
-                            Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(builder: (context) {
-                              return orderforadminedit(
-                                ordernumber:
-                                    allordersfordisplay[index].ordernumber,
-                                cuscode: allordersfordisplay[index].cuscode,
-                                cusname: allordersfordisplay[index].cusname,
-                                pay: allordersfordisplay[index].pay,
-                                amountlist: allordersfordisplay[index]
-                                    .amountlist
-                                    .toString(),
-                                date: allordersfordisplay[index]
-                                    .date
-                                    .substring(5, 25),
-                              );
-                            }));
-                          } else {
-                            Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(builder: (context) {
-                              return orderforedit(
-                                ordernumber:
-                                    allordersfordisplay[index].ordernumber,
-                                cuscode: allordersfordisplay[index].cuscode,
-                                cusname: allordersfordisplay[index].cusname,
-                                pay: allordersfordisplay[index].pay,
-                                amountlist: allordersfordisplay[index]
-                                    .amountlist
-                                    .toString(),
-                                date: allordersfordisplay[index]
-                                    .date
-                                    .substring(5, 25),
-                              );
-                            }));
-                          }
-                        },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "${allordersfordisplay[index].cusname}",
-                                  maxLines: 2,
-                                  style: TextStyle(
-                                      fontSize: 16.0.sp,
-                                      fontFamily: 'newbodyfont',
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black),
-                                ),
-                                Text(
-                                  allordersfordisplay[index]
+                            // ignore: prefer_const_constructors
+                            ? ActionPane(
+                                motion: ScrollMotion(),
+                                // ignore: prefer_const_literals_to_create_immutables
+                                children: [
+                                  Container(
+                                    color: Colors.green,
+                                    width:
+                                        MediaQuery.of(context).size.width / 2,
+                                    height: MediaQuery.of(context).size.height,
+                                    child: OutlinedButton(
+                                      onPressed: () {
+                                        inputnumber(index);
+                                      },
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.fire_truck,
+                                            color: Colors.white,
+                                            size: 22.sp,
+                                          ),
+                                          Text(
+                                            "ADD TRACK",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontFamily: 'newbodyfont',
+                                                fontSize: 15.sp),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : ActionPane(
+                                motion: ScrollMotion(),
+                                children: [
+                                  Container(
+                                    color: Colors.red,
+                                    width:
+                                        MediaQuery.of(context).size.width / 2,
+                                    height: MediaQuery.of(context).size.height,
+                                    child: OutlinedButton(
+                                      onPressed: () {
+                                        cancelorder(index);
+                                      },
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.cancel,
+                                            color: Colors.white,
+                                            size: 22.sp,
+                                          ),
+                                          Text(
+                                            "Cancel",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontFamily: 'newbodyfont',
+                                                fontSize: 15.sp),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                        // The child of the Slidable is what the user sees when the
+                        // component is not dragged.
+                        child: OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                              backgroundColor:
+                                  allordersfordisplay[index].price != null
+                                      ? HexColor("#F6D55C")
+                                      : ColorConstants.colorcardorder),
+                          onPressed: () {
+                            if (stringpreferences1?[1] == "ADMIN") {
+                              Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(builder: (context) {
+                                return orderforadminedit(
+                                  ordernumber:
+                                      allordersfordisplay[index].ordernumber,
+                                  cuscode: allordersfordisplay[index].cuscode,
+                                  cusname: allordersfordisplay[index].cusname,
+                                  pay: allordersfordisplay[index].pay,
+                                  amountlist: allordersfordisplay[index]
+                                      .amountlist
+                                      .toString(),
+                                  date: allordersfordisplay[index]
                                       .date
                                       .substring(5, 25),
-                                  style: TextConstants.textstyle,
-                                ),
-                              ],
-                            ),
-                            Text(
-                              "คำสั่งซื้อที่ : ${allordersfordisplay[index].ordernumber}",
-                              style: TextConstants.textstyle,
-                            ),
-                            Text(
-                              "วิธีการชำระ : ${allordersfordisplay[index].pay}",
-                              style: TextConstants.textstyle,
-                            ),
-                            Text(
-                              "จำนวน ${allordersfordisplay[index].amountlist} รายการ",
-                              style: TextConstants.textstyle,
-                            ),
-                          ],
+                                );
+                              }));
+                            } else {
+                              Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(builder: (context) {
+                                return orderforedit(
+                                  ordernumber:
+                                      allordersfordisplay[index].ordernumber,
+                                  cuscode: allordersfordisplay[index].cuscode,
+                                  cusname: allordersfordisplay[index].cusname,
+                                  pay: allordersfordisplay[index].pay,
+                                  amountlist: allordersfordisplay[index]
+                                      .amountlist
+                                      .toString(),
+                                  date: allordersfordisplay[index]
+                                      .date
+                                      .substring(5, 25),
+                                );
+                              }));
+                            }
+                          },
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "${allordersfordisplay[index].cusname}",
+                                    maxLines: 2,
+                                    style: TextStyle(
+                                        fontSize: 16.0.sp,
+                                        fontFamily: 'newbodyfont',
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black),
+                                  ),
+                                  Text(
+                                    allordersfordisplay[index]
+                                        .date
+                                        .substring(5, 25),
+                                    style: TextConstants.textstyle,
+                                  ),
+                                ],
+                              ),
+                              Text(
+                                "คำสั่งซื้อที่ : ${allordersfordisplay[index].ordernumber}",
+                                style: TextConstants.textstyle,
+                              ),
+                              Text(
+                                "วิธีการชำระ : ${allordersfordisplay[index].pay}",
+                                style: TextConstants.textstyle,
+                              ),
+                              Text(
+                                "จำนวน ${allordersfordisplay[index].amountlist} รายการ",
+                                style: TextConstants.textstyle,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
+                      )),
                 );
               },
-            ),
-          ),
-          drawer: Drawer(
-            backgroundColor: Colors.grey[300],
-            child: ListView(
-              // Important: Remove any padding from the ListView.
-              padding: EdgeInsets.zero,
-              children: <Widget>[
-                DrawerHeader(
-                  child: Column(
-                    children: [
-                      Text(
-                        namestore,
-                        style: TextStyle(
-                            fontSize: 25.0,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'newtitlefont'),
-                      ),
-                    ],
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[50],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Center(
-                      child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: TextButton(
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.white),
-                      ),
-                      child: Text(
-                        "LOG OUT",
-                        style: TextStyle(
-                            fontSize: 20.0,
-                            color: Colors.black,
-                            fontFamily: 'newtitlefont'),
-                      ),
-                      onPressed: () async {
-                        stringpreferences1!.clear();
-                        SharedPreferences preferences1 =
-                            await SharedPreferences.getInstance();
-                        preferences1.setStringList(
-                            "codestore", stringpreferences1!);
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => (login()),
-                          ),
-                        );
-                        ;
-                      },
-                    ),
-                  )),
-                )
-              ],
             ),
           ),
         ),
@@ -293,7 +238,7 @@ class _orderfromstoreState extends State<orderfromstore> {
 
   Future addamount() async {
     try {
-      String url = "http://185.78.165.189:3000//addamount";
+      String url = "http://185.78.165.189:3000/pythonapi/addamount";
       SharedPreferences preferences1 = await SharedPreferences.getInstance();
       stringpreferences1 = preferences1.getStringList("codestore");
       for (var i = 0; i < 5; i++) {

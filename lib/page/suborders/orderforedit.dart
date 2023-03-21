@@ -13,7 +13,6 @@ import 'package:sigma_space/main.dart';
 import 'package:sigma_space/page/chectsotck.dart';
 import 'package:sizer/sizer.dart';
 import 'package:textfield_search/textfield_search.dart';
-import 'package:sigma_space/classapi/class.dart';
 import 'package:http/http.dart' as http;
 
 class orderforedit extends StatefulWidget {
@@ -289,7 +288,7 @@ class _orderforedit extends State<orderforedit> {
     stringpreferences1 = preferences1.getStringList("codestore");
 
     String url =
-        "http://185.78.165.189:3000/nodejsapi/getordersBycodestoreandcuscodeandordernumber";
+        "http://185.78.165.189:3000/pythonapi/getordersBycodestoreandcuscodeandordernumber";
     var body = {
       "codestore": stringpreferences1![0],
       "cuscode": widget.cuscode,
@@ -310,6 +309,7 @@ class _orderforedit extends State<orderforedit> {
               u["codeproduct"],
               u["nameproduct"],
               u["amount"],
+              u["getprice"],
               u["pay"],
               u["notes"],
               u["date"],

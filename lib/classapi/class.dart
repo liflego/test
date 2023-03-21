@@ -65,6 +65,7 @@ class Getallcustomer {
   String notes;
   int score;
   int sconfrim;
+  int saleid;
   Getallcustomer(
     this.cuscode,
     this.cusname,
@@ -74,6 +75,7 @@ class Getallcustomer {
     this.notes,
     this.score,
     this.sconfrim,
+    this.saleid,
   );
 }
 
@@ -87,8 +89,18 @@ class Getalldealer {
   int score;
   int sconfrim;
   String companyname;
-  Getalldealer(this.cuscode, this.cusname, this.phone, this.address,
-      this.codestore, this.notes, this.score, this.sconfrim, this.companyname);
+  String auth;
+  Getalldealer(
+      this.cuscode,
+      this.cusname,
+      this.phone,
+      this.address,
+      this.codestore,
+      this.notes,
+      this.score,
+      this.sconfrim,
+      this.companyname,
+      this.auth);
 }
 
 //get data from table order by codestore and customer code
@@ -97,6 +109,7 @@ class GetorderBycodestoreandcuscodeandordernumber {
   String codeproduct;
   String nameproduct;
   int amount;
+  int getprice;
   String pay;
   String notes;
   String date;
@@ -107,6 +120,7 @@ class GetorderBycodestoreandcuscodeandordernumber {
       this.codeproduct,
       this.nameproduct,
       this.amount,
+      this.getprice,
       this.pay,
       this.notes,
       this.date,
@@ -151,11 +165,6 @@ class Getdeliverylist {
 
   Getdeliverylist(this.orders, this.codeproduct, this.nameproduct, this.numbers,
       this.address);
-}
-
-class Getuser {
-  String position;
-  Getuser(this.position);
 }
 
 class Getcustomerstore {
@@ -206,3 +215,4 @@ class Getnotifordealer {
       this.track);
 }
 
+// uusadfiybh

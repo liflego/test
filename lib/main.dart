@@ -13,7 +13,7 @@ import 'package:sizer/sizer.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  final preferences1 = await SharedPreferences.getInstance();
+
   runApp(
       new MaterialApp(debugShowCheckedModeBanner: false, home: new showlogo()));
 }
@@ -48,7 +48,6 @@ class MyAppState extends State<MyApp> {
     )
   ];
   final _pageOption2 = [
-    orderfromstore(),
     checkstock(
       codeorder: [],
       nameorder: [],
@@ -57,6 +56,7 @@ class MyAppState extends State<MyApp> {
       productset: [],
       price: [],
     ),
+    orderfromstore(),
     customer()
   ];
 
@@ -126,14 +126,14 @@ class MyAppState extends State<MyApp> {
                             Icons.check_box_outlined,
                             size: 30.sp,
                           ),
-                          label: "ORDER",
+                          label: "STOCK",
                         ),
                         new BottomNavigationBarItem(
                           icon: Icon(
                             Icons.list,
                             size: 30.sp,
                           ),
-                          label: "STOCK",
+                          label: "ORDER",
                         ),
                         new BottomNavigationBarItem(
                           icon: Icon(
