@@ -758,7 +758,7 @@ class _orderforadminedit extends State<orderforadminedit> {
         padding: const EdgeInsets.all(2.0),
         child: TextButton(
           onPressed: () {
-            insertintonotice();
+            updateadminconfirm();
           },
           child: Container(
             width: MediaQuery.of(context).size.width / 2,
@@ -853,9 +853,9 @@ class _orderforadminedit extends State<orderforadminedit> {
     return _allorder;
   }
 
-  Future insertintonotice() async {
+  Future updateadminconfirm() async {
     try {
-      String url = "http://185.78.165.189:3000/pythonapi/updatenotice";
+      String url = "http://185.78.165.189:3000/pythonapi/updateadminconfirm";
 
       var body = {
         "ordernumber": allorderfordisplay[0].ordernumber,
