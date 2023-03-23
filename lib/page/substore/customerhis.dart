@@ -408,15 +408,16 @@ class _storehisState extends State<storehis> {
     for (var u in jsonres) {
       GetorderBycodestoreandcuscodeandordernumber data =
           GetorderBycodestoreandcuscodeandordernumber(
-              u["ordernumber"],
-              u["codeproduct"],
-              u["nameproduct"],
-              u["amount"],
-              u["getprice"],
-              u["pay"],
-              u["notes"],
-              u["date"],
-              u["price"]);
+        u["ordernumber"],
+        u["codeproduct"],
+        u["nameproduct"],
+        u["amount"],
+        u["getprice"],
+        u["pay"],
+        u["notes"],
+        u["date"],
+        u["price"],
+      );
       aaa.add(data);
       getgrouptype.add(u["ordernumber"]);
     }
