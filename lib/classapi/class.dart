@@ -65,7 +65,7 @@ class Getallcustomer {
   String notes;
   int score;
   int sconfrim;
-  int saleid;
+  String auth;
   Getallcustomer(
     this.cuscode,
     this.cusname,
@@ -75,7 +75,7 @@ class Getallcustomer {
     this.notes,
     this.score,
     this.sconfrim,
-    this.saleid,
+    this.auth,
   );
 }
 
@@ -170,7 +170,8 @@ class Getdeliverylist {
 class Getcustomerstore {
   String name;
   String code;
-  Getcustomerstore(this.name, this.code);
+  String auth;
+  Getcustomerstore(this.name, this.code, this.auth);
 }
 
 class Getallorders {
