@@ -56,7 +56,6 @@ class _customerState extends State<customer> {
         top: false,
         child: Scaffold(
           appBar: AppBar(
-            automaticallyImplyLeading: false,
             backgroundColor: ColorConstants.appbarcolor,
             toolbarHeight: 7.h,
             title: Text(
