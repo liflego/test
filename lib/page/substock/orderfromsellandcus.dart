@@ -836,7 +836,7 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
     List<String> stringpreferences1;
     SharedPreferences preferences1 = await SharedPreferences.getInstance();
     stringpreferences1 = preferences1.getStringList("codestore")!;
-    String url = "http://185.78.165.189:3000/pythonapi/customer";
+    String url = "http://185.78.165.189:3000/pythonapi/fullcustomer";
     var body = {
       "codestore": stringpreferences1[0],
     };
@@ -849,11 +849,13 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
 
     for (var u in jsonres) {
       Getcustomerstore data = Getcustomerstore(
-          u["cusname"] + "[" + u["cuscode"] + "]", u["cuscode"]);
+          u["MAX(c.cusname)"] + "[" + u["MAX(c.cuscode)"] + "]",
+          u["MAX(c.cuscode)"],
+          u["auth"]);
       alldata.add(data);
-      _list.add(u["cusname"] + "[" + u["cuscode"] + "]");
+      _list.add(u["MAX(c.cusname)"] + "[" + u["MAX(c.cuscode)"] + "]");
+      print(u["auth"]);
     }
-    print(alldata[0].code);
 
     return _list;
   }
@@ -880,7 +882,7 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
     SharedPreferences preferences1 = await SharedPreferences.getInstance();
     stringpreferences1 = preferences1.getStringList("codestore");
     SharedPreferences preferences2 = await SharedPreferences.getInstance();
-    stringpreferences2 = preferences2.getString("dealercode");
+    getdatatocheckstock = preferences2.getStringList("dealercode");
 
     try {
       String url = "http://185.78.165.189:3000/pythonapi/insertorders";
@@ -902,7 +904,6 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
                     TextButton(
                       child: Text('OK'),
                       onPressed: () {
-                        deleteamount();
                         Navigator.of(context).pop();
                       },
                     )
@@ -916,6 +917,7 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
       }
       String getcuscode = "";
       String getcodestore = "";
+      String getauth = "";
       if (stringpreferences1![1] == "DEALER") {
         getcodestore = stringpreferences2!;
         getcuscode = stringpreferences1![0];
@@ -924,6 +926,9 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
         Iterable<Getcustomerstore> visi = alldata.where(
             (customercode) => customercode.name.contains(mysearh.text.trim()));
         visi.forEach((customercode) => getcuscode = customercode.code);
+        Iterable<Getcustomerstore> visiauth =
+            alldata.where((auth) => auth.name.contains(mysearh.text.trim()));
+        visi.forEach((auth) => getauth = auth.auth);
       }
 
       for (var i = 0; i < widget.codeorder.length; i++) {
@@ -946,8 +951,14 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
             body: JsonEncoder().convert(body));
         print(body);
       }
-
+      deleteamount();
       insertintonotice();
+      if (stringpreferences1![1] == "DEALER") {
+        notiorderforsale();
+      } else {
+        notiorderfordealer(getauth);
+        notiorderforadmin();
+      }
       return showDialog(
           context: context,
           builder: (_) => new AlertDialog(
@@ -956,12 +967,10 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
                   TextButton(
                     child: Text('OK'),
                     onPressed: () {
-                      deleteamount();
-                      Navigator.pop(context);
-                      // Navigator.of(context).pushReplacement(
-                      //     MaterialPageRoute(builder: (context) {
-                      //   return MyApp();
-                      // }));
+                      Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (context) {
+                        return MyApp();
+                      }));
                     },
                   )
                 ],
@@ -1006,7 +1015,7 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
 
   Future insertintonotice() async {
     try {
-      String url = "http://185.78.165.189:3000/pythonapi/insertintonotice";
+      String url = "http://185.78.165.189:3000/pythonapi/insertnewnotice";
 
       String cuscode = "";
       Iterable<Getcustomerstore> visi = alldata.where(
@@ -1052,7 +1061,7 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
       String url = "https://api.line.me/v2/bot/message/push";
 
       var body = {
-        "to": "Ub3a212f44fa2801444da5a89a4443eab",
+        "to": getdatatocheckstock![1],
         "messages": [
           {
             "type": "text",
@@ -1082,6 +1091,73 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
                   )
                 ],
               ));
+    }
+  }
+
+  Future notiorderfordealer(getauth) async {
+    try {
+      String url = "https://api.line.me/v2/bot/message/push";
+
+      var body = {
+        "to": getauth.toString(),
+        "messages": [
+          {
+            "type": "text",
+            "text":
+                "Order $lastorder \nเซลล์สั่งสินค้าเข้ามาเเล้ว\nสามารถเข้าไปตรวจสอบได้ที่ SIGB ในหน้าแจ้งเตือน"
+          }
+        ]
+      };
+
+      http.Response response = await http.post(Uri.parse(url),
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            "Authorization":
+                "Bearer Udr/QZCEGnv1Ylq05t7fuQqCMK9OSuoN5dIUWI/l+t8LEa3hiv+9l4Z/BhdtGJKd0dlXvWxrot5y4M3s5ID9r091xsS32x6/td+PzuZF2cPU8p633PaPQ4+nFwvCcjua109piyIgCJ4C7BbJ1DAblwdB04t89/1O/w1cDnyilFU="
+          },
+          body: JsonEncoder().convert(body));
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  Future notiorderforadmin() async {
+    try {
+      String url = "http://185.78.165.189:3000/pythonapi/getadminauth";
+      List<String> stringpreferences1;
+      SharedPreferences preferences1 = await SharedPreferences.getInstance();
+      stringpreferences1 = preferences1.getStringList("codestore")!;
+
+      var body = {"codestore": stringpreferences1[0]};
+      http.Response response = await http.post(Uri.parse(url),
+          headers: {'Content-Type': 'application/json; charset=utf-8'},
+          body: JsonEncoder().convert(body));
+
+      List jsonRes = json.decode(response.body);
+      print(jsonRes[0]["auth"]);
+
+      String lineurl = "https://api.line.me/v2/bot/message/push";
+      for (int i = 0; i <= jsonRes.length; i++) {
+        var linebody = {
+          "to": jsonRes[i]["auth"].toString(),
+          "messages": [
+            {
+              "type": "text",
+              "text": "Order $lastorder \n จากเซลล์ ${stringpreferences1[2]}"
+            }
+          ]
+        };
+        print(linebody);
+        http.Response lineresponse = await http.post(Uri.parse(lineurl),
+            headers: {
+              'Content-Type': 'application/json; charset=utf-8',
+              "Authorization":
+                  "Bearer Udr/QZCEGnv1Ylq05t7fuQqCMK9OSuoN5dIUWI/l+t8LEa3hiv+9l4Z/BhdtGJKd0dlXvWxrot5y4M3s5ID9r091xsS32x6/td+PzuZF2cPU8p633PaPQ4+nFwvCcjua109piyIgCJ4C7BbJ1DAblwdB04t89/1O/w1cDnyilFU="
+            },
+            body: JsonEncoder().convert(linebody));
+      }
+    } catch (error) {
+      print(error);
     }
   }
 }
