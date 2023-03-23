@@ -11,6 +11,7 @@ import 'package:sigma_space/main.dart';
 import 'package:sigma_space/page/suborders/orderforadminedit.dart';
 import 'package:sigma_space/page/suborders/orderforedit.dart';
 import 'package:sizer/sizer.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../classapi/class.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -29,7 +30,7 @@ class _orderfromstoreState extends State<orderfromstore> {
   TextEditingController companyString = TextEditingController();
   TextEditingController trackString = TextEditingController();
   String namestore = "";
-
+  String auth = "";
   @override
   void initState() {
     fectalldata().then((value) {
@@ -50,7 +51,7 @@ class _orderfromstoreState extends State<orderfromstore> {
         top: false,
         child: Scaffold(
           appBar: AppBar(
-            automaticallyImplyLeading: false,
+            automaticallyImplyLeading: true,
             backgroundColor: ColorConstants.appbarcolor,
             toolbarHeight: 7.h,
             title: Text(
@@ -231,6 +232,111 @@ class _orderfromstoreState extends State<orderfromstore> {
               },
             ),
           ),
+          drawer: Drawer(
+            backgroundColor: Colors.grey[300],
+            child: ListView(
+              // Important: Remove any padding from the ListView.
+              padding: EdgeInsets.zero,
+              children: <Widget>[
+                DrawerHeader(
+                  child: Column(
+                    children: [
+                      Text(
+                        namestore,
+                        style: TextStyle(
+                            fontSize: 25.0,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'newtitlefont'),
+                      ),
+                    ],
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[50],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Center(
+                      child: SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          child: auth == "null"
+                              ? TextButton(
+                                  style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(
+                                        Colors.greenAccent[700]),
+                                  ),
+                                  child: Text(
+                                    "รับการแจ้งเตือนผ่าน LINE",
+                                    style: TextStyle(
+                                        fontSize: 20.0,
+                                        color: Colors.black,
+                                        fontFamily: 'newtitlefont'),
+                                  ),
+                                  onPressed: () {
+                                    insertlineuid();
+                                    _openline();
+                                    setState(() {
+                                      auth = "notnull";
+                                    });
+                                  },
+                                )
+                              : TextButton(
+                                  style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(
+                                        Colors.red[400]),
+                                  ),
+                                  child: Text(
+                                    "ยกเลิกรับการแจ้งเตือนผ่าน LINE",
+                                    style: TextStyle(
+                                        fontSize: 20.0,
+                                        color: Colors.white,
+                                        fontFamily: 'newtitlefont'),
+                                  ),
+                                  onPressed: () {
+                                    //showdialog
+                                    //cancle
+                                  },
+                                ))),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(top: 400.0, left: 8.0, right: 8.0),
+                  child: Center(
+                      child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: TextButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.white),
+                      ),
+                      child: Text(
+                        "LOG OUT",
+                        style: TextStyle(
+                            fontSize: 20.0,
+                            color: Colors.black,
+                            fontFamily: 'newtitlefont'),
+                      ),
+                      onPressed: () async {
+                        stringpreferences1!.clear();
+
+                        SharedPreferences preferences1 =
+                            await SharedPreferences.getInstance();
+                        preferences1.setStringList(
+                            "codestore", stringpreferences1!);
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => (login()),
+                          ),
+                        );
+                        ;
+                      },
+                    ),
+                  )),
+                )
+              ],
+            ),
+          ),
         ),
       );
     });
@@ -260,9 +366,10 @@ class _orderfromstoreState extends State<orderfromstore> {
   Future<List<Getallorders>> fectalldata() async {
     SharedPreferences preferences1 = await SharedPreferences.getInstance();
     stringpreferences1 = preferences1.getStringList("codestore");
-    setState(() {
-      namestore = stringpreferences1![3];
-    });
+
+    namestore = stringpreferences1![3];
+    auth = stringpreferences1![4];
+
     String url = "http://185.78.165.189:3000/pythonapi/getallorders";
     var body = {
       "codestore": stringpreferences1![0],
@@ -283,7 +390,7 @@ class _orderfromstoreState extends State<orderfromstore> {
         u["MAX(a.price)"],
         u["MAX(a.saleconfirm)"],
         u["MAX(b.cusname)"],
-        u["count(a.ordernumber)"],
+        u["countorder"],
         u["date"],
       );
 
@@ -498,5 +605,28 @@ class _orderfromstoreState extends State<orderfromstore> {
     } catch (e) {
       print(e);
     }
+  }
+
+  Future insertlineuid() async {
+    try {
+      String url = "http://185.78.165.189:3000/pythonapi/insertlineuid";
+
+      var body = {
+        "userid": stringpreferences1![2],
+      };
+
+      http.Response response = await http.post(Uri.parse(url),
+          headers: {'Content-Type': 'application/json; charset=utf-8'},
+          body: JsonEncoder().convert(body));
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  Future<void> _openline() async {
+    String LineURL = 'https://page.line.me/962ekjzu';
+    await canLaunch(LineURL)
+        ? await launch(LineURL)
+        : throw 'Could not launch $LineURL';
   }
 }
