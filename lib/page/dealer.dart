@@ -45,6 +45,7 @@ class _dealerpageState extends State<dealerpage> {
   List<String> list = [];
   String namestore = "";
   bool togglecheck = false;
+  String auth = "";
   List<String> getdatatocheckstock = [];
   @override
   void initState() {
@@ -186,24 +187,45 @@ class _dealerpageState extends State<dealerpage> {
                   padding: const EdgeInsets.all(8.0),
                   child: Center(
                       child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: TextButton(
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.greenAccent[700]),
-                      ),
-                      child: Text(
-                        "รับการแจ้งเตือนผ่าน LINE",
-                        style: TextStyle(
-                            fontSize: 20.0,
-                            color: Colors.black,
-                            fontFamily: 'newtitlefont'),
-                      ),
-                      onPressed: () {
-                        insertlineuid();
-                      },
-                    ),
-                  )),
+                          width: MediaQuery.of(context).size.width,
+                          child: auth == "null"
+                              ? TextButton(
+                                  style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(
+                                        Colors.greenAccent[700]),
+                                  ),
+                                  child: Text(
+                                    "รับการแจ้งเตือนผ่าน LINE",
+                                    style: TextStyle(
+                                        fontSize: 20.0,
+                                        color: Colors.black,
+                                        fontFamily: 'newtitlefont'),
+                                  ),
+                                  onPressed: () {
+                                    insertlineuid();
+                                    _openline();
+                                    setState(() {
+                                      auth = "notnull";
+                                    });
+                                  },
+                                )
+                              : TextButton(
+                                  style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(
+                                        Colors.red[400]),
+                                  ),
+                                  child: Text(
+                                    "ยกเลิกรับการแจ้งเตือนผ่าน LINE",
+                                    style: TextStyle(
+                                        fontSize: 20.0,
+                                        color: Colors.white,
+                                        fontFamily: 'newtitlefont'),
+                                  ),
+                                  onPressed: () {
+                                    //showdialog
+                                    //cancle
+                                  },
+                                ))),
                 ),
                 Padding(
                   padding:
@@ -551,6 +573,7 @@ class _dealerpageState extends State<dealerpage> {
     stringpreferences1 = preferences1.getStringList("codestore");
 
     namestore = stringpreferences1![3];
+    auth = stringpreferences1![4];
 
     String url = "http://185.78.165.189:3000/pythonapi/fulldealer";
     var body = {
@@ -793,7 +816,8 @@ class _dealerpageState extends State<dealerpage> {
           "codestore": list[2].trim(),
           "notes": "Putyournote",
           "score": 3,
-          "saleid": list[3].trim()
+          "saleid": list[3].trim(),
+          "dealerid": stringpreferences1![2]
         };
         print(body);
 
@@ -851,5 +875,12 @@ class _dealerpageState extends State<dealerpage> {
     } catch (error) {
       print(error);
     }
+  }
+
+  Future<void> _openline() async {
+    String LineURL = 'https://page.line.me/962ekjzu';
+    await canLaunch(LineURL)
+        ? await launch(LineURL)
+        : throw 'Could not launch $LineURL';
   }
 }
