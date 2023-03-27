@@ -1,21 +1,15 @@
 import 'dart:convert';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
-import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sigma_space/main.dart';
-import 'package:sigma_space/page/orderfromstore.dart';
 import 'package:sigma_space/page/substore/customerhis.dart';
 import 'package:sizer/sizer.dart';
-import 'package:textfield_search/textfield_search.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../classapi/class.dart';
 import 'package:http/http.dart' as http;
-import 'package:popup_card/popup_card.dart';
 
 class customer extends StatefulWidget {
   customer({Key? key}) : super(key: key);
@@ -63,8 +57,7 @@ class _customerState extends State<customer> {
               style: TextStyle(fontFamily: 'newtitlefont', fontSize: 25.sp),
             ),
             actions: [
-              IconButton(
-                  onPressed: () {}, icon: Icon(Icons.location_history_rounded))
+              IconButton(onPressed: () {}, icon: Icon(Icons.work_outline))
             ],
           ),
           backgroundColor: ColorConstants.backgroundbody,
@@ -269,7 +262,7 @@ class _customerState extends State<customer> {
                     children: [
                       Container(
                         color: Colors.blue[900],
-                        width: MediaQuery.of(context).size.width / 2,
+                        width: MediaQuery.of(context).size.width / 2.25,
                         height: MediaQuery.of(context).size.height,
                         child: OutlinedButton(
                           onPressed: () => gotosubstore(index),
@@ -305,84 +298,30 @@ class _customerState extends State<customer> {
                               allcustomerfordisplay[index].cusname,
                               style: TextConstants.textstyle,
                             ),
-                            // allcustomer[index].address == null
-                            //     ? TextButton(
-                            //         child: Text('Add Location'),
-                            //         onPressed: () {
-                            //           Navigator.of(context).pop();
-                            //         },
-                            //       )
-                            //     : Text(
-                            //         allcustomerfordisplay[index].address,
-                            //         style: TextConstants.textstyle,
-                            //       ),
-                            Row(
-                              children: [
-                                IconButton(
-                                    onPressed: () {
-                                      _launchPhoneURL(index);
-                                    },
-                                    icon: Icon(
-                                      Icons.call,
-                                      color: Colors.blue,
-                                      size: 20.sp,
-                                    )),
-                                Text(
+                            TextButton(
+                                onPressed: () {
+                                  _launchPhoneURL(index);
+                                },
+                                child: Text(
                                   allcustomerfordisplay[index].phone,
-                                  style: TextConstants.textstyle,
-                                ),
-                              ],
-                            ),
+                                )),
                             allcustomer[index].address == null
-                                ? Row(
-                                    children: [
-                                      Icon(Icons.location_on_outlined),
-                                      TextButton(
-                                        child: Text('Add Location'),
-                                        onPressed: () {
-                                          inputlocation(index);
-                                        },
-                                      ),
-                                    ],
+                                ? TextButton(
+                                    child: Text('Add Location'),
+                                    onPressed: () {
+                                      inputlocation(index);
+                                    },
                                   )
-                                : Row(
-                                    children: [
-                                      IconButton(
-                                          onPressed: () {
-                                            _openmap(index);
-                                          },
-                                          icon: Icon(
-                                            Icons.location_on_outlined,
-                                            size: 25.sp,
-                                          )),
-                                      TextButton(
-                                        child: Text(
-                                          "Google map",
-                                          style: TextConstants.textstyle,
-                                        ),
-                                        onPressed: () {
-                                          _openmap(index);
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                            allcustomerfordisplay[index].notes ==
-                                    "Put your note.."
-                                ? SizedBox()
-                                : Text(
-                                    "#" + allcustomerfordisplay[index].notes,
-                                    style: TextConstants.textStylenotes,
+                                : TextButton(
+                                    child: Text(
+                                      "Google map",
+                                    ),
+                                    onPressed: () {
+                                      _openmap(index);
+                                    },
                                   ),
                           ],
                         ),
-                        // Padding(
-                        //   padding: const EdgeInsets.only(bottom: 100.0, left: 60),
-                        //   child: Container(
-                        //     color: Colors.red,
-                        //     child: IconButton(
-                        //         onPressed: () {}, icon: Icon(Icons.location_on)),
-                        //   ),
-                        // ),
                         toggle == false
                             ? SizedBox(
                                 height: 10,
@@ -476,13 +415,6 @@ class _customerState extends State<customer> {
                               ),
                             ],
                           ),
-                          allcustomerfordisplay[index].notes ==
-                                  "Put your note.."
-                              ? SizedBox()
-                              : Text(
-                                  "#" + allcustomerfordisplay[index].notes,
-                                  style: TextConstants.textStylenotes,
-                                ),
                         ],
                       ),
                       Padding(
@@ -563,7 +495,6 @@ class _customerState extends State<customer> {
         u["MAX(c.phone)"],
         u["MAX(c.address)"],
         u["MAX(c.codestore)"],
-        u["MAX(c.notes)"],
         u["MAX(c.score)"],
         u["MAX(c.sconfirm)"],
         u["MAX(c.saleid)"],
@@ -591,9 +522,7 @@ class _customerState extends State<customer> {
     cusdata = [
       allcustomerfordisplay[index].cuscode,
       allcustomerfordisplay[index].cusname,
-      allcustomerfordisplay[index].address,
       allcustomerfordisplay[index].phone,
-      allcustomerfordisplay[index].notes,
       allcustomerfordisplay[index].score.toString(),
       allcustomerfordisplay[index].sconfrim.toString()
     ];
@@ -762,7 +691,7 @@ class _customerState extends State<customer> {
                       color: ColorConstants.buttoncolor,
                       child: Center(
                           child: Text(
-                        "google map ",
+                        "google map",
                         style: TextStyle(color: Colors.white),
                       )))),
               TextButton(
