@@ -21,7 +21,7 @@ class _storehisState extends State<storehis> {
   List<String>? stringpreferences1;
   List<GetorderBycodestoreandcuscodeandordernumber> allorder = [];
   List<GetorderBycodestoreandcuscodeandordernumber> allorderfordisplay = [];
-  TextEditingController notes = TextEditingController();
+
   TextEditingController score = TextEditingController();
 
   var refreshkey = GlobalKey<RefreshIndicatorState>();
@@ -76,7 +76,7 @@ class _storehisState extends State<storehis> {
                 ),
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.height,
+                height: MediaQuery.of(context).size.height / 1.8,
                 child: ListView.builder(
                   itemBuilder: (context, index) {
                     return listItem(index);
@@ -95,7 +95,6 @@ class _storehisState extends State<storehis> {
             elevation: 5,
             child: SizedBox(
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height / 4.25,
               child: Padding(
                   padding: const EdgeInsets.all(5.0),
                   child: Column(
@@ -106,36 +105,10 @@ class _storehisState extends State<storehis> {
                         style: TextConstants.textstyleforheader,
                       ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(widget.cusdata[2],
-                              style: TextConstants.textstyle),
-                          SizedBox(
-                            width: 5.w,
-                            height: 3.h,
-                            child: TextFormField(
-                              controller: score,
-                              onFieldSubmitted: (value) => {
-                                setState(() {
-                                  score.text = value;
-                                  updatescore();
-                                })
-                              },
-                              maxLines: 1,
-                              decoration: InputDecoration(
-                                  labelText:
-                                      "Score : " + widget.cusdata[5].toString(),
-                                  enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide.none)),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
-                            widget.cusdata[3],
+                            widget.cusdata[2],
                             style: TextConstants.textstyle,
                           ),
                           Transform.scale(
@@ -151,27 +124,6 @@ class _storehisState extends State<storehis> {
                                 )),
                           ),
                         ],
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        height: 7.h,
-                        child: Center(
-                          child: TextFormField(
-                            controller: notes,
-                            onFieldSubmitted: (value) => {
-                              setState(() {
-                                notes.text = value;
-                              })
-                            },
-                            maxLines: 1,
-                            maxLength: 30,
-                            decoration: InputDecoration(
-                                hintStyle: TextConstants.textstyle,
-                                hintText: widget.cusdata[4],
-                                enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(width: 1))),
-                          ),
-                        ),
                       ),
                     ],
                   )),
@@ -191,32 +143,6 @@ class _storehisState extends State<storehis> {
                         widget.cusdata[1],
                         style: TextConstants.textstyleforheader,
                       ),
-                      // Row(
-                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //   children: [
-                      //     Text(widget.cusdata[2],
-                      //         style: TextConstants.textstyle),
-                      //     SizedBox(
-                      //       width: 5.w,
-                      //       height: 3.h,
-                      //       child: TextFormField(
-                      //         controller: score,
-                      //         onFieldSubmitted: (value) => {
-                      //           setState(() {
-                      //             score.text = value;
-                      //             updatescore();
-                      //           })
-                      //         },
-                      //         maxLines: 1,
-                      //         decoration: InputDecoration(
-                      //             labelText:
-                      //                 "Score : " + widget.cusdata[5].toString(),
-                      //             enabledBorder: OutlineInputBorder(
-                      //                 borderSide: BorderSide.none)),
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -237,27 +163,6 @@ class _storehisState extends State<storehis> {
                                 )),
                           ),
                         ],
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        height: 7.h,
-                        child: Center(
-                          child: TextFormField(
-                            controller: notes,
-                            onFieldSubmitted: (value) => {
-                              setState(() {
-                                notes.text = value;
-                              })
-                            },
-                            maxLines: 1,
-                            maxLength: 30,
-                            decoration: InputDecoration(
-                                hintStyle: TextConstants.textstyle,
-                                hintText: widget.cusdata[4],
-                                enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(width: 1))),
-                          ),
-                        ),
                       ),
                     ],
                   )),
@@ -308,7 +213,7 @@ class _storehisState extends State<storehis> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  color: Colors.grey[100],
+                  color: ColorConstants.cardcolor,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
