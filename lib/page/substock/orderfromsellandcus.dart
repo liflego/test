@@ -851,6 +851,7 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
       Getcustomerstore data = Getcustomerstore(
           u["MAX(c.cusname)"] + "[" + u["MAX(c.cuscode)"] + "]",
           u["MAX(c.cuscode)"],
+          u["cusid"],
           u["auth"]);
       alldata.add(data);
       _list.add(u["MAX(c.cusname)"] + "[" + u["MAX(c.cuscode)"] + "]");
@@ -918,14 +919,22 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
       String getcuscode = "";
       String getcodestore = "";
       String getauth = "";
+      int getcusid = 0;
       if (stringpreferences1![1] == "DEALER") {
-        getcodestore = stringpreferences2!;
+        getcodestore = getdatatocheckstock![0];
         getcuscode = stringpreferences1![0];
+        getcusid = int.parse(stringpreferences1![2]);
       } else {
         getcodestore = stringpreferences1![0];
+        //filtet cuscode
         Iterable<Getcustomerstore> visi = alldata.where(
             (customercode) => customercode.name.contains(mysearh.text.trim()));
         visi.forEach((customercode) => getcuscode = customercode.code);
+        //filter cusid
+        Iterable<Getcustomerstore> visicusid =
+            alldata.where((cusid) => cusid.name.contains(mysearh.text.trim()));
+        visi.forEach((cusid) => getcusid = cusid.cusid);
+        //filter lineauth
         Iterable<Getcustomerstore> visiauth =
             alldata.where((auth) => auth.name.contains(mysearh.text.trim()));
         visi.forEach((auth) => getauth = auth.auth);
@@ -941,7 +950,9 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
           "getprice": widget.price[i],
           "saleconfirm": 1,
           "codestore": getcodestore,
+          "saleid": stringpreferences1![2],
           "cuscode": getcuscode.trim(),
+          "cusid": getcusid,
           "date": DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()),
           "pay": pay.trim(),
           "notes": notes.text.trim()
@@ -1104,7 +1115,7 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
           {
             "type": "text",
             "text":
-                "Order $lastorder \nเซลล์สั่งสินค้าเข้ามาเเล้ว\nสามารถเข้าไปตรวจสอบได้ที่ SIGB ในหน้าแจ้งเตือน"
+                "ORDER $lastorder \nเซลล์สั่งสินค้าเข้ามาเเล้ว\nสามารถเข้าไปตรวจสอบได้ที่ SIGB ในหน้าแจ้งเตือน"
           }
         ]
       };
@@ -1143,7 +1154,7 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
           "messages": [
             {
               "type": "text",
-              "text": "Order $lastorder \n จากเซลล์ ${stringpreferences1[2]}"
+              "text": "ORDER $lastorder \n จากเซลล์ ${stringpreferences1[2]}"
             }
           ]
         };
