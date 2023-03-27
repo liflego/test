@@ -863,7 +863,7 @@ class _orderforadminedit extends State<orderforadminedit> {
       };
       print(body);
 
-      http.Response response = await http.post(Uri.parse(url),
+      http.Response response = await http.patch(Uri.parse(url),
           headers: {'Content-Type': 'application/json; charset=utf-8'},
           body: JsonEncoder().convert(body));
       updateprice();
