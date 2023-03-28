@@ -390,7 +390,7 @@ class _dealerpageState extends State<dealerpage> {
   Widget listItem(index) {
     return alldealerfordisplay[index].sconfrim == 1
         ? Card(
-            color: ColorConstants.colorcardorder,
+            color: ColorConstants.cardcolor,
             child: OutlinedButton(
               onPressed: () async {
                 setState(() {
@@ -594,11 +594,10 @@ class _dealerpageState extends State<dealerpage> {
           u["MAX(c.phone)"],
           u["MAX(c.address)"],
           u["MAX(c.codestore)"],
-          u["MAX(c.notes)"],
-          u["MAX(c.score)"],
           u["MAX(c.sconfirm)"],
           u["companyname"],
-          u["auth"]);
+          u["auth"],
+          u["saleid"]);
       _alldealer.add(data);
     }
 
