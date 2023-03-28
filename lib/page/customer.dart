@@ -30,6 +30,7 @@ class _customerState extends State<customer> {
   bool toggleall = false;
   List<bool> toggleselect = [];
   final _formkey = GlobalKey<FormState>();
+  List<int> getadmincf = [];
 
   @override
   void initState() {
@@ -57,7 +58,19 @@ class _customerState extends State<customer> {
               style: TextStyle(fontFamily: 'newtitlefont', fontSize: 25.sp),
             ),
             actions: [
-              IconButton(onPressed: () {}, icon: Icon(Icons.work_outline))
+              IconButton(
+                  onPressed: () {
+                    print(stringpreferences1![2]);
+
+                    setState(() {
+                      allcustomerfordisplay = allcustomer.where((_allcusname) {
+                        var cusname =
+                            _allcusname.saleid.toString().toLowerCase();
+                        return cusname.contains(stringpreferences1![2]);
+                      }).toList();
+                    });
+                  },
+                  icon: Icon(Icons.work_outline))
             ],
           ),
           backgroundColor: ColorConstants.backgroundbody,
@@ -170,8 +183,8 @@ class _customerState extends State<customer> {
                   text = text.toLowerCase();
 
                   setState(() {
-                    allcustomerfordisplay = allcustomer.where((_allproduct) {
-                      var cusname = _allproduct.cusname.toLowerCase();
+                    allcustomerfordisplay = allcustomer.where((_allcusname) {
+                      var cusname = _allcusname.cusname.toLowerCase();
                       return cusname.contains(text);
                     }).toList();
                   });
@@ -191,7 +204,7 @@ class _customerState extends State<customer> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            "(${allcustomerfordisplay.length} Unit)",
+            "(${getadmincf.length} Unit)",
             style: TextConstants.textstyle,
           ),
           toggle == true
@@ -490,22 +503,27 @@ class _customerState extends State<customer> {
 
     for (var u in jsonres) {
       Getallcustomer data = Getallcustomer(
-        u["MAX(c.cuscode)"],
-        u["MAX(c.cusname)"],
-        u["MAX(c.phone)"],
-        u["MAX(c.address)"],
-        u["MAX(c.codestore)"],
-        u["MAX(c.score)"],
-        u["MAX(c.sconfirm)"],
-        u["MAX(c.saleid)"],
-      );
+          u["MAX(c.cuscode)"],
+          u["MAX(c.cusname)"],
+          u["MAX(c.phone)"],
+          u["MAX(c.address)"],
+          u["MAX(c.codestore)"],
+          u["MAX(c.score)"],
+          u["MAX(c.sconfirm)"],
+          u["auth"],
+          u["MAX(c.saleid)"]);
       _allcustomer.add(data);
     }
-
+    print(_allcustomer[2].saleid);
     for (var i in jsonres) {
       toggleselect.add(false);
     }
 
+    for (int i = 0; i < _allcustomer.length; i++) {
+      if (_allcustomer[i].sconfrim == 1) {
+        getadmincf.add(1);
+      }
+    }
     return _allcustomer;
   }
 
