@@ -12,6 +12,7 @@ import 'package:flutter_hex_color/flutter_hex_color.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sigma_space/login.dart';
+import 'package:sigma_space/main.dart';
 import 'package:sigma_space/page/chectsotck.dart';
 import 'package:sigma_space/page/substore/customerhis.dart';
 import 'package:sizer/sizer.dart';
@@ -881,5 +882,71 @@ class _dealerpageState extends State<dealerpage> {
     await canLaunch(LineURL)
         ? await launch(LineURL)
         : throw 'Could not launch $LineURL';
+  }
+
+  void cancellinenoti() => showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          content: SizedBox(
+            height: 80.sp,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                new Text("ยกเลิกการแจ้งเตือนผ่านไลน์ ?"),
+                Padding(padding: EdgeInsets.only(top: 20.0)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    TextButton(
+                        child: Container(
+                            width: 18.w,
+                            height: 5.h,
+                            color: Colors.green,
+                            child: Center(
+                                child: Text(
+                              "Yes",
+                              style: TextStyle(color: Colors.white),
+                            ))),
+                        onPressed: () {
+                          deletelineuid();
+                        }),
+                    TextButton(
+                        child: Container(
+                            width: 18.w,
+                            height: 5.h,
+                            color: Colors.red,
+                            child: Center(
+                                child: Text(
+                              "No",
+                              style: TextStyle(color: Colors.white),
+                            ))),
+                        onPressed: () {
+                          Navigator.canPop(context)
+                              ? Navigator.pop(context)
+                              : null;
+                        })
+                  ],
+                ),
+                // ignore: unnecessary_new
+              ],
+            ),
+          ),
+        ),
+      );
+
+  Future deletelineuid() async {
+    try {
+      String url =
+          "http://185.78.165.189:3000/pythonapi/deletelineuid/${stringpreferences1![2]}";
+
+      http.Response response = await http.delete(Uri.parse(url),
+          headers: {'Content-Type': 'application/json; charset=utf-8'});
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (context) {
+        return MyApp();
+      }));
+    } catch (e) {
+      print(e);
+    }
   }
 }
