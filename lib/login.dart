@@ -202,12 +202,7 @@ class _loginState extends State<login> {
       child: SizedBox(
         child: Center(
           child: SignInButton(Buttons.GoogleDark, onPressed: () {
-            Navigator.of(context)
-                .pushReplacement(MaterialPageRoute(builder: (context) {
-              return googlelogin();
-            }));
-
-            // signInWithGoogle();
+            signInWithGoogle();
           }),
         ),
       ),
@@ -312,6 +307,7 @@ class _loginState extends State<login> {
               jsonRes["auth"],
             ];
           }
+
           SharedPreferences preferences1 =
               await SharedPreferences.getInstance();
           preferences1.setStringList("codestore", stringpreferences1);
