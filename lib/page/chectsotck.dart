@@ -184,6 +184,9 @@ class _checkstock extends State<checkstock> {
                                     onPressed: () {
                                       insertlineuid();
                                       _openline();
+                                      setState(() {
+                                        auth = "notnull";
+                                      });
                                     },
                                   )
                                 : TextButton(
@@ -225,6 +228,7 @@ class _checkstock extends State<checkstock> {
                         ),
                         onPressed: () async {
                           stringpreferences1!.clear();
+
                           SharedPreferences preferences1 =
                               await SharedPreferences.getInstance();
                           preferences1.setStringList(
@@ -557,7 +561,7 @@ class _checkstock extends State<checkstock> {
 
     return Card(
       elevation: 2,
-      color: HexColor("#F6D55C"),
+      color: ColorConstants.cardcolor,
       child: Slidable(
         endActionPane: stringpreferences1?[1] == "DEALER"
             ? ActionPane(
@@ -845,10 +849,9 @@ class _checkstock extends State<checkstock> {
     stringpreferences1 = preferences1.getStringList("codestore");
     SharedPreferences preferences2 = await SharedPreferences.getInstance();
     stringpreferences2 = preferences2.getStringList("dealercode");
-    setState(() {
-      namestore = stringpreferences1![3];
-      auth = stringpreferences1![4];
-    });
+
+    namestore = stringpreferences1![3];
+    auth = stringpreferences1![4];
 
     String url = "http://185.78.165.189:3000/pythonapi/codestore";
     String url1 = "http://185.78.165.189:3000/pythonapi/getproductfordealer";
@@ -1074,7 +1077,7 @@ class _checkstock extends State<checkstock> {
       String url = "http://185.78.165.189:3000/pythonapi/insertfavorite";
       var body = {
         "codeproduct": allproductfordisplay[index].codeproduct.toString(),
-        "codestore": stringpreferences2!.toString(),
+        "codestore": stringpreferences2![0].toString(),
         "dealercode": stringpreferences1![0]
       };
 
