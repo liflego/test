@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -30,8 +31,10 @@ class _customerState extends State<customer> {
   bool toggleall = false;
   List<bool> toggleselect = [];
   final _formkey = GlobalKey<FormState>();
-  List<int> getadmincf = [];
-
+  int getadmincf = 0;
+  int getadmincfforsale = 0;
+  List<int> getsaleid = [];
+  bool toggle1 = false;
   @override
   void initState() {
     fectallcustomerdata().then((value) {
@@ -60,17 +63,30 @@ class _customerState extends State<customer> {
             actions: [
               IconButton(
                   onPressed: () {
-                    print(stringpreferences1![2]);
-
-                    setState(() {
-                      allcustomerfordisplay = allcustomer.where((_allcusname) {
-                        var cusname =
-                            _allcusname.saleid.toString().toLowerCase();
-                        return cusname.contains(stringpreferences1![2]);
-                      }).toList();
-                    });
+                    if (toggle1 == false) {
+                      toggle1 = true;
+                      allcustomerfordisplay.clear();
+                      allcustomer.clear();
+                      fectallcustomerdataforsale().then((value) {
+                        setState(() {
+                          allcustomer.addAll(value);
+                          allcustomerfordisplay = allcustomer;
+                        });
+                      });
+                    } else {
+                      toggle1 = false;
+                      getadmincf = 0;
+                      allcustomerfordisplay.clear();
+                      allcustomer.clear();
+                      fectallcustomerdata().then((value) {
+                        setState(() {
+                          allcustomer.addAll(value);
+                          allcustomerfordisplay = allcustomer;
+                        });
+                      });
+                    }
                   },
-                  icon: Icon(Icons.work_outline))
+                  icon: Icon(Icons.work))
             ],
           ),
           backgroundColor: ColorConstants.backgroundbody,
@@ -203,10 +219,15 @@ class _customerState extends State<customer> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            "(${getadmincf.length} Unit)",
-            style: TextConstants.textstyle,
-          ),
+          toggle1 == true
+              ? Text(
+                  "(${getadmincfforsale} Unit)",
+                  style: TextConstants.textstyle,
+                )
+              : Text(
+                  "(${getadmincf} Unit)",
+                  style: TextConstants.textstyle,
+                ),
           toggle == true
               ? Row(
                   children: [
@@ -266,7 +287,10 @@ class _customerState extends State<customer> {
   Widget listItem(index) {
     return allcustomerfordisplay[index].sconfrim == 1
         ? Card(
-            color: ColorConstants.colorcardorder,
+            color: allcustomerfordisplay[index].saleid.toString() ==
+                    stringpreferences1![2]
+                ? ColorConstants.cardcolor
+                : ColorConstants.colorcardorder,
             child: OutlinedButton(
                 onPressed: null,
                 child: Slidable(
@@ -317,18 +341,25 @@ class _customerState extends State<customer> {
                                 },
                                 child: Text(
                                   allcustomerfordisplay[index].phone,
+                                  style: TextStyle(
+                                      fontSize: 18.sp,
+                                      fontFamily: 'newbodyfont'),
                                 )),
                             allcustomer[index].address == null
                                 ? TextButton(
-                                    child: Text('Add Location'),
+                                    child: Text('Add Location',
+                                        style: TextStyle(
+                                            fontSize: 16.sp,
+                                            fontFamily: 'newbodyfont')),
                                     onPressed: () {
                                       inputlocation(index);
                                     },
                                   )
                                 : TextButton(
-                                    child: Text(
-                                      "Google map",
-                                    ),
+                                    child: Text("Google map",
+                                        style: TextStyle(
+                                            fontSize: 16.sp,
+                                            fontFamily: 'newbodyfont')),
                                     onPressed: () {
                                       _openmap(index);
                                     },
@@ -508,7 +539,6 @@ class _customerState extends State<customer> {
           u["MAX(c.phone)"],
           u["MAX(c.address)"],
           u["MAX(c.codestore)"],
-          u["MAX(c.score)"],
           u["MAX(c.sconfirm)"],
           u["auth"],
           u["MAX(c.saleid)"]);
@@ -521,9 +551,10 @@ class _customerState extends State<customer> {
 
     for (int i = 0; i < _allcustomer.length; i++) {
       if (_allcustomer[i].sconfrim == 1) {
-        getadmincf.add(1);
+        getadmincf = getadmincf + 1;
       }
     }
+
     return _allcustomer;
   }
 
@@ -541,7 +572,6 @@ class _customerState extends State<customer> {
       allcustomerfordisplay[index].cuscode,
       allcustomerfordisplay[index].cusname,
       allcustomerfordisplay[index].phone,
-      allcustomerfordisplay[index].score.toString(),
       allcustomerfordisplay[index].sconfrim.toString()
     ];
 
@@ -771,5 +801,43 @@ class _customerState extends State<customer> {
     } catch (e) {
       print(e);
     }
+  }
+
+  Future<List<Getallcustomer>> fectallcustomerdataforsale() async {
+    SharedPreferences preferences1 = await SharedPreferences.getInstance();
+    stringpreferences1 = preferences1.getStringList("codestore");
+    String url = "http://185.78.165.189:3000/pythonapi/fullcustomerforsale";
+    var body = {
+      "codestore": stringpreferences1![0],
+      "saleid": stringpreferences1![2]
+    };
+
+    http.Response response = await http.post(Uri.parse(url),
+        headers: {'Content-Type': 'application/json; charset=utf-8'},
+        body: JsonEncoder().convert(body));
+
+    dynamic jsonres = json.decode(response.body);
+    List<Getallcustomer>? _allcustomerforsale = [];
+
+    for (var u in jsonres) {
+      Getallcustomer data = Getallcustomer(
+          u["MAX(c.cuscode)"],
+          u["MAX(c.cusname)"],
+          u["MAX(c.phone)"],
+          u["MAX(c.address)"],
+          u["MAX(c.codestore)"],
+          u["MAX(c.sconfirm)"],
+          u["auth"],
+          u["MAX(c.saleid)"]);
+      _allcustomerforsale.add(data);
+    }
+
+    for (var i in jsonres) {
+      toggleselect.add(false);
+    }
+
+    getadmincfforsale = _allcustomerforsale.length;
+
+    return _allcustomerforsale;
   }
 }
