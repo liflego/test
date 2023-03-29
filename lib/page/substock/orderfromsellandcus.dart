@@ -84,9 +84,24 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
           child: Scaffold(
               appBar: AppBar(
                 leading: IconButton(
-                    onPressed: () {
-                      Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(builder: (context) => MyApp()));
+                    onPressed: () async {
+                      if (stringpreferences1?[1] == "DEALER") {
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => checkstock(
+                                  codeorder: [],
+                                  nameorder: [],
+                                  numorder: [],
+                                  numpercrate: [],
+                                  productset: [],
+                                  price: [],
+                                )));
+                      } else {
+                        SharedPreferences pagepref =
+                            await SharedPreferences.getInstance();
+                        pagepref.setInt("pagepre", 0);
+                        Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(builder: (context) => MyApp()));
+                      }
                     },
                     icon: Icon(
                       Icons.arrow_back,
