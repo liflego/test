@@ -65,7 +65,7 @@ class _loginState extends State<login> {
           centerTitle: true,
           toolbarHeight: 10.h,
           title: Text(
-            "SENTOR",
+            "SIGB",
             style: TextStyle(fontSize: 30.0.sp, fontFamily: 'newtitlefont'),
           ),
           backgroundColor: ColorConstants.appbarcolor,

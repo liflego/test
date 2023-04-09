@@ -61,7 +61,10 @@ class _addnewproductpage extends State<addnewproductpage> {
                 ),
                 backgroundColor: ColorConstants.appbarcolor,
                 leading: IconButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      SharedPreferences pagepref =
+                          await SharedPreferences.getInstance();
+                      pagepref.setInt("pagepre", 1);
                       Navigator.of(context).pushReplacement(
                           MaterialPageRoute(builder: (context) => MyApp()));
                     },
@@ -567,7 +570,7 @@ class _addnewproductpage extends State<addnewproductpage> {
             "type": type.text.trim(),
             "score": int.parse(score.text.trim()),
             "price": int.parse(price.text.trim()),
-            "pathimg": stringpreferences1![0],
+            "pathimg": "Cpic",
             "nameimg": "null"
           };
           http.Response response = await http.post(Uri.parse(url),
@@ -610,7 +613,7 @@ class _addnewproductpage extends State<addnewproductpage> {
             "type": type.text.trim(),
             "score": int.parse(score.text.trim()),
             "price": int.parse(price.text.trim()),
-            "pathimg": stringpreferences1![0],
+            "pathimg": "Cpic",
             "nameimg": selectedImage!.path.split('/').last
           };
           http.Response response = await http.post(Uri.parse(url),

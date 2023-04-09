@@ -7,7 +7,7 @@ class ColorConstants {
   static Color? backgroundbody = Colors.white;
   static Color? appbarcolor = HexColor('#1034A6');
   static Color? buttoncolor = Colors.amber;
-  static Color? cardcolor = HexColor("#FFDC2E");
+  static Color? cardcolor = HexColor("#F6D55C");
   static Color? sc4 = HexColor("#FFB117");
   static Color? sc3 = HexColor("#FFDC2E");
   static Color? sc2 = HexColor("#FAE39C");
@@ -62,21 +62,11 @@ class Getallcustomer {
   String phone;
   String address;
   String codestore;
-  String notes;
-  int score;
   int sconfrim;
   String auth;
-  Getallcustomer(
-    this.cuscode,
-    this.cusname,
-    this.phone,
-    this.address,
-    this.codestore,
-    this.notes,
-    this.score,
-    this.sconfrim,
-    this.auth,
-  );
+  int saleid;
+  Getallcustomer(this.cuscode, this.cusname, this.phone, this.address,
+      this.codestore, this.sconfrim, this.auth, this.saleid);
 }
 
 class Getalldealer {
@@ -85,22 +75,12 @@ class Getalldealer {
   String phone;
   String address;
   String codestore;
-  String notes;
-  int score;
   int sconfrim;
   String companyname;
   String auth;
-  Getalldealer(
-      this.cuscode,
-      this.cusname,
-      this.phone,
-      this.address,
-      this.codestore,
-      this.notes,
-      this.score,
-      this.sconfrim,
-      this.companyname,
-      this.auth);
+  int saleid;
+  Getalldealer(this.cuscode, this.cusname, this.phone, this.address,
+      this.codestore, this.sconfrim, this.companyname, this.auth, this.saleid);
 }
 
 //get data from table order by codestore and customer code
@@ -170,8 +150,9 @@ class Getdeliverylist {
 class Getcustomerstore {
   String name;
   String code;
+  int cusid;
   String auth;
-  Getcustomerstore(this.name, this.code, this.auth);
+  Getcustomerstore(this.name, this.code, this.cusid, this.auth);
 }
 
 class Getallorders {
@@ -183,9 +164,10 @@ class Getallorders {
   String cusname;
   int amountlist;
   String date;
+  String auth;
 
   Getallorders(this.cuscode, this.ordernumber, this.pay, this.price,
-      this.saleconfirm, this.cusname, this.amountlist, this.date);
+      this.saleconfirm, this.cusname, this.amountlist, this.date, this.auth);
 }
 
 // class for get data from noti database
@@ -201,6 +183,7 @@ class Getnotifordealer {
   num priceall;
   String company;
   String track;
+  String codestore;
 
   Getnotifordealer(
       this.ordernumber,
@@ -213,7 +196,8 @@ class Getnotifordealer {
       this.countorder,
       this.priceall,
       this.company,
-      this.track);
+      this.track,
+      this.codestore);
 }
 
 // uusadfiybh

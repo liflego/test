@@ -28,14 +28,12 @@ class MyAppState extends State<MyApp> {
   List<String>? stringpreferences1;
   @override
   void initState() {
+    pagepref();
     updatestatus().then((value) => position = stringpreferences1);
     super.initState();
   }
 
   int _selectpage = 0;
-  bool item1 = false;
-  bool item2 = false;
-  bool item3 = false;
   final _pageOption = [
     orderfromstore(),
     checkstock(
@@ -64,7 +62,7 @@ class MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return Sizer(builder: (context, orientation, deviceType) {
+    return Sizer(builder: (context, orientation, device) {
       return Scaffold(
         backgroundColor: Colors.white,
         body: position?[1] == "ADMIN"
@@ -149,11 +147,20 @@ class MyAppState extends State<MyApp> {
 
   Future updatestatus() async {
     SharedPreferences preferences1 = await SharedPreferences.getInstance();
-    // preferences1.setInt("status", 0);
 
     setState(() {
       stringpreferences1 = preferences1.getStringList("codestore");
-      print(stringpreferences1);
     });
+  }
+
+  Future pagepref() async {
+    SharedPreferences pagepref = await SharedPreferences.getInstance();
+    if (pagepref.getInt("pagepre") == null) {
+      _selectpage = 0;
+    } else {
+      setState(() {
+        _selectpage = pagepref.getInt("pagepre")!;
+      });
+    }
   }
 }

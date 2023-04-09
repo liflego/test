@@ -95,7 +95,8 @@ class _checkstock extends State<checkstock> {
           top: false,
           child: Scaffold(
             appBar: AppBar(
-              automaticallyImplyLeading: true,
+              automaticallyImplyLeading:
+                  stringpreferences1?[1] == "SALE" ? true : false,
               toolbarHeight: 7.h,
               title: Text(
                 "STOCK",
@@ -203,8 +204,7 @@ class _checkstock extends State<checkstock> {
                                           fontFamily: 'newtitlefont'),
                                     ),
                                     onPressed: () {
-                                      //showdialog
-                                      //cancle
+                                      cancellinenoti();
                                     },
                                   ))),
                   ),
@@ -227,6 +227,9 @@ class _checkstock extends State<checkstock> {
                               fontFamily: 'newtitlefont'),
                         ),
                         onPressed: () async {
+                          SharedPreferences pagepref =
+                              await SharedPreferences.getInstance();
+                          pagepref.setInt("pagepre", 0);
                           stringpreferences1!.clear();
 
                           SharedPreferences preferences1 =
@@ -376,10 +379,23 @@ class _checkstock extends State<checkstock> {
                               toggle = toggle + 1;
 
                               if (toggle == 1) {
-                                showlistamount = groupamountsort;
+                                allproduct.clear();
+                                allproductfordisplay.clear();
+                                fectalldataasc().then((value) {
+                                  setState(() {
+                                    allproduct.addAll(value);
+                                    allproductfordisplay = allproduct;
+                                  });
+                                });
                               } else if (toggle == 2) {
-                                showlistamount = groupamountreversed;
-                                print(showlistamount);
+                                allproduct.clear();
+                                allproductfordisplay.clear();
+                                fectalldatadesc().then((value) {
+                                  setState(() {
+                                    allproduct.addAll(value);
+                                    allproductfordisplay = allproduct;
+                                  });
+                                });
                               } else {
                                 toggle = 0;
                               }
@@ -513,52 +529,6 @@ class _checkstock extends State<checkstock> {
   }
 
   Widget listItem(index) {
-    List<int> amountsort = [];
-    List<int> getamountpercrate = [];
-    List<String> getcodeproduct = [];
-    List<String> getnameproduct = [];
-    List<String> gettype = [];
-    List<String> getproductset = [];
-    List<String> getprice = [];
-    List<int> getscore = [];
-    List<String> getimg = [];
-
-    Iterable<Getallproduct> visiamount = allproductfordisplay.where((am) =>
-        am.amount.toString().contains(showlistamount[index].toString()));
-    visiamount.forEach((am) => amountsort.add(am.amount));
-
-    Iterable<Getallproduct> visipercrate = allproductfordisplay.where((ampc) =>
-        ampc.amount.toString().contains(showlistamount[index].toString()));
-    visipercrate.forEach((ampc) => getamountpercrate.add(ampc.amountpercrate));
-
-    Iterable<Getallproduct> visicode = allproductfordisplay.where((code) =>
-        code.amount.toString().contains(showlistamount[index].toString()));
-    visicode.forEach((code) => getcodeproduct.add(code.codeproduct));
-
-    Iterable<Getallproduct> visiname = allproductfordisplay.where((namepd) =>
-        namepd.amount.toString().contains(showlistamount[index].toString()));
-    visiname.forEach((namepd) => getnameproduct.add(namepd.nameproduct));
-
-    Iterable<Getallproduct> visitype = allproductfordisplay.where((type) =>
-        type.amount.toString().contains(showlistamount[index].toString()));
-    visitype.forEach((type) => gettype.add(type.alltype));
-
-    Iterable<Getallproduct> visipdset = allproductfordisplay.where((pdset) =>
-        pdset.amount.toString().contains(showlistamount[index].toString()));
-    visipdset.forEach((pdset) => getproductset.add(pdset.productset));
-
-    Iterable<Getallproduct> visiprice = allproductfordisplay.where((price) =>
-        price.amount.toString().contains(showlistamount[index].toString()));
-    visiprice.forEach((price) => getprice.add(price.price.toString()));
-
-    Iterable<Getallproduct> visiscore = allproductfordisplay.where((score) =>
-        score.amount.toString().contains(showlistamount[index].toString()));
-    visiscore.forEach((score) => getscore.add(score.score));
-
-    Iterable<Getallproduct> visiimg = allproductfordisplay.where((img) =>
-        img.amount.toString().contains(showlistamount[index].toString()));
-    visiimg.forEach((img) => getimg.add(img.nameimg));
-
     return Card(
       elevation: 2,
       color: ColorConstants.cardcolor,
@@ -642,35 +612,19 @@ class _checkstock extends State<checkstock> {
         child: OutlinedButton(
           onPressed: () {
             if (stringpreferences1?[1] == "ADMIN") {
-              if (toggle == 0) {
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => updatepage(
-                          codeproduct: allproductfordisplay[index].codeproduct,
-                          nameproduct: allproductfordisplay[index].nameproduct,
-                          type: allproductfordisplay[index].alltype,
-                          pdpd: allproductfordisplay[index].productset,
-                          score: allproductfordisplay[index].score,
-                          amount: allproductfordisplay[index].amount,
-                          amountper: allproductfordisplay[index].amountpercrate,
-                          price: allproductfordisplay[index].price,
-                          pathimg: allproductfordisplay[index].pathimg,
-                          nameimg: allproductfordisplay[index].nameimg,
-                        )));
-              } else {
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => updatepage(
-                          codeproduct: getcodeproduct[0],
-                          nameproduct: getnameproduct[0],
-                          type: gettype[0],
-                          pdpd: getproductset[0],
-                          score: getscore[0],
-                          amount: amountsort[0],
-                          amountper: getamountpercrate[0],
-                          price: allproductfordisplay[0].price,
-                          pathimg: allproductfordisplay[index].pathimg,
-                          nameimg: allproductfordisplay[0].nameimg,
-                        )));
-              }
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (context) => updatepage(
+                        codeproduct: allproductfordisplay[index].codeproduct,
+                        nameproduct: allproductfordisplay[index].nameproduct,
+                        type: allproductfordisplay[index].alltype,
+                        pdpd: allproductfordisplay[index].productset,
+                        score: allproductfordisplay[index].score,
+                        amount: allproductfordisplay[index].amount,
+                        amountper: allproductfordisplay[index].amountpercrate,
+                        price: allproductfordisplay[index].price,
+                        pathimg: allproductfordisplay[index].pathimg,
+                        nameimg: allproductfordisplay[index].nameimg,
+                      )));
             } else {
               inputnumber(index);
             }
@@ -687,154 +641,82 @@ class _checkstock extends State<checkstock> {
                       children: <Widget>[
                         Row(
                           children: [
-                            toggle != 0
-                                ? SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width / 1.8,
-                                    child: Text(
-                                      getnameproduct[0] +
-                                          "(" +
-                                          getproductset[0] +
-                                          "ละ" +
-                                          "${getamountpercrate[0]}" +
-                                          ")",
-                                      maxLines: 2,
-                                      style: TextStyle(
-                                          fontSize: 16.sp,
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: 'newbodyfont',
-                                          color: Colors.black),
-                                    ),
-                                  )
-                                : SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width / 1.8,
-                                    child: Text(
-                                      allproductfordisplay[index].nameproduct +
-                                          "(" +
-                                          allproductfordisplay[index]
-                                              .productset +
-                                          "ละ" +
-                                          "${allproductfordisplay[index].amountpercrate}" +
-                                          ")",
-                                      maxLines: 2,
-                                      style: TextStyle(
-                                          fontSize: 16.sp,
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: 'newbodyfont',
-                                          color: Colors.black),
-                                    ),
-                                  ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width / 1.8,
+                              child: Text(
+                                allproductfordisplay[index].nameproduct +
+                                    "(" +
+                                    allproductfordisplay[index].productset +
+                                    "ละ" +
+                                    "${allproductfordisplay[index].amountpercrate}" +
+                                    ")",
+                                maxLines: 2,
+                                style: TextStyle(
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'newbodyfont',
+                                    color: Colors.black),
+                              ),
+                            ),
                           ],
                         ),
-                        toggle != 0
-                            ? Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    getcodeproduct[0],
-                                    style: TextConstants.textstyle,
-                                  ),
-                                  Text(
-                                    "ประเภท: ${gettype[0]}",
-                                    style: TextConstants.textstyle,
-                                  ),
-                                  amountsort[0] == 0
-                                      ? Text(
-                                          "จำนวน : ${amountsort[0]}",
-                                          style: TextStyle(
-                                              fontSize: 18.sp,
-                                              fontFamily: 'newbodyfont',
-                                              color: Colors.red),
-                                        )
-                                      : Text(
-                                          "จำนวน : ${amountsort[0]}" +
-                                              "(${(amountsort[0] / getamountpercrate[0]).toInt()}" +
-                                              getproductset[0] +
-                                              ")",
-                                          style: TextConstants.textstyle,
-                                        ),
-                                  Text(
-                                    "ราคา: ${getprice[0]}",
-                                    style: TextConstants.textstyle,
-                                  ),
-                                ],
-                              )
-                            : Row(
-                                //row for image and column
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        allproductfordisplay[index].codeproduct,
+                        Row(
+                          //row for image and column
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  allproductfordisplay[index].codeproduct,
+                                  style: TextConstants.textstyle,
+                                ),
+                                Text(
+                                  "ประเภท: ${allproductfordisplay[index].alltype}",
+                                  style: TextConstants.textstyle,
+                                ),
+                                allproductfordisplay[index].amount == 0
+                                    ? Text(
+                                        "จำนวน : ${allproductfordisplay[index].amount}",
+                                        style: TextStyle(
+                                            fontSize: 18.sp,
+                                            fontFamily: 'newbodyfont',
+                                            color: Colors.red),
+                                      )
+                                    : Text(
+                                        "จำนวน : ${allproductfordisplay[index].amount}" +
+                                            "(${((allproductfordisplay[index].amount) / allproductfordisplay[index].amountpercrate).toInt()}" +
+                                            allproductfordisplay[index]
+                                                .productset +
+                                            ")",
                                         style: TextConstants.textstyle,
                                       ),
-                                      Text(
-                                        "ประเภท: ${allproductfordisplay[index].alltype}",
-                                        style: TextConstants.textstyle,
-                                      ),
-                                      allproductfordisplay[index].amount == 0
-                                          ? Text(
-                                              "จำนวน : ${allproductfordisplay[index].amount}",
-                                              style: TextStyle(
-                                                  fontSize: 18.sp,
-                                                  fontFamily: 'newbodyfont',
-                                                  color: Colors.red),
-                                            )
-                                          : Text(
-                                              "จำนวน : ${allproductfordisplay[index].amount}" +
-                                                  "(${((allproductfordisplay[index].amount) / allproductfordisplay[index].amountpercrate).toInt()}" +
-                                                  allproductfordisplay[index]
-                                                      .productset +
-                                                  ")",
-                                              style: TextConstants.textstyle,
-                                            ),
-                                      Text(
-                                        "ราคา: ${allproductfordisplay[index].price}",
-                                        style: TextConstants.textstyle,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                Text(
+                                  "ราคา: ${allproductfordisplay[index].price}",
+                                  style: TextConstants.textstyle,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
-                  toggle != 0
-                      ? getimg[0] == null || getimg[0] == "null"
-                          ? SizedBox()
-                          : Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                // add border
-                                border:
-                                    Border.all(width: 2, color: Colors.white),
-                              ),
-                              height: 90.sp,
-                              width: 90.sp,
-                              child: Image.network(
-                                  "http://185.78.165.189:8000/img/${allproductfordisplay[0].pathimg}/${getimg[0]}"),
-                            )
-                      : allproductfordisplay[index].nameimg == null ||
-                              allproductfordisplay[index].nameimg == "null"
-                          ? SizedBox()
-                          : Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                // add border
-                                border:
-                                    Border.all(width: 2, color: Colors.white),
-                              ),
-                              height: 90.sp,
-                              width: 90.sp,
-                              child: Image.network(
-                                  "http://185.78.165.189:8000/img/${allproductfordisplay[index].pathimg}/${allproductfordisplay[index].nameimg}"),
-                            )
+                  allproductfordisplay[index].nameimg == null ||
+                          allproductfordisplay[index].nameimg == "null"
+                      ? SizedBox()
+                      : Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            // add border
+                            border: Border.all(width: 2, color: Colors.white),
+                          ),
+                          height: 90.sp,
+                          width: 90.sp,
+                          child: Image.network(
+                              "http://185.78.165.189:8000/img/${allproductfordisplay[index].pathimg}/${allproductfordisplay[index].nameimg}"),
+                        )
                 ],
               ),
             ),
@@ -917,19 +799,69 @@ class _checkstock extends State<checkstock> {
 
     grouptype = LinkedHashSet<String>.from(getgrouptype).toList();
 
-    for (int i = 0; i < _allproduct.length; i++) {
-      groupamountsort.add(0);
-      groupamountreversed.add(0);
-      showlistamount.add(0);
+    return _allproduct;
+  }
+
+  Future<List<Getallproduct>> fectalldataasc() async {
+    SharedPreferences preferences1 = await SharedPreferences.getInstance();
+    stringpreferences1 = preferences1.getStringList("codestore");
+
+    String url = "http://185.78.165.189:3000/pythonapi/codestore/sortamountasc";
+    List<Getallproduct>? _allproduct = [];
+
+    var body = {"codestore": stringpreferences1![0]};
+    http.Response response = await http.post(Uri.parse(url),
+        headers: {'Content-Type': 'application/json; charset=utf-8'},
+        body: JsonEncoder().convert(body));
+
+    dynamic jsonres = json.decode(response.body);
+    for (var u in jsonres) {
+      Getallproduct data = Getallproduct(
+          u["codeproduct"],
+          u["nameproduct"],
+          u["amount"],
+          u["amountpercrate"],
+          u["productset"],
+          u["type"],
+          u["score"],
+          u["price"],
+          u["fav"],
+          u["pathimg"],
+          u["nameimg"]);
+      _allproduct.add(data);
     }
-    for (int i = 0; i < _allproduct.length; i++) {
-      groupamountsort[i] = getamount[i];
-    }
-    if (mounted) {
-      setState(() {
-        groupamountsort.sort();
-        groupamountreversed = groupamountsort.reversed.toList();
-      });
+
+    return _allproduct;
+  }
+
+  Future<List<Getallproduct>> fectalldatadesc() async {
+    SharedPreferences preferences1 = await SharedPreferences.getInstance();
+    stringpreferences1 = preferences1.getStringList("codestore");
+
+    String url =
+        "http://185.78.165.189:3000/pythonapi/codestore/sortamountdesc";
+    List<Getallproduct>? _allproduct = [];
+
+    var body = {"codestore": stringpreferences1![0]};
+    http.Response response = await http.post(Uri.parse(url),
+        headers: {'Content-Type': 'application/json; charset=utf-8'},
+        body: JsonEncoder().convert(body));
+
+    dynamic jsonres = json.decode(response.body);
+    for (var u in jsonres) {
+      Getallproduct data = Getallproduct(
+          u["codeproduct"],
+          u["nameproduct"],
+          u["amount"],
+          u["amountpercrate"],
+          u["productset"],
+          u["type"],
+          u["score"],
+          u["price"],
+          u["fav"],
+          u["pathimg"],
+          u["nameimg"]);
+      _allproduct.add(data);
     }
 
     return _allproduct;
@@ -937,7 +869,7 @@ class _checkstock extends State<checkstock> {
 
   Future<void> scanbarcode() async {
     String barcodeScanRes;
-    // Platform messages may fail, so we use a try/catch PlatformException.
+
     try {
       barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
           '#ff6666', 'Cancel', true, ScanMode.BARCODE);
@@ -1128,5 +1060,71 @@ class _checkstock extends State<checkstock> {
     await canLaunch(LineURL)
         ? await launch(LineURL)
         : throw 'Could not launch $LineURL';
+  }
+
+  void cancellinenoti() => showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          content: SizedBox(
+            height: 80.sp,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                new Text("ยกเลิกการแจ้งเตือนผ่านไลน์ ?"),
+                Padding(padding: EdgeInsets.only(top: 20.0)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    TextButton(
+                        child: Container(
+                            width: 18.w,
+                            height: 5.h,
+                            color: Colors.green,
+                            child: Center(
+                                child: Text(
+                              "Yes",
+                              style: TextStyle(color: Colors.white),
+                            ))),
+                        onPressed: () {
+                          deletelineuid();
+                        }),
+                    TextButton(
+                        child: Container(
+                            width: 18.w,
+                            height: 5.h,
+                            color: Colors.red,
+                            child: Center(
+                                child: Text(
+                              "No",
+                              style: TextStyle(color: Colors.white),
+                            ))),
+                        onPressed: () {
+                          Navigator.canPop(context)
+                              ? Navigator.pop(context)
+                              : null;
+                        })
+                  ],
+                ),
+                // ignore: unnecessary_new
+              ],
+            ),
+          ),
+        ),
+      );
+
+  Future deletelineuid() async {
+    try {
+      String url =
+          "http://185.78.165.189:3000/pythonapi/deletelineuid/${stringpreferences1![2]}";
+
+      http.Response response = await http.delete(Uri.parse(url),
+          headers: {'Content-Type': 'application/json; charset=utf-8'});
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (context) {
+        return MyApp();
+      }));
+    } catch (e) {
+      print(e);
+    }
   }
 }

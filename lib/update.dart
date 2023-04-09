@@ -83,7 +83,10 @@ class _updatepage extends State<updatepage> {
               ),
               backgroundColor: ColorConstants.appbarcolor,
               leading: IconButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    SharedPreferences pagepref =
+                        await SharedPreferences.getInstance();
+                    pagepref.setInt("pagepre", 1);
                     Navigator.of(context).pushReplacement(
                         MaterialPageRoute(builder: (context) => MyApp()));
                   },
@@ -397,13 +400,7 @@ class _updatepage extends State<updatepage> {
   Widget listitem() {
     return Card(
         elevation: 2,
-        color: widget.score == 4
-            ? ColorConstants.sc4
-            : widget.score == 3
-                ? ColorConstants.sc3
-                : widget.score == 2
-                    ? ColorConstants.sc2
-                    : Colors.grey[50],
+        color: ColorConstants.cardcolor,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 1.h, vertical: 0.w),
           child: SingleChildScrollView(
@@ -501,9 +498,8 @@ class _updatepage extends State<updatepage> {
             "score": score.text.trim(),
             "amount": amount.text.trim(),
             "price": price.text.trim(),
-            "pathimg": stringpreferences1![0],
+            "pathimg": "Cpic",
             "nameimg": "null",
-            // "nameimg": selectedImage!.path.split('/').last,
             "codestore": stringpreferences1![0],
             "codeproduct": widget.codeproduct
           };
@@ -539,7 +535,7 @@ class _updatepage extends State<updatepage> {
             "score": score.text.trim(),
             "amount": amount.text.trim(),
             "price": price.text.trim(),
-            "pathimg": stringpreferences1![0],
+            "pathimg": "Cpic",
             "nameimg": getnameimg,
             "codestore": stringpreferences1![0],
             "codeproduct": widget.codeproduct

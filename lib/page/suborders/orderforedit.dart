@@ -66,7 +66,10 @@ class _orderforedit extends State<orderforedit> {
           child: Scaffold(
               appBar: AppBar(
                 leading: IconButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      SharedPreferences pagepref =
+                          await SharedPreferences.getInstance();
+                      pagepref.setInt("pagepre", 1);
                       Navigator.of(context).pushReplacement(
                           MaterialPageRoute(builder: (context) => MyApp()));
                     },

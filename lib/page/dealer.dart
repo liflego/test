@@ -223,8 +223,7 @@ class _dealerpageState extends State<dealerpage> {
                                         fontFamily: 'newtitlefont'),
                                   ),
                                   onPressed: () {
-                                    //showdialog
-                                    //cancle
+                                    cancellinenoti();
                                   },
                                 ))),
                 ),
@@ -247,6 +246,9 @@ class _dealerpageState extends State<dealerpage> {
                             fontFamily: 'newtitlefont'),
                       ),
                       onPressed: () async {
+                        SharedPreferences pagepref =
+                            await SharedPreferences.getInstance();
+                        pagepref.setInt("pagepre", 0);
                         stringpreferences1!.clear();
                         SharedPreferences preferences1 =
                             await SharedPreferences.getInstance();
@@ -618,24 +620,6 @@ class _dealerpageState extends State<dealerpage> {
     }
   }
 
-  // Future gotosubstore(index) async {
-  //   cusdata = [
-  //     alldealerfordisplay[index].cuscode,
-  //     alldealerfordisplay[index].cusname,
-  //     alldealerfordisplay[index].address,
-  //     alldealerfordisplay[index].phone,
-  //     alldealerfordisplay[index].notes,
-  //     alldealerfordisplay[index].score.toString()
-  //   ];
-
-  //   SharedPreferences prefercustomer = await SharedPreferences.getInstance();
-  //   prefercustomer.setStringList("cusdata", cusdata);
-  //   Navigator.of(context).pushReplacement(MaterialPageRoute(
-  //       builder: (context) => storehis(
-  //             cusdata: cusdata,
-  //           )));
-  // }
-
   Future insertintonotice() async {
     if (_formkey.currentState!.validate()) {
       try {
@@ -812,10 +796,7 @@ class _dealerpageState extends State<dealerpage> {
           "cuscode": stringpreferences1![0],
           "cusname": stringpreferences1![3],
           "phone": list[0].trim(),
-          "address": list[1].trim(),
           "codestore": list[2].trim(),
-          "notes": "Putyournote",
-          "score": 3,
           "saleid": list[3].trim(),
           "dealerid": stringpreferences1![2]
         };

@@ -10,7 +10,6 @@ import 'package:flutter_hex_color/flutter_hex_color.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
-import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -37,10 +36,7 @@ class _googlelogin extends State<googlelogin> {
   late int ttt;
   late String s;
   late String codestore;
-  Location location = new Location();
   late bool _serviceEnbled;
-  late PermissionStatus _permissionGrranted;
-  LocationData? _locationData;
   bool _isGetlocation = false;
   // final position = ['ADMIN', 'SALE', 'DEALER'];
   // String? value1;

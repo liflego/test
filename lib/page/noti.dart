@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sigma_space/login.dart';
 import 'package:sigma_space/page/chectsotck.dart';
-import 'package:sigma_space/page/subnoti/notioderlist.dart';
+import 'package:sigma_space/page/subnoti/notiorderlist.dart';
 import 'package:sigma_space/page/substore/customerhis.dart';
 import 'package:sizer/sizer.dart';
 import 'package:textfield_search/textfield_search.dart';
@@ -48,6 +48,7 @@ class _notipage extends State<notipage> {
           top: false,
           child: Scaffold(
             appBar: AppBar(
+              automaticallyImplyLeading: false,
               backgroundColor: ColorConstants.appbarcolor,
               toolbarHeight: 7.h,
               title: Text(
@@ -79,7 +80,7 @@ class _notipage extends State<notipage> {
           children: [
             Container(
               color: Colors.blue[900],
-              width: MediaQuery.of(context).size.width / 2,
+              width: MediaQuery.of(context).size.width / 2.25,
               height: MediaQuery.of(context).size.height,
               child: OutlinedButton(
                 onPressed: () {

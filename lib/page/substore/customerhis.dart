@@ -21,11 +21,8 @@ class _storehisState extends State<storehis> {
   List<String>? stringpreferences1;
   List<GetorderBycodestoreandcuscodeandordernumber> allorder = [];
   List<GetorderBycodestoreandcuscodeandordernumber> allorderfordisplay = [];
-
   TextEditingController score = TextEditingController();
-
   var refreshkey = GlobalKey<RefreshIndicatorState>();
-
   var grouptype = [];
 
   @override
@@ -49,8 +46,14 @@ class _storehisState extends State<storehis> {
           child: Scaffold(
             appBar: AppBar(
               leading: new BackButton(
-                onPressed: () => Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => MyApp())),
+                onPressed: () async {
+                  SharedPreferences pagepref =
+                      await SharedPreferences.getInstance();
+                  pagepref.setInt("pagepre", 2);
+
+                  Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (context) => MyApp()));
+                },
               ),
               backgroundColor: ColorConstants.appbarcolor,
               toolbarHeight: 7.h,
@@ -76,7 +79,7 @@ class _storehisState extends State<storehis> {
                 ),
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.height / 1.8,
+                height: MediaQuery.of(context).size.height / 1.6,
                 child: ListView.builder(
                   itemBuilder: (context, index) {
                     return listItem(index);
