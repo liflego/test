@@ -82,9 +82,6 @@ class MyAppState extends State<MyApp> {
             },
             items: position?[1] == "ADMIN"
                 ? [
-                    // ignore: unnecessary_new
-
-                    // ignore: unnecessary_new
                     new BottomNavigationBarItem(
                       icon: Icon(
                         Icons.list,

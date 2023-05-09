@@ -715,7 +715,7 @@ class _checkstock extends State<checkstock> {
                           height: 90.sp,
                           width: 90.sp,
                           child: Image.network(
-                              "http://185.78.165.189:8000/img/${allproductfordisplay[index].pathimg}/${allproductfordisplay[index].nameimg}"),
+                              "http://185.78.165.189:8080/img/${allproductfordisplay[index].pathimg}/${allproductfordisplay[index].nameimg}"),
                         )
                 ],
               ),

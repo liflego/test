@@ -38,6 +38,7 @@ class _showlogoState extends State<showlogo> {
 
   autologin() async {
     final preferences1 = await SharedPreferences.getInstance();
+
     if (preferences1.getStringList("codestore") != null) {
       strintpre = preferences1.getStringList("codestore")!;
     }

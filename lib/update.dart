@@ -591,8 +591,7 @@ class _updatepage extends State<updatepage> {
     stringpreferences1 = preferences1.getStringList("codestore");
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse(
-          "http://185.78.165.189:3000/pythonapi/upload/${stringpreferences1![0]}"),
+      Uri.parse("http://185.78.165.189:3000/pythonapi/upload"),
     );
     Map<String, String> headers = {"Content-type": "multipart/form-data"};
     request.files.add(
