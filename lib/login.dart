@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+// import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
@@ -13,6 +13,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'classapi/class.dart';
 import 'main.dart';
 import 'package:sizer/sizer.dart';
+import 'package:email_otp/email_otp.dart';
 
 class login extends StatefulWidget {
   login({Key? key}) : super(key: key);
@@ -27,33 +28,19 @@ class _loginState extends State<login> {
   TextEditingController passwordString = TextEditingController();
   int? status;
   int? status2;
-  GoogleSignInAccount? _userObj;
-  GoogleSignIn _googleSignIn = GoogleSignIn();
+  // GoogleSignInAccount? _userObj;
+  // GoogleSignIn _googleSignIn = GoogleSignIn();
   String name = "";
   String email = "";
-  final auth = FirebaseAuth.instance;
+  // final auth = FirebaseAuth.instance;
   List<String> stringpreferences1 = [];
   List<String> stringpreferences2 = [];
-  String location = 'Current';
-  late String lat;
-  late String long;
-
+  EmailOTP myauth = EmailOTP();
+  bool toggle = false;
   @override
   void initState() {
     super.initState();
   }
-
-  // Future loginauto() async {
-  //   SharedPreferences preferences1 = await SharedPreferences.getInstance();
-
-  //   setState(() {
-  //     stringpreferences1 = preferences1.getStringList("codestore")!;
-  //     Navigator.of(context)
-  //         .pushReplacement(MaterialPageRoute(builder: (context) {
-  //       return MyApp();
-  //     }));
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -79,10 +66,21 @@ class _loginState extends State<login> {
                   padding: const EdgeInsets.only(top: 70.0),
                 ),
                 usernametext(),
-                passwordtext(),
-                buttonlogin(),
+                sentotp(),
+                OTPtext(),
                 register(),
-                googleloginbutton(),
+                toggle == true
+                    ? SizedBox(
+                        child: Column(
+                          children: [
+                            OTPtext(),
+                            register(),
+                          ],
+                        ),
+                      )
+                    : SizedBox()
+
+                // googleloginbutton(),
               ],
             ),
           ),
@@ -97,7 +95,7 @@ class _loginState extends State<login> {
       padding: EdgeInsets.only(top: 50, left: 40, right: 40),
       child: TextFormField(
         decoration: InputDecoration(
-          hintText: "Username",
+          hintText: "YOUR EMAIL ADDRESS",
           hintStyle: TextStyle(
               fontFamily: "newbodyfont",
               fontSize: 15.sp,
@@ -120,13 +118,13 @@ class _loginState extends State<login> {
     );
   }
 
-  Widget passwordtext() {
+  Widget OTPtext() {
     return Padding(
-      padding: EdgeInsets.only(top: 5, left: 40, right: 40),
+      padding: EdgeInsets.only(top: 60, left: 40, right: 40),
       child: TextFormField(
         decoration: InputDecoration(
           filled: false,
-          hintText: "Password",
+          hintText: "OTP VERIFY",
           hintStyle: TextStyle(
               fontFamily: "newbodyfont",
               fontSize: 15.sp,
@@ -150,19 +148,36 @@ class _loginState extends State<login> {
     );
   }
 
-  Widget buttonlogin() {
+  Widget sentotp() {
     return Padding(
-      padding: EdgeInsets.only(top: 60, left: 40, right: 40),
+      padding: EdgeInsets.only(top: 5, left: 40, right: 40),
       // ignore: deprecated_member_use
       child: Container(
         decoration: BoxDecoration(
             color: Colors.white,
             border: Border.all(width: 2, color: Colors.amber)),
         child: TextButton(
-          onPressed: doLogin,
+          onPressed: () async {
+            myauth.setConfig(
+                appEmail: "sigma.group2565@gmail.com",
+                appName: "SIGB OTP",
+                userEmail: usernameString.text,
+                otpLength: 6,
+                otpType: OTPType.digitsOnly);
+            if (await myauth.sendOTP() == true) {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text("OTP has been sent"),
+              ));
+              toggle = true;
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text("Oops, OTP send failed"),
+              ));
+            }
+          },
           child: Center(
             child: Text(
-              "Sign in",
+              "SENT OTP",
               style: TextStyle(
                   fontSize: 20.0.sp,
                   color: ColorConstants.buttoncolor,
@@ -181,10 +196,20 @@ class _loginState extends State<login> {
         style: ButtonStyle(
             backgroundColor:
                 MaterialStateProperty.all(ColorConstants.buttoncolor)),
-        onPressed: null,
+        onPressed: () async {
+          if (await myauth.verifyOTP(otp: passwordString.text) == true) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("OTP is verified"),
+            ));
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("Invalid OTP"),
+            ));
+          }
+        },
         child: Center(
           child: Text(
-            "Register",
+            "LOG IN",
             style: TextStyle(
                 fontSize: 20.0.sp,
                 color: Colors.white,
@@ -195,19 +220,19 @@ class _loginState extends State<login> {
     );
   }
 
-  Widget googleloginbutton() {
-    return Padding(
-      padding: EdgeInsets.only(top: 80),
-      // ignore: deprecated_member_use
-      child: SizedBox(
-        child: Center(
-          child: SignInButton(Buttons.GoogleDark, onPressed: () {
-            signInWithGoogle();
-          }),
-        ),
-      ),
-    );
-  }
+  // Widget googleloginbutton() {
+  //   return Padding(
+  //     padding: EdgeInsets.only(top: 80),
+  //     // ignore: deprecated_member_use
+  //     child: SizedBox(
+  //       child: Center(
+  //         child: SignInButton(Buttons.GoogleDark, onPressed: () {
+  //           signInWithGoogle();
+  //         }),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Future doLogin() async {
     if (_formkey.currentState!.validate()) {
@@ -272,104 +297,96 @@ class _loginState extends State<login> {
     }
   }
 
-  Future doLogingg() async {
-    try {
-      String url = "http://185.78.165.189:3000/pythonapi/login";
+  // Future doLogingg() async {
+  //   try {
+  //     String url = "http://185.78.165.189:3000/pythonapi/login";
 
-      var body = {
-        "username": FirebaseAuth.instance.currentUser!.email,
-        "uid": FirebaseAuth.instance.currentUser!.uid
-      };
-      print(body);
+  //     var body = {
+  //       "username": FirebaseAuth.instance.currentUser!.email,
+  //       "uid": FirebaseAuth.instance.currentUser!.uid
+  //     };
+  //     print(body);
 
-      http.Response response = await http.post(Uri.parse(url),
-          headers: {'Content-Type': 'application/json; charset=utf-8'},
-          body: JsonEncoder().convert(body));
+  //     http.Response response = await http.post(Uri.parse(url),
+  //         headers: {'Content-Type': 'application/json; charset=utf-8'},
+  //         body: JsonEncoder().convert(body));
 
-      if (response.statusCode == 200) {
-        var jsonRes = json.decode(response.body);
+  //     if (response.statusCode == 200) {
+  //       var jsonRes = json.decode(response.body);
 
-        if (jsonRes["success"] == 1) {
-          if (jsonRes["auth"] == null) {
-            stringpreferences1 = [
-              jsonRes["codestore"],
-              jsonRes["position"],
-              jsonRes["userid"].toString(),
-              jsonRes["namestore"],
-              "null",
-            ];
-          } else {
-            stringpreferences1 = [
-              jsonRes["codestore"],
-              jsonRes["position"],
-              jsonRes["userid"].toString(),
-              jsonRes["namestore"],
-              jsonRes["auth"],
-            ];
-          }
+  //       if (jsonRes["success"] == 1) {
+  //         if (jsonRes["auth"] == null) {
+  //           stringpreferences1 = [
+  //             jsonRes["codestore"],
+  //             jsonRes["position"],
+  //             jsonRes["userid"].toString(),
+  //             jsonRes["namestore"],
+  //             "null",
+  //           ];
+  //         } else {
+  //           stringpreferences1 = [
+  //             jsonRes["codestore"],
+  //             jsonRes["position"],
+  //             jsonRes["userid"].toString(),
+  //             jsonRes["namestore"],
+  //             jsonRes["auth"],
+  //           ];
+  //         }
 
-          SharedPreferences preferences1 =
-              await SharedPreferences.getInstance();
-          preferences1.setStringList("codestore", stringpreferences1);
+  //         SharedPreferences preferences1 =
+  //             await SharedPreferences.getInstance();
+  //         preferences1.setStringList("codestore", stringpreferences1);
 
-          Navigator.of(context)
-              .pushReplacement(MaterialPageRoute(builder: (context) {
-            return MyApp();
-          }));
-        } else {
-          return Navigator.of(context)
-              .pushReplacement(MaterialPageRoute(builder: (context) {
-            return handleAuthState();
-          }));
-        }
-      } else {
-        //print("Server error");
-        return Navigator.of(context)
-            .pushReplacement(MaterialPageRoute(builder: (context) {
-          return googlelogin();
-        }));
-      }
-    } catch (error) {
-      print(error);
-    }
-  }
+  //         Navigator.of(context)
+  //             .pushReplacement(MaterialPageRoute(builder: (context) {
+  //           return MyApp();
+  //         }));
+  //       } else {
+  //         return Navigator.of(context)
+  //             .pushReplacement(MaterialPageRoute(builder: (context) {
+  //           return handleAuthState();
+  //         }));
+  //       }
+  //     } else {
+  //       //print("Server error");
+  //       return Navigator.of(context)
+  //           .pushReplacement(MaterialPageRoute(builder: (context) {
+  //         return googlelogin();
+  //       }));
+  //     }
+  //   } catch (error) {
+  //     print(error);
+  //   }
+  // }
 
-  signInWithGoogle() async {
-    // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser =
-        await GoogleSignIn(scopes: <String>["email"]).signIn();
+  // signInWithGoogle() async {
+  //   // Trigger the authentication flow
+  //   final GoogleSignInAccount? googleUser =
+  //       await GoogleSignIn(scopes: <String>["email"]).signIn();
 
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser!.authentication;
+  //   // Obtain the auth details from the request
+  //   final GoogleSignInAuthentication googleAuth =
+  //       await googleUser!.authentication;
 
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-    doLogingg();
-    // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(credential);
-  }
+  //   // Create a new credential
+  //   final credential = GoogleAuthProvider.credential(
+  //     accessToken: googleAuth.accessToken,
+  //     idToken: googleAuth.idToken,
+  //   );
+  //   doLogingg();
+  //   // Once signed in, return the UserCredential
+  //   return await FirebaseAuth.instance.signInWithCredential(credential);
+  // }
 
-  handleAuthState() {
-    return StreamBuilder(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (BuildContext context, snapshot) {
-          if (snapshot.hasData) {
-            return googlelogin();
-          } else {
-            return login();
-          }
-        });
-  }
-
-  Future<void> _openmap(double lat, double long) async {
-    String googleURL =
-        'https://www.google.com/maps/search/?api=1&query=$lat,$long';
-    await canLaunch(googleURL)
-        ? await launch(googleURL)
-        : throw 'Could not launch $googleURL';
-  }
+  // handleAuthState() {
+  //   return StreamBuilder(
+  //       stream: FirebaseAuth.instance.authStateChanges(),
+  //       builder: (BuildContext context, snapshot) {
+  //         if (snapshot.hasData) {
+  //           return googlelogin();
+  //         } else {
+  //           return login();
+  //         }
+  //       });
+  // }
 }
