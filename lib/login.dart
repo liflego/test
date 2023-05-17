@@ -36,7 +36,7 @@ class _loginState extends State<login> {
   List<String> stringpreferences1 = [];
   List<String> stringpreferences2 = [];
   EmailOTP myauth = EmailOTP();
-  bool toggle = false;
+
   @override
   void initState() {
     super.initState();
@@ -69,16 +69,6 @@ class _loginState extends State<login> {
                 sentotp(),
                 OTPtext(),
                 register(),
-                toggle == true
-                    ? SizedBox(
-                        child: Column(
-                          children: [
-                            OTPtext(),
-                            register(),
-                          ],
-                        ),
-                      )
-                    : SizedBox()
 
                 // googleloginbutton(),
               ],
@@ -136,7 +126,7 @@ class _loginState extends State<login> {
             borderSide: BorderSide(color: Colors.amber, width: 2),
           ),
         ),
-        obscureText: true,
+        obscureText: false,
         controller: passwordString,
         validator: (input) {
           if (input!.isEmpty) {
@@ -168,7 +158,6 @@ class _loginState extends State<login> {
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Text("OTP has been sent"),
               ));
-              toggle = true;
             } else {
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Text("Oops, OTP send failed"),
@@ -201,6 +190,7 @@ class _loginState extends State<login> {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text("OTP is verified"),
             ));
+            doLogin();
           } else {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text("Invalid OTP"),
@@ -241,7 +231,6 @@ class _loginState extends State<login> {
 
         var body = {
           "username": usernameString.text.trim(),
-          "uid": passwordString.text.trim()
         };
 
         http.Response response = await http.post(Uri.parse(url),
