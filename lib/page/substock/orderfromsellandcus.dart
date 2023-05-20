@@ -866,11 +866,10 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
       Getcustomerstore data = Getcustomerstore(
           u["MAX(c.cusname)"] + "[" + u["MAX(c.cuscode)"] + "]",
           u["MAX(c.cuscode)"],
-          u["cusid"],
+          u["MAX(c.dealerid)"],
           u["auth"]);
       alldata.add(data);
       _list.add(u["MAX(c.cusname)"] + "[" + u["MAX(c.cuscode)"] + "]");
-      print(u["auth"]);
     }
 
     return _list;
@@ -934,11 +933,11 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
       String getcuscode = "";
       String getcodestore = "";
       String getauth = "";
-      int getcusid = 0;
+      int getdealerid = 0;
       if (stringpreferences1![1] == "DEALER") {
         getcodestore = getdatatocheckstock![0];
         getcuscode = stringpreferences1![0];
-        getcusid = int.parse(stringpreferences1![2]);
+        getdealerid = int.parse(stringpreferences1![2]);
       } else {
         getcodestore = stringpreferences1![0];
         //filtet cuscode
@@ -948,7 +947,8 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
         //filter cusid
         Iterable<Getcustomerstore> visicusid =
             alldata.where((cusid) => cusid.name.contains(mysearh.text.trim()));
-        visi.forEach((cusid) => getcusid = cusid.cusid);
+        visi.forEach((cusid) => getdealerid = cusid.dealerid);
+        print("cusid is $getdealerid");
         //filter lineauth
         Iterable<Getcustomerstore> visiauth =
             alldata.where((auth) => auth.name.contains(mysearh.text.trim()));
@@ -967,7 +967,7 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
           "codestore": getcodestore,
           "saleid": stringpreferences1![2],
           "cuscode": getcuscode.trim(),
-          "cusid": getcusid,
+          "cusid": getdealerid,
           "date": DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()),
           "pay": pay.trim(),
           "notes": notes.text.trim()
@@ -988,7 +988,7 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
       return showDialog(
           context: context,
           builder: (_) => new AlertDialog(
-                content: new Text("Update success"),
+                content: new Text("Orders success"),
                 actions: <Widget>[
                   TextButton(
                     child: Text('OK'),
