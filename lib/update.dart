@@ -355,7 +355,7 @@ class _updatepage extends State<updatepage> {
             child: Column(children: [
           selectedImage == null
               ? Text(
-                  "Select Image for Uploade",
+                  "UPLOAD IMAGE",
                   style: TextConstants.textStylenotes,
                 )
               : Image.file(selectedImage!),
@@ -374,7 +374,7 @@ class _updatepage extends State<updatepage> {
 
   Widget buttondone() {
     return Padding(
-      padding: EdgeInsets.all(5),
+      padding: EdgeInsets.all(20),
       child: Container(
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(

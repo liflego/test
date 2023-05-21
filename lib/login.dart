@@ -8,6 +8,7 @@ import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
+import 'package:sigma_space/page/sublogin/Createdealerac.dart';
 import 'package:sigma_space/page/sublogin/googlelogin.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'classapi/class.dart';
@@ -68,9 +69,8 @@ class _loginState extends State<login> {
                 usernametext(),
                 sentotp(),
                 OTPtext(),
-                register(),
-
-                // googleloginbutton(),
+                loginbt(),
+                registerbt()
               ],
             ),
           ),
@@ -178,7 +178,7 @@ class _loginState extends State<login> {
     );
   }
 
-  Widget register() {
+  Widget loginbt() {
     return Padding(
       padding: EdgeInsets.only(top: 5, left: 40, right: 40),
       child: TextButton(
@@ -210,6 +210,26 @@ class _loginState extends State<login> {
     );
   }
 
+  Widget registerbt() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 1.0.h, vertical: 40.0.w),
+      child: TextButton(
+        onPressed: () {
+          Navigator.of(context)
+              .pushReplacement(MaterialPageRoute(builder: (context) {
+            return createAcountfordealer();
+          }));
+        },
+        child: Text(
+          "Create Dealer Acount..",
+          style: TextStyle(
+              fontSize: 18.sp,
+              fontFamily: 'newbodyfont',
+              color: Colors.blue[400]),
+        ),
+      ),
+    );
+  }
   // Widget googleloginbutton() {
   //   return Padding(
   //     padding: EdgeInsets.only(top: 80),

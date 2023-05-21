@@ -469,7 +469,7 @@ class _addnewproductpage extends State<addnewproductpage> {
         child: Column(children: [
           selectedImage == null
               ? Text(
-                  "Select Image for Uploade",
+                  "UPLOAD IMAGE",
                   style: TextConstants.textStylenotes,
                 )
               : Image.file(selectedImage!),
@@ -488,7 +488,7 @@ class _addnewproductpage extends State<addnewproductpage> {
 
   Widget buttondone() {
     return Padding(
-      padding: EdgeInsets.all(5),
+      padding: EdgeInsets.all(10),
       child: Container(
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
@@ -588,7 +588,7 @@ class _addnewproductpage extends State<addnewproductpage> {
             return showDialog(
                 context: context,
                 builder: (_) => new AlertDialog(
-                      content: new Text("Update success"),
+                      content: new Text("ADD PRODUCT SUCCESS"),
                       actions: <Widget>[
                         TextButton(
                           child: Text('OK'),
@@ -631,7 +631,7 @@ class _addnewproductpage extends State<addnewproductpage> {
             return showDialog(
                 context: context,
                 builder: (_) => new AlertDialog(
-                      content: new Text("Update success"),
+                      content: new Text("ADD PRODUCT SUCCESS"),
                       actions: <Widget>[
                         TextButton(
                           child: Text('OK'),

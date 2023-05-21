@@ -150,9 +150,9 @@ class Getdeliverylist {
 class Getcustomerstore {
   String name;
   String code;
-  int cusid;
+  int dealerid;
   String auth;
-  Getcustomerstore(this.name, this.code, this.cusid, this.auth);
+  Getcustomerstore(this.name, this.code, this.dealerid, this.auth);
 }
 
 class Getallorders {

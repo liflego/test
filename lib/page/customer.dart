@@ -58,7 +58,7 @@ class _customerState extends State<customer> {
             backgroundColor: ColorConstants.appbarcolor,
             toolbarHeight: 7.h,
             title: Text(
-              "CUSTOMER",
+              "CUSTOMERS",
               style: TextStyle(fontFamily: 'newtitlefont', fontSize: 25.sp),
             ),
             actions: [
@@ -545,7 +545,6 @@ class _customerState extends State<customer> {
           u["MAX(c.saleid)"]);
       _allcustomer.add(data);
     }
-    print(_allcustomer[2].saleid);
     for (var i in jsonres) {
       toggleselect.add(false);
     }
