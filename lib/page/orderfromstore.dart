@@ -72,7 +72,8 @@ class _orderfromstoreState extends State<orderfromstore> {
                         width: MediaQuery.of(context).size.width,
                         child: Slidable(
                           endActionPane: stringpreferences1?[1] == "ADMIN" &&
-                                  allordersfordisplay[index].price != null
+                                  allordersfordisplay[index].price != null &&
+                                  allordersfordisplay[index].track == null
                               // ignore: prefer_const_constructors
                               ? ActionPane(
                                   motion: ScrollMotion(),
@@ -110,41 +111,83 @@ class _orderfromstoreState extends State<orderfromstore> {
                                     ),
                                   ],
                                 )
-                              : ActionPane(
-                                  motion: ScrollMotion(),
-                                  children: [
-                                    Container(
-                                      color: Colors.red,
-                                      width:
-                                          MediaQuery.of(context).size.width / 2,
-                                      height:
-                                          MediaQuery.of(context).size.height,
-                                      child: OutlinedButton(
-                                        onPressed: () {
-                                          cancelorder(index);
-                                        },
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              Icons.cancel,
-                                              color: Colors.white,
-                                              size: 22.sp,
-                                            ),
-                                            Text(
-                                              "Cancel",
-                                              style: TextStyle(
+                              : stringpreferences1?[1] == "ADMIN" &&
+                                      allordersfordisplay[index].track != null
+                                  ? ActionPane(
+                                      motion: ScrollMotion(),
+                                      // ignore: prefer_const_literals_to_create_immutables
+                                      children: [
+                                        Container(
+                                          color: Colors.cyan,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              2,
+                                          height: MediaQuery.of(context)
+                                              .size
+                                              .height,
+                                          child: OutlinedButton(
+                                            onPressed: () {},
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Icon(
+                                                  Icons.fire_truck,
                                                   color: Colors.white,
-                                                  fontFamily: 'newbodyfont',
-                                                  fontSize: 15.sp),
-                                            )
-                                          ],
+                                                  size: 22.sp,
+                                                ),
+                                                Text(
+                                                  "EDIT TRACK",
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontFamily: 'newbodyfont',
+                                                      fontSize: 15.sp),
+                                                )
+                                              ],
+                                            ),
+                                          ),
                                         ),
-                                      ),
+                                      ],
+                                    )
+                                  : ActionPane(
+                                      motion: ScrollMotion(),
+                                      children: [
+                                        Container(
+                                          color: Colors.red,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              2,
+                                          height: MediaQuery.of(context)
+                                              .size
+                                              .height,
+                                          child: OutlinedButton(
+                                            onPressed: () {
+                                              cancelorder(index);
+                                            },
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Icon(
+                                                  Icons.cancel,
+                                                  color: Colors.white,
+                                                  size: 22.sp,
+                                                ),
+                                                Text(
+                                                  "Cancel",
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontFamily: 'newbodyfont',
+                                                      fontSize: 15.sp),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
 
                           // The child of the Slidable is what the user sees when the
                           // component is not dragged.
@@ -396,7 +439,8 @@ class _orderfromstoreState extends State<orderfromstore> {
           u["MAX(b.cusname)"],
           u["countorder"],
           u["date"],
-          u["auth"]);
+          u["auth"],
+          u["track"]);
 
       _allorders.add(data);
       getgrouptype.add(u["type"]);
@@ -423,7 +467,7 @@ class _orderfromstoreState extends State<orderfromstore> {
                           controller: companyString,
                           validator: (input) {
                             if (input!.length < 1) {
-                              return "Please enter Company";
+                              return "PLEASE ENTER YOUR COMPANY";
                             }
                           },
                           textAlign: TextAlign.center,
@@ -438,7 +482,7 @@ class _orderfromstoreState extends State<orderfromstore> {
                           controller: trackString,
                           validator: (input) {
                             if (input!.length < 1) {
-                              return "Please enter Track number";
+                              return "PLEASE ENTER TRACE NUMBER";
                             }
                           },
                           textAlign: TextAlign.center,
@@ -527,7 +571,7 @@ class _orderfromstoreState extends State<orderfromstore> {
           return showDialog(
               context: context,
               builder: (_) => new AlertDialog(
-                    content: new Text("Plese enter your info."),
+                    content: new Text("PLEASE ENTER YOUR INFO."),
                     actions: <Widget>[
                       TextButton(
                         child: Text('OK'),
@@ -541,7 +585,8 @@ class _orderfromstoreState extends State<orderfromstore> {
         var body = {
           "ordernumber": allordersfordisplay[index].ordernumber,
           "company": companyString.text.trim(),
-          "track": trackString.text.trim()
+          "track": trackString.text.trim(),
+          "date": DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()),
         };
 
         http.Response response = await http.post(Uri.parse(url),
@@ -554,10 +599,10 @@ class _orderfromstoreState extends State<orderfromstore> {
           return showDialog(
               context: context,
               builder: (_) => new AlertDialog(
-                    content: new Text("Message send successfully"),
+                    content: new Text("DELIVERY SUCCESS"),
                     actions: <Widget>[
                       TextButton(
-                        child: Text('OK'),
+                        child: Text('DONE'),
                         onPressed: () {
                           companyString.clear();
                           trackString.clear();

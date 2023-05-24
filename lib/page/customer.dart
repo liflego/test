@@ -348,7 +348,7 @@ class _customerState extends State<customer> {
                                 )),
                             allcustomer[index].address == null
                                 ? TextButton(
-                                    child: Text('Add Location',
+                                    child: Text('ADD LOCATION',
                                         style: TextStyle(
                                             fontSize: 16.sp,
                                             fontFamily: 'newbodyfont')),

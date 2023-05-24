@@ -855,9 +855,10 @@ class _orderforadminedit extends State<orderforadminedit> {
 
   Future updateadminconfirm() async {
     try {
-      String url = "http://185.78.165.189:3000/pythonapi/updateadminconfirm";
+      String url = "http://185.78.165.189:3000/pythonapi/updatenoti";
 
       var body = {
+        "message": "adminconfirm",
         "ordernumber": allorderfordisplay[0].ordernumber,
         "date": DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()),
       };

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
@@ -283,7 +284,7 @@ class _notipage extends State<notipage> {
                                             ),
                                             Text(
                                               allnoticefordisplay[index]
-                                                  .date
+                                                  .datedelivery
                                                   .substring(5, 25),
                                               style: TextConstants.textstyle,
                                             ),
@@ -312,9 +313,21 @@ class _notipage extends State<notipage> {
                                           "บริษัทขนส่ง : ${allnoticefordisplay[index].company}",
                                           style: TextConstants.textstyle,
                                         ),
-                                        Text(
-                                          "TRACK : ${allnoticefordisplay[index].company}",
-                                          style: TextConstants.textstyle,
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "TRACK : ${allnoticefordisplay[index].track}",
+                                              style: TextConstants.textstyle,
+                                            ),
+                                            IconButton(
+                                                onPressed: () {
+                                                  Clipboard.setData(ClipboardData(
+                                                      text: allnoticefordisplay[
+                                                              index]
+                                                          .track));
+                                                },
+                                                icon: Icon(Icons.copy_outlined))
+                                          ],
                                         ),
                                       ],
                                     ),
@@ -406,7 +419,8 @@ class _notipage extends State<notipage> {
           u["priceall"],
           u["company"],
           u["track"],
-          u["codestore"]);
+          u["codestore"],
+          u["date2"]);
       _allnotice.add(data);
     }
 

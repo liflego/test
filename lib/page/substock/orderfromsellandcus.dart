@@ -914,7 +914,7 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
         return showDialog(
             context: context,
             builder: (_) => new AlertDialog(
-                  content: new Text("Choose payment method"),
+                  content: new Text("CHOOSE YOUR PAYMENT METHOD"),
                   actions: <Widget>[
                     TextButton(
                       child: Text('OK'),
@@ -988,7 +988,7 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
       return showDialog(
           context: context,
           builder: (_) => new AlertDialog(
-                content: new Text("Orders success"),
+                content: new Text("ORDER SUCCESSFULLY"),
                 actions: <Widget>[
                   TextButton(
                     child: Text('OK'),
@@ -1103,21 +1103,7 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
                 "Bearer Udr/QZCEGnv1Ylq05t7fuQqCMK9OSuoN5dIUWI/l+t8LEa3hiv+9l4Z/BhdtGJKd0dlXvWxrot5y4M3s5ID9r091xsS32x6/td+PzuZF2cPU8p633PaPQ4+nFwvCcjua109piyIgCJ4C7BbJ1DAblwdB04t89/1O/w1cDnyilFU="
           },
           body: JsonEncoder().convert(body));
-    } catch (error) {
-      return showDialog(
-          context: context,
-          builder: (_) => new AlertDialog(
-                content: new Text("Email or password is not correct"),
-                actions: <Widget>[
-                  TextButton(
-                    child: Text('OK'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  )
-                ],
-              ));
-    }
+    } catch (error) {}
   }
 
   Future notiorderfordealer(getauth) async {
