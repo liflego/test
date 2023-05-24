@@ -112,9 +112,10 @@ class _loginState extends State<login> {
     return Padding(
       padding: EdgeInsets.only(top: 60, left: 40, right: 40),
       child: TextFormField(
+        keyboardType: TextInputType.number,
         decoration: InputDecoration(
           filled: false,
-          hintText: "OTP VERIFY",
+          hintText: "OTP VERIFICATION",
           hintStyle: TextStyle(
               fontFamily: "newbodyfont",
               fontSize: 15.sp,
@@ -221,7 +222,7 @@ class _loginState extends State<login> {
           }));
         },
         child: Text(
-          "Create Dealer Acount..",
+          "CREATE DEALER ACOUNT..",
           style: TextStyle(
               fontSize: 18.sp,
               fontFamily: 'newbodyfont',

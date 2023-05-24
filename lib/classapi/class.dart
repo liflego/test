@@ -165,9 +165,19 @@ class Getallorders {
   int amountlist;
   String date;
   String auth;
+  String track;
 
-  Getallorders(this.cuscode, this.ordernumber, this.pay, this.price,
-      this.saleconfirm, this.cusname, this.amountlist, this.date, this.auth);
+  Getallorders(
+      this.cuscode,
+      this.ordernumber,
+      this.pay,
+      this.price,
+      this.saleconfirm,
+      this.cusname,
+      this.amountlist,
+      this.date,
+      this.auth,
+      this.track);
 }
 
 // class for get data from noti database
@@ -184,6 +194,7 @@ class Getnotifordealer {
   String company;
   String track;
   String codestore;
+  String datedelivery;
 
   Getnotifordealer(
       this.ordernumber,
@@ -197,7 +208,8 @@ class Getnotifordealer {
       this.priceall,
       this.company,
       this.track,
-      this.codestore);
+      this.codestore,
+      this.datedelivery);
 }
 
 // uusadfiybh

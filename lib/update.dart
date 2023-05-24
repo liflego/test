@@ -469,10 +469,10 @@ class _updatepage extends State<updatepage> {
                                 ? SizedBox()
                                 : Container(
                                     color: Colors.white,
-                                    height: 100,
-                                    width: 100,
+                                    height: 90.sp,
+                                    width: 90.sp,
                                     child: Image.network(
-                                        "http://185.78.165.189:8000/img/${widget.pathimg}/${widget.nameimg}"),
+                                        "http://185.78.165.189:8080/img/${widget.pathimg}/${widget.nameimg}"),
                                   ),
                           ],
                         ),
@@ -513,7 +513,7 @@ class _updatepage extends State<updatepage> {
                 context: context,
                 // ignore: unnecessary_new
                 builder: (_) => new AlertDialog(
-                      content: new Text("Update success"),
+                      content: new Text("UPDATE SUCCESSFULLY"),
                       actions: <Widget>[
                         TextButton(
                           child: Text('OK'),
@@ -550,7 +550,7 @@ class _updatepage extends State<updatepage> {
                 context: context,
                 // ignore: unnecessary_new
                 builder: (_) => new AlertDialog(
-                      content: new Text("Update success"),
+                      content: new Text("UPDATE SUCCESSFULLY"),
                       actions: <Widget>[
                         TextButton(
                           child: Text('OK'),
