@@ -70,45 +70,50 @@ class _updatepage extends State<updatepage> {
 
   @override
   Widget build(BuildContext context) {
-    return Sizer(
-      builder: (context, orientation, deviceType) {
-        return SafeArea(
-          top: false,
-          child: Scaffold(
-            appBar: AppBar(
-              toolbarHeight: 7.h,
-              title: Text(
-                "UPDATE",
-                style: TextStyle(fontFamily: 'newtitlefont', fontSize: 25.sp),
-              ),
-              backgroundColor: ColorConstants.appbarcolor,
-              leading: IconButton(
-                  onPressed: () async {
-                    SharedPreferences pagepref =
-                        await SharedPreferences.getInstance();
-                    pagepref.setInt("pagepre", 1);
-                    Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => MyApp()));
-                  },
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
-                    size: 20.sp,
-                  )),
-            ),
-            backgroundColor: ColorConstants.backgroundbody,
-            body: Form(
-              key: _formkey,
-              child: ListView(children: [
-                SizedBox(child: listitem()),
-                update(),
-                selectimage(),
-                buttondone()
-              ]),
-            ),
-          ),
-        );
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
       },
+      child: Sizer(
+        builder: (context, orientation, deviceType) {
+          return SafeArea(
+            top: false,
+            child: Scaffold(
+              appBar: AppBar(
+                toolbarHeight: 7.h,
+                title: Text(
+                  "UPDATE",
+                  style: TextStyle(fontFamily: 'newtitlefont', fontSize: 25.sp),
+                ),
+                backgroundColor: ColorConstants.appbarcolor,
+                leading: IconButton(
+                    onPressed: () async {
+                      SharedPreferences pagepref =
+                          await SharedPreferences.getInstance();
+                      pagepref.setInt("pagepre", 1);
+                      Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (context) => MyApp()));
+                    },
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: Colors.white,
+                      size: 20.sp,
+                    )),
+              ),
+              backgroundColor: ColorConstants.backgroundbody,
+              body: Form(
+                key: _formkey,
+                child: ListView(children: [
+                  SizedBox(child: listitem()),
+                  update(),
+                  selectimage(),
+                  buttondone()
+                ]),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -579,11 +584,14 @@ class _updatepage extends State<updatepage> {
 
   Future getImage() async {
     final pickimage = await ImagePicker().getImage(source: ImageSource.gallery);
-    selectedImage = io.File(pickimage!.path);
-
-    setState(() {
-      getnameimg = selectedImage!.path.split('/').last.toString();
-    });
+    if (pickimage == null) {
+      return;
+    } else {
+      selectedImage = io.File(pickimage!.path);
+      setState(() {
+        getnameimg = selectedImage!.path.split('/').last.toString();
+      });
+    }
   }
 
   onUploadImage() async {
