@@ -39,6 +39,7 @@ class _addnewproductpage extends State<addnewproductpage> {
   int numm = 0;
   int numper = 1;
   io.File? selectedImage;
+  String? getnameimg;
 
   var resJson;
   String message = "";
@@ -559,7 +560,7 @@ class _addnewproductpage extends State<addnewproductpage> {
     if (_formkey.currentState!.validate()) {
       try {
         String url = "http://185.78.165.189:3000/pythonapi/insertproduct";
-        if (selectedImage == null || selectedImage == "null") {
+        if (selectedImage == null) {
           var body = {
             "codeproduct": code.text.trim(),
             "nameproduct": name.text.trim(),
@@ -614,7 +615,7 @@ class _addnewproductpage extends State<addnewproductpage> {
             "score": int.parse(score.text.trim()),
             "price": int.parse(price.text.trim()),
             "pathimg": "Cpic",
-            "nameimg": selectedImage!.path.split('/').last
+            "nameimg": getnameimg
           };
           http.Response response = await http.post(Uri.parse(url),
               headers: {'Content-Type': 'application/json; charset=utf-8'},
@@ -656,9 +657,14 @@ class _addnewproductpage extends State<addnewproductpage> {
 
   Future getImage() async {
     final pickimage = await ImagePicker().getImage(source: ImageSource.gallery);
-    selectedImage = io.File(pickimage!.path);
-
-    setState(() {});
+    if (pickimage == null) {
+      return;
+    } else {
+      selectedImage = io.File(pickimage!.path);
+      setState(() {
+        getnameimg = selectedImage!.path.split('/').last.toString();
+      });
+    }
   }
 
   onUploadImage() async {
