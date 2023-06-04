@@ -5,12 +5,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sigma_space/classapi/class.dart';
 import 'package:sigma_space/main.dart';
 import 'package:sizer/sizer.dart';
 import 'package:http/http.dart' as http;
+import 'dart:io' as io;
 
 class orderforadminedit extends StatefulWidget {
   int ordernumber;
@@ -56,7 +58,8 @@ class _orderforadminedit extends State<orderforadminedit> {
   TextEditingController step1 = TextEditingController();
   TextEditingController step2 = TextEditingController();
   TextEditingController step3 = TextEditingController();
-
+  io.File? selectedImage;
+  String? getnameimg;
   @override
   void initState() {
     listgetdatastore().then((value) {
@@ -174,12 +177,13 @@ class _orderforadminedit extends State<orderforadminedit> {
                   togglecal == true ? chooseall() : SizedBox(),
                   SizedBox(height: 5.sp),
                   Container(
-                    color: Colors.white,
+                    color: Colors.grey[200],
                     height: MediaQuery.of(context).size.height / 2.4,
                     child: listitems(),
                   ),
                   textpriceall(),
                   note(),
+                  selectimage(),
                   done()
                 ],
               )));
@@ -752,6 +756,47 @@ class _orderforadminedit extends State<orderforadminedit> {
     );
   }
 
+  Widget selectimage() {
+    return Padding(
+        padding: EdgeInsets.all(5),
+        child: Center(
+            child: Column(children: [
+          selectedImage == null
+              ? Text(
+                  "UPLOAD IMAGE",
+                  style: TextConstants.textStylenotes,
+                )
+              : Image.file(
+                  selectedImage!,
+                  width: 90.sp,
+                  height: 90.sp,
+                ),
+          TextButton.icon(
+              style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all(ColorConstants.buttoncolor)),
+              onPressed: getImage,
+              icon: Icon(Icons.upload),
+              label: Text(
+                "UPLOAD",
+                style: TextConstants.textstyle,
+              ))
+        ])));
+  }
+
+  Future getImage() async {
+    // ignore: deprecated_member_use
+    final pickimage = await ImagePicker().getImage(source: ImageSource.gallery);
+    if (pickimage == null) {
+      return;
+    } else {
+      selectedImage = io.File(pickimage!.path);
+      setState(() {
+        getnameimg = selectedImage!.path.split('/').last.toString();
+      });
+    }
+  }
+
   Widget done() {
     return SizedBox(
       child: Padding(
@@ -862,15 +907,42 @@ class _orderforadminedit extends State<orderforadminedit> {
         "ordernumber": allorderfordisplay[0].ordernumber,
         "date": DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()),
       };
-      print(body);
 
       http.Response response = await http.patch(Uri.parse(url),
           headers: {'Content-Type': 'application/json; charset=utf-8'},
           body: JsonEncoder().convert(body));
       updateprice();
+      if (selectedImage != null) {
+        onUploadImage();
+      }
     } catch (error) {
       print(error);
     }
+  }
+
+  onUploadImage() async {
+    SharedPreferences preferences1 = await SharedPreferences.getInstance();
+    stringpreferences1 = preferences1.getStringList("codestore");
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse("http://185.78.165.189:3000/pythonapi/uploadimgdelivery"),
+    );
+    Map<String, String> headers = {"Content-type": "multipart/form-data"};
+    request.files.add(
+      http.MultipartFile(
+        'image',
+        selectedImage!.readAsBytes().asStream(),
+        selectedImage!.lengthSync(),
+        filename: selectedImage!.path.split('/').last,
+      ),
+    );
+    request.headers.addAll(headers);
+    var res = await request.send();
+    http.Response response = await http.Response.fromStream(res);
+    setState(() {
+      var resJson = jsonDecode(response.body);
+      selectedImage = null;
+    });
   }
 
   Future updateprice() async {
