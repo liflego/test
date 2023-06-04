@@ -123,7 +123,7 @@ class _notipage extends State<notipage> {
             child: Padding(
                 padding: const EdgeInsets.all(5.0),
                 child: allnoticefordisplay[index].message == "order" &&
-                        allnoticefordisplay[index].company == null
+                        allnoticefordisplay[index].track == null
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -247,7 +247,7 @@ class _notipage extends State<notipage> {
                             ],
                           )
                         : allnoticefordisplay[index].message == "order" &&
-                                allnoticefordisplay[index].company != ""
+                                allnoticefordisplay[index].track != null
                             ? Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -309,10 +309,6 @@ class _notipage extends State<notipage> {
                                                 "จำนวนเงิน : ${allnoticefordisplay[index].priceall} บาท",
                                                 style: TextConstants.textstyle,
                                               ),
-                                        Text(
-                                          "บริษัทขนส่ง : ${allnoticefordisplay[index].company}",
-                                          style: TextConstants.textstyle,
-                                        ),
                                         Row(
                                           children: [
                                             Text(
@@ -417,7 +413,6 @@ class _notipage extends State<notipage> {
           u["MAX(b.pay)"],
           u["countorder"],
           u["priceall"],
-          u["company"],
           u["track"],
           u["codestore"],
           u["date2"]);
