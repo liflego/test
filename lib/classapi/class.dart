@@ -191,7 +191,6 @@ class Getnotifordealer {
   String pay;
   int countorder;
   num priceall;
-  String company;
   String track;
   String codestore;
   String datedelivery;
@@ -206,7 +205,6 @@ class Getnotifordealer {
       this.pay,
       this.countorder,
       this.priceall,
-      this.company,
       this.track,
       this.codestore,
       this.datedelivery);
