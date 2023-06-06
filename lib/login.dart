@@ -150,7 +150,7 @@ class _loginState extends State<login> {
         child: TextButton(
           onPressed: () async {
             myauth.setConfig(
-                appEmail: "sigma.group2565@gmail.com",
+                appEmail: usernameString.text,
                 appName: "SIGB OTP",
                 userEmail: usernameString.text,
                 otpLength: 6,
@@ -222,7 +222,7 @@ class _loginState extends State<login> {
           }));
         },
         child: Text(
-          "CREATE DEALER ACOUNT..",
+          "CREATE DEALER ACCOUNT",
           style: TextStyle(
               fontSize: 18.sp,
               fontFamily: 'newbodyfont',
@@ -260,7 +260,8 @@ class _loginState extends State<login> {
 
         var jsonRes = json.decode(response.body);
 
-        if (jsonRes["success"] == 1) {
+        if (jsonRes["success"] == 1 &&
+            (jsonRes["loginstatus"] == null || jsonRes["loginstatus"] == 0)) {
           if (jsonRes["auth"] == null) {
             stringpreferences1 = [
               jsonRes["codestore"],
@@ -284,19 +285,50 @@ class _loginState extends State<login> {
 
           preferences1.setStringList("codestore", stringpreferences1);
 
-          Navigator.of(context)
-              .pushReplacement(MaterialPageRoute(builder: (context) {
-            return MyApp();
-          }));
+          // Navigator.of(context)
+          //     .pushReplacement(MaterialPageRoute(builder: (context) {
+          //   return MyApp();
+          // }));
+          ////update login status
+          String url2 =
+              "http://185.78.165.189:3000/pythonapi/updateloginstatus";
+
+          var body2 = {
+            "username": usernameString.text.trim(),
+          };
+
+          http.Response response2 = await http.patch(Uri.parse(url2),
+              headers: {'Content-Type': 'application/json; charset=utf-8'},
+              body: JsonEncoder().convert(body2));
+        } else {
+          return showDialog(
+              context: context,
+              builder: (_) => new AlertDialog(
+                    content: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: new Text(
+                        "YOUR ACCOUNT IS ALREADY LOGGED IN.",
+                        style: TextStyle(color: Colors.red, fontSize: 15.sp),
+                      ),
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text('DONE'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      )
+                    ],
+                  ));
         }
       } catch (error) {
         return showDialog(
             context: context,
             builder: (_) => new AlertDialog(
-                  content: new Text("Email or password is not correct"),
+                  content: new Text("OTP INVALID"),
                   actions: <Widget>[
                     TextButton(
-                      child: Text('OK'),
+                      child: Text('DONE'),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
