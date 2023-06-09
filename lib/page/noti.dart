@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:html';
+import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -29,12 +31,20 @@ class _notipage extends State<notipage> {
   List<Getnotifordealer> allnotice = [];
   List<Getnotifordealer> allnoticefordisplay = [];
 
+  List<bool> clickimg = [];
+  List<bool> saveimg = [];
+
   @override
   void initState() {
     fectalldata().then((value) {
       setState(() {
         allnotice.addAll(value);
         allnoticefordisplay = allnotice;
+        clickimg.clear();
+        for (int i = 0; i < allnoticefordisplay.length; i++) {
+          clickimg.add(false);
+          saveimg.add(false);
+        }
       });
     });
 
@@ -123,7 +133,7 @@ class _notipage extends State<notipage> {
             child: Padding(
                 padding: const EdgeInsets.all(5.0),
                 child: allnoticefordisplay[index].message == "order" &&
-                        allnoticefordisplay[index].track == null
+                        allnoticefordisplay[index].nameimg == null
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -247,7 +257,7 @@ class _notipage extends State<notipage> {
                             ],
                           )
                         : allnoticefordisplay[index].message == "order" &&
-                                allnoticefordisplay[index].track != null
+                                allnoticefordisplay[index].nameimg != null
                             ? Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -311,18 +321,57 @@ class _notipage extends State<notipage> {
                                               ),
                                         Row(
                                           children: [
-                                            Text(
-                                              "TRACK : ${allnoticefordisplay[index].track}",
-                                              style: TextConstants.textstyle,
-                                            ),
-                                            IconButton(
-                                                onPressed: () {
-                                                  Clipboard.setData(ClipboardData(
-                                                      text: allnoticefordisplay[
-                                                              index]
-                                                          .track));
-                                                },
-                                                icon: Icon(Icons.copy_outlined))
+                                            allnoticefordisplay[index]
+                                                        .nameimg ==
+                                                    null
+                                                ? SizedBox()
+                                                : SizedBox(
+                                                    child: clickimg[index] ==
+                                                            true
+                                                        ? SizedBox(
+                                                            width: 200.0.sp,
+                                                            height: 220.0.sp,
+                                                            child: Image.network(
+                                                                "http://185.78.165.189:8000/img/${allnoticefordisplay[index].pathimg}/${allnoticefordisplay[index].nameimg}"),
+                                                          )
+                                                        : SizedBox(
+                                                            width: 100.0.sp,
+                                                            height: 100.0.sp,
+                                                            child: Image.network(
+                                                                "http://185.78.165.189:8000/img/${allnoticefordisplay[index].pathimg}/${allnoticefordisplay[index].nameimg}"),
+                                                          ),
+                                                  ),
+                                            Column(
+                                              children: [
+                                                Transform.rotate(
+                                                  angle: 90 * pi / 180,
+                                                  child: IconButton(
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          if (clickimg[index] ==
+                                                              false) {
+                                                            clickimg[index] =
+                                                                true;
+                                                          } else {
+                                                            clickimg[index] =
+                                                                false;
+                                                          }
+                                                        });
+                                                      },
+                                                      icon: Icon(
+                                                          Icons.expand_sharp,
+                                                          color: ColorConstants
+                                                              .buttoncolor)),
+                                                ),
+                                                IconButton(
+                                                    onPressed: () {},
+                                                    icon: Icon(
+                                                      Icons.download,
+                                                      color: ColorConstants
+                                                          .buttoncolor,
+                                                    )),
+                                              ],
+                                            )
                                           ],
                                         ),
                                       ],
@@ -413,7 +462,8 @@ class _notipage extends State<notipage> {
           u["MAX(b.pay)"],
           u["countorder"],
           u["priceall"],
-          u["track"],
+          u["pathimg"],
+          u["nameimg"],
           u["codestore"],
           u["date2"]);
       _allnotice.add(data);
