@@ -249,27 +249,34 @@ class _dealerpageState extends State<dealerpage> {
                         SharedPreferences pagepref =
                             await SharedPreferences.getInstance();
                         pagepref.setInt("pagepre", 0);
+
+                        ////update login status
+                        String url2 =
+                            "http://185.78.165.189:3000/pythonapi/updateloginstatus";
+
+                        var body2 = {
+                          "loginstatus": "0",
+                          "username": stringpreferences1![5].toString(),
+                        };
+
+                        http.Response response2 = await http.patch(
+                            Uri.parse(url2),
+                            headers: {
+                              'Content-Type': 'application/json; charset=utf-8'
+                            },
+                            body: JsonEncoder().convert(body2));
                         stringpreferences1!.clear();
+
                         SharedPreferences preferences1 =
                             await SharedPreferences.getInstance();
                         preferences1.setStringList(
                             "codestore", stringpreferences1!);
-
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                             builder: (context) => (login()),
                           ),
                         );
-
-                        // _googleSignIn.signOut().then((value) {
-                        //   Navigator.pushReplacement(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //       builder: (context) => (login()),
-                        //     ),
-                        //   );
-                        // });
                       },
                     ),
                   )),
