@@ -191,7 +191,8 @@ class Getnotifordealer {
   String pay;
   int countorder;
   num priceall;
-  String track;
+  String pathimg;
+  String nameimg;
   String codestore;
   String datedelivery;
 
@@ -205,7 +206,8 @@ class Getnotifordealer {
       this.pay,
       this.countorder,
       this.priceall,
-      this.track,
+      this.pathimg,
+      this.nameimg,
       this.codestore,
       this.datedelivery);
 }

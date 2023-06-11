@@ -269,6 +269,7 @@ class _loginState extends State<login> {
               jsonRes["userid"].toString(),
               jsonRes["namestore"],
               "null",
+              jsonRes["username"]
             ];
           } else {
             stringpreferences1 = [
@@ -277,6 +278,7 @@ class _loginState extends State<login> {
               jsonRes["userid"].toString(),
               jsonRes["namestore"],
               jsonRes["auth"],
+              jsonRes["username"]
             ];
           }
 
@@ -285,15 +287,16 @@ class _loginState extends State<login> {
 
           preferences1.setStringList("codestore", stringpreferences1);
 
-          // Navigator.of(context)
-          //     .pushReplacement(MaterialPageRoute(builder: (context) {
-          //   return MyApp();
-          // }));
+          Navigator.of(context)
+              .pushReplacement(MaterialPageRoute(builder: (context) {
+            return MyApp();
+          }));
           ////update login status
           String url2 =
               "http://185.78.165.189:3000/pythonapi/updateloginstatus";
 
           var body2 = {
+            "loginstatus": "1",
             "username": usernameString.text.trim(),
           };
 
@@ -307,8 +310,8 @@ class _loginState extends State<login> {
                     content: SizedBox(
                       width: MediaQuery.of(context).size.width,
                       child: new Text(
-                        "YOUR ACCOUNT IS ALREADY LOGGED IN.",
-                        style: TextStyle(color: Colors.red, fontSize: 15.sp),
+                        "EMAIL ADDRESS ALREADY IN USE!",
+                        style: TextStyle(color: Colors.red, fontSize: 12.sp),
                       ),
                     ),
                     actions: <Widget>[

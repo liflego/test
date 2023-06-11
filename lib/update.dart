@@ -562,7 +562,7 @@ class _updatepage extends State<updatepage> {
                           onPressed: () {
                             if (selectedImage != null) {
                               onUploadImage();
-                            } else {}
+                            }
                             Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
                                     builder: (context) => MyApp()));

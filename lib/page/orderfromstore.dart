@@ -4,12 +4,14 @@ import 'package:flutter_hex_color/flutter_hex_color.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sigma_space/login.dart';
 import 'package:sigma_space/main.dart';
 import 'package:sigma_space/page/suborders/orderforadminedit.dart';
 import 'package:sigma_space/page/suborders/orderforedit.dart';
+import 'package:sigma_space/page/suborders/uploadtrack.dart';
 import 'package:sizer/sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../classapi/class.dart';
@@ -31,6 +33,7 @@ class _orderfromstoreState extends State<orderfromstore> {
   TextEditingController trackString = TextEditingController();
   String namestore = "";
   String auth = "";
+
   @override
   void initState() {
     fectalldata().then((value) {
@@ -71,13 +74,11 @@ class _orderfromstoreState extends State<orderfromstore> {
                     child: SizedBox(
                         width: MediaQuery.of(context).size.width,
                         child: Slidable(
-                          endActionPane: stringpreferences1?[1] == "ADMIN" &&
-                                  allordersfordisplay[index].price != null &&
-                                  allordersfordisplay[index].track == null
-                              // ignore: prefer_const_constructors
+                          endActionPane: allordersfordisplay[index].track ==
+                                      null &&
+                                  allordersfordisplay[index].price != null
                               ? ActionPane(
                                   motion: ScrollMotion(),
-                                  // ignore: prefer_const_literals_to_create_immutables
                                   children: [
                                     Container(
                                       color: Colors.green,
@@ -87,14 +88,22 @@ class _orderfromstoreState extends State<orderfromstore> {
                                           MediaQuery.of(context).size.height,
                                       child: OutlinedButton(
                                         onPressed: () {
-                                          inputnumber(index);
+                                          Navigator.of(context).pushReplacement(
+                                              MaterialPageRoute(
+                                                  builder: (context) {
+                                            return uploadtrack(
+                                              ordernumber:
+                                                  allordersfordisplay[index]
+                                                      .ordernumber,
+                                            );
+                                          }));
                                         },
                                         child: Column(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
                                             Icon(
-                                              Icons.fire_truck,
+                                              Icons.local_shipping,
                                               color: Colors.white,
                                               size: 22.sp,
                                             ),
@@ -111,83 +120,41 @@ class _orderfromstoreState extends State<orderfromstore> {
                                     ),
                                   ],
                                 )
-                              : stringpreferences1?[1] == "ADMIN" &&
-                                      allordersfordisplay[index].track != null
-                                  ? ActionPane(
-                                      motion: ScrollMotion(),
-                                      // ignore: prefer_const_literals_to_create_immutables
-                                      children: [
-                                        Container(
-                                          color: Colors.cyan,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              2,
-                                          height: MediaQuery.of(context)
-                                              .size
-                                              .height,
-                                          child: OutlinedButton(
-                                            onPressed: () {},
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Icon(
-                                                  Icons.fire_truck,
-                                                  color: Colors.white,
-                                                  size: 22.sp,
-                                                ),
-                                                Text(
-                                                  "EDIT TRACK",
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontFamily: 'newbodyfont',
-                                                      fontSize: 15.sp),
-                                                )
-                                              ],
+                              : ActionPane(
+                                  motion: ScrollMotion(),
+                                  children: [
+                                    Container(
+                                      color: Colors.red,
+                                      width:
+                                          MediaQuery.of(context).size.width / 2,
+                                      height:
+                                          MediaQuery.of(context).size.height,
+                                      child: OutlinedButton(
+                                        onPressed: () {
+                                          cancelorder(index);
+                                        },
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              Icons.cancel,
+                                              color: Colors.white,
+                                              size: 22.sp,
                                             ),
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  : ActionPane(
-                                      motion: ScrollMotion(),
-                                      children: [
-                                        Container(
-                                          color: Colors.red,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              2,
-                                          height: MediaQuery.of(context)
-                                              .size
-                                              .height,
-                                          child: OutlinedButton(
-                                            onPressed: () {
-                                              cancelorder(index);
-                                            },
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Icon(
-                                                  Icons.cancel,
+                                            Text(
+                                              "Cancel",
+                                              style: TextStyle(
                                                   color: Colors.white,
-                                                  size: 22.sp,
-                                                ),
-                                                Text(
-                                                  "Cancel",
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontFamily: 'newbodyfont',
-                                                      fontSize: 15.sp),
-                                                )
-                                              ],
-                                            ),
-                                          ),
+                                                  fontFamily: 'newbodyfont',
+                                                  fontSize: 15.sp),
+                                            )
+                                          ],
                                         ),
-                                      ],
+                                      ),
                                     ),
+                                  ],
+                                ),
 
                           // The child of the Slidable is what the user sees when the
                           // component is not dragged.
@@ -449,69 +416,6 @@ class _orderfromstoreState extends State<orderfromstore> {
     return _allorders;
   }
 
-  void inputnumber(index) => showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-            content: SizedBox(
-              height: 200.sp,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  new Text("ADD TRACK"),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                          child: Center(
-                        child: TextFormField(
-                          controller: companyString,
-                          validator: (input) {
-                            if (input!.length < 1) {
-                              return "PLEASE ENTER YOUR COMPANY";
-                            }
-                          },
-                          textAlign: TextAlign.center,
-                          autofocus: true,
-                          decoration: InputDecoration(hintText: "Company"),
-                        ),
-                      )),
-                      Padding(padding: EdgeInsets.all(10.0)),
-                      SizedBox(
-                          child: Center(
-                        child: TextFormField(
-                          controller: trackString,
-                          validator: (input) {
-                            if (input!.length < 1) {
-                              return "PLEASE ENTER TRACE NUMBER";
-                            }
-                          },
-                          textAlign: TextAlign.center,
-                          autofocus: true,
-                          decoration: InputDecoration(hintText: "Track number"),
-                        ),
-                      )),
-                      Padding(padding: EdgeInsets.only(top: 30.0)),
-                      TextButton(
-                          child: Container(
-                              width: 18.w,
-                              height: 5.h,
-                              color: ColorConstants.buttoncolor,
-                              child: Center(
-                                  child: Text(
-                                "DONE",
-                                style: TextStyle(color: Colors.white),
-                              ))),
-                          onPressed: () {
-                            insertdelivery(index);
-                          }),
-
-                      // ignore: unnecessary_new
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ));
   void cancelorder(index) => showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -561,84 +465,6 @@ class _orderfromstoreState extends State<orderfromstore> {
           ),
         ),
       );
-
-  Future insertdelivery(index) async {
-    if (_formkey.currentState!.validate()) {
-      try {
-        String url = "http://185.78.165.189:3000/pythonapi/insertdelivery";
-        if (companyString.text.trim().length < 1 ||
-            trackString.text.trim().length < 1) {
-          return showDialog(
-              context: context,
-              builder: (_) => new AlertDialog(
-                    content: new Text("PLEASE ENTER YOUR INFO."),
-                    actions: <Widget>[
-                      TextButton(
-                        child: Text('OK'),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      )
-                    ],
-                  ));
-        }
-        var body = {
-          "ordernumber": allordersfordisplay[index].ordernumber,
-          "company": companyString.text.trim(),
-          "track": trackString.text.trim(),
-          "date": DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()),
-        };
-
-        http.Response response = await http.post(Uri.parse(url),
-            headers: {'Content-Type': 'application/json; charset=utf-8'},
-            body: JsonEncoder().convert(body));
-        if (response.statusCode == 200) {
-          companyString.clear();
-          trackString.clear();
-
-          return showDialog(
-              context: context,
-              builder: (_) => new AlertDialog(
-                    content: new Text("DELIVERY SUCCESS"),
-                    actions: <Widget>[
-                      TextButton(
-                        child: Text('DONE'),
-                        onPressed: () {
-                          companyString.clear();
-                          trackString.clear();
-                          Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(builder: (context) {
-                            return MyApp();
-                          }));
-                        },
-                      )
-                    ],
-                  ));
-        } else {
-          return showDialog(
-              context: context,
-              builder: (_) => new AlertDialog(
-                    content: new Text("Server error"),
-                    actions: <Widget>[
-                      TextButton(
-                        child: Text('OK'),
-                        onPressed: () {
-                          companyString.clear();
-                          trackString.clear();
-                          Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(builder: (context) {
-                            return MyApp();
-                          }));
-                        },
-                      )
-                    ],
-                  ));
-        }
-      } catch (error) {
-        print(error);
-      }
-    }
-  }
 
   Future deleteorders(index) async {
     try {

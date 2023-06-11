@@ -1,5 +1,6 @@
 import 'dart:collection';
 import 'dart:convert';
+import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -58,7 +59,7 @@ class _storehisState extends State<storehis> {
               backgroundColor: ColorConstants.appbarcolor,
               toolbarHeight: 7.h,
               title: Text(
-                "STORE",
+                "HISTORY",
                 style: TextStyle(fontFamily: 'newtitlefont', fontSize: 25.sp),
               ),
             ),
@@ -67,19 +68,7 @@ class _storehisState extends State<storehis> {
             body: ListView(children: [
               showdata(),
               SizedBox(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    "History :",
-                    style: TextStyle(
-                        fontSize: 22.sp,
-                        fontFamily: 'newbodyfont',
-                        color: Colors.black),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height / 1.6,
+                height: MediaQuery.of(context).size.height,
                 child: ListView.builder(
                   itemBuilder: (context, index) {
                     return listItem(index);
@@ -210,6 +199,7 @@ class _storehisState extends State<storehis> {
       padding: EdgeInsets.all(5),
       child: SizedBox(
           width: MediaQuery.of(context).size.width,
+          // height: MediaQuery.of(context).size.height / 2.6,
           child: Card(
             elevation: 5,
             child: Column(
@@ -239,19 +229,103 @@ class _storehisState extends State<storehis> {
                           "(${paymethod.length} รายการ)",
                           style: TextConstants.textstyle,
                         ),
-                        Text(
-                          "วิธีการชำระ ${paymethod[0]}",
-                          style: TextConstants.textstyle,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "วิธีการชำระ ${paymethod[0]}",
+                              style: TextConstants.textstyle,
+                            ),
+                            IconButton(
+                                onPressed: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (_) => new AlertDialog(
+                                            content: SizedBox(
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height /
+                                                  1.8,
+                                              child: new ListView.builder(
+                                                itemCount: codeproduct.length,
+                                                itemBuilder:
+                                                    (BuildContext context,
+                                                        int index) {
+                                                  return Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          Icon(
+                                                            Icons.circle,
+                                                            size: 8.sp,
+                                                          ),
+                                                          Text(
+                                                            " " +
+                                                                nameproduct[
+                                                                    index],
+                                                            style: TextConstants
+                                                                .textstyleforhistory,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Text(
+                                                        "(${codeproduct[index]})",
+                                                        style: TextConstants
+                                                            .textstyleforhistory,
+                                                      ),
+                                                      Text(
+                                                        "จำนวน ${amount[index]} หน่วย",
+                                                        style: TextConstants
+                                                            .textstyleforhistory,
+                                                      )
+                                                    ],
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                            actions: <Widget>[
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                    color: Colors.amber,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5.0),
+                                                    border: Border.all(
+                                                        width: 2,
+                                                        color: Colors.amber)),
+                                                child: TextButton(
+                                                  child: Text(
+                                                    'DONE',
+                                                    style:
+                                                        TextConstants.textstyle,
+                                                  ),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              )
+                                            ],
+                                          ));
+                                },
+                                icon: Icon(
+                                  Icons.zoom_out_map_outlined,
+                                  size: 15.sp,
+                                  color: Colors.blue,
+                                ))
+                          ],
                         ),
                       ],
                     ),
                   ),
                 ),
                 SizedBox(
-                  height: 1.h,
-                ),
-                SizedBox(
-                  height: 15.h,
+                  height: MediaQuery.of(context).size.height / 8,
                   child: Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: ListView.builder(
@@ -277,7 +351,7 @@ class _storehisState extends State<storehis> {
                               style: TextConstants.textstyleforhistory,
                             ),
                             Text(
-                              "จำนวน ${amount[index]}",
+                              "จำนวน ${amount[index]} หน่วย",
                               style: TextConstants.textstyleforhistory,
                             )
                           ],

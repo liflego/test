@@ -230,6 +230,23 @@ class _checkstock extends State<checkstock> {
                           SharedPreferences pagepref =
                               await SharedPreferences.getInstance();
                           pagepref.setInt("pagepre", 0);
+
+                          ////update login status
+                          String url2 =
+                              "http://185.78.165.189:3000/pythonapi/updateloginstatus";
+
+                          var body2 = {
+                            "loginstatus": "0",
+                            "username": stringpreferences1![5].toString(),
+                          };
+
+                          http.Response response2 = await http.patch(
+                              Uri.parse(url2),
+                              headers: {
+                                'Content-Type':
+                                    'application/json; charset=utf-8'
+                              },
+                              body: JsonEncoder().convert(body2));
                           stringpreferences1!.clear();
 
                           SharedPreferences preferences1 =
@@ -242,7 +259,6 @@ class _checkstock extends State<checkstock> {
                               builder: (context) => (login()),
                             ),
                           );
-                          ;
                         },
                       ),
                     )),
@@ -626,7 +642,11 @@ class _checkstock extends State<checkstock> {
                         nameimg: allproductfordisplay[index].nameimg,
                       )));
             } else {
-              inputnumber(index);
+              if (allproductfordisplay[index].amount == 0) {
+                return null;
+              } else {
+                inputnumber(index);
+              }
             }
           },
           child: Padding(
@@ -745,7 +765,7 @@ class _checkstock extends State<checkstock> {
     if (stringpreferences1![1] == "DEALER") {
       var body = {
         "dealercode": stringpreferences1![0],
-        "codestore": stringpreferences2![0]
+        "codestore": stringpreferences2?[0]
       };
 
       getgrouptype.add("FAVORITE");
@@ -1024,7 +1044,7 @@ class _checkstock extends State<checkstock> {
                   content: new Text("Success"),
                   actions: <Widget>[
                     TextButton(
-                      child: Text('OK'),
+                      child: Text('DONE'),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },

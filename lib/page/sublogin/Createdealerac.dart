@@ -47,6 +47,19 @@ class _createAcountfordealerState extends State<createAcountfordealer> {
             style: TextStyle(fontSize: 30.0.sp, fontFamily: 'newtitlefont'),
           ),
           backgroundColor: ColorConstants.appbarcolor,
+          leading: IconButton(
+              onPressed: () async {
+                SharedPreferences pagepref =
+                    await SharedPreferences.getInstance();
+                pagepref.setInt("pagepre", 1);
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => login()));
+              },
+              icon: Icon(
+                Icons.arrow_back,
+                color: Colors.white,
+                size: 20.sp,
+              )),
         ),
         body: SingleChildScrollView(
           child: Form(

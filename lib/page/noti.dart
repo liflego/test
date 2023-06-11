@@ -367,26 +367,24 @@ class _notipage extends State<notipage> {
                                                   ),
                                             Column(
                                               children: [
-                                                Transform.rotate(
-                                                  angle: 90 * pi / 180,
-                                                  child: IconButton(
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          if (clickimg[index] ==
-                                                              false) {
-                                                            clickimg[index] =
-                                                                true;
-                                                          } else {
-                                                            clickimg[index] =
-                                                                false;
-                                                          }
-                                                        });
-                                                      },
-                                                      icon: Icon(
-                                                          Icons.expand_sharp,
-                                                          color: ColorConstants
-                                                              .buttoncolor)),
-                                                ),
+                                                IconButton(
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        if (clickimg[index] ==
+                                                            false) {
+                                                          clickimg[index] =
+                                                              true;
+                                                        } else {
+                                                          clickimg[index] =
+                                                              false;
+                                                        }
+                                                      });
+                                                    },
+                                                    icon: Icon(
+                                                        Icons
+                                                            .zoom_out_map_outlined,
+                                                        color: ColorConstants
+                                                            .buttoncolor)),
                                                 IconButton(
                                                     onPressed: () {
                                                       _saveNetworkImage(index);

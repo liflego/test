@@ -292,109 +292,105 @@ class _customerState extends State<customer> {
                     stringpreferences1![2]
                 ? ColorConstants.cardcolor
                 : ColorConstants.colorcardorder,
-            child: OutlinedButton(
-                onPressed: null,
-                child: Slidable(
-                  endActionPane: ActionPane(
-                    motion: ScrollMotion(),
-                    children: [
-                      Container(
-                        color: Colors.blue[900],
-                        width: MediaQuery.of(context).size.width / 2.25,
-                        height: MediaQuery.of(context).size.height,
-                        child: OutlinedButton(
-                          onPressed: () => gotosubstore(index),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.history_rounded,
-                                color: Colors.white,
-                                size: 22.sp,
-                              ),
-                              Text(
-                                "HISTORY",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: 'newbodyfont',
-                                    fontSize: 15.sp),
-                              )
-                            ],
+            child: Slidable(
+              endActionPane: ActionPane(
+                motion: ScrollMotion(),
+                children: [
+                  Container(
+                    color: Colors.blue[900],
+                    width: MediaQuery.of(context).size.width / 2.1,
+                    height: MediaQuery.of(context).size.height,
+                    child: OutlinedButton(
+                      onPressed: () => gotosubstore(index),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.history_rounded,
+                            color: Colors.white,
+                            size: 22.sp,
                           ),
-                        ),
+                          Text(
+                            "HISTORY",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'newbodyfont',
+                                fontSize: 15.sp),
+                          )
+                        ],
                       ),
-                    ],
-                  ),
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              allcustomerfordisplay[index].cusname,
-                              style: TextConstants.textstyle,
-                            ),
-                            TextButton(
-                                onPressed: () {
-                                  _launchPhoneURL(index);
-                                },
-                                child: Text(
-                                  allcustomerfordisplay[index].phone,
-                                  style: TextStyle(
-                                      fontSize: 18.sp,
-                                      fontFamily: 'newbodyfont'),
-                                )),
-                            allcustomer[index].address == null
-                                ? TextButton(
-                                    child: Text('ADD LOCATION',
-                                        style: TextStyle(
-                                            fontSize: 16.sp,
-                                            fontFamily: 'newbodyfont')),
-                                    onPressed: () {
-                                      inputlocation(index);
-                                    },
-                                  )
-                                : TextButton(
-                                    child: Text("Google map",
-                                        style: TextStyle(
-                                            fontSize: 16.sp,
-                                            fontFamily: 'newbodyfont')),
-                                    onPressed: () {
-                                      _openmap(index);
-                                    },
-                                  ),
-                          ],
-                        ),
-                        toggle == false
-                            ? SizedBox(
-                                height: 10,
-                              )
-                            : Padding(
-                                padding: const EdgeInsets.only(left: 20.0),
-                                child: IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        toggleselect[index] =
-                                            !toggleselect[index];
-                                        toggleall = false;
-                                      });
-                                    },
-                                    icon: toggleselect[index] == false
-                                        ? Icon(
-                                            Icons.check_box_outline_blank,
-                                            size: 20.sp,
-                                          )
-                                        : Icon(
-                                            Icons.check_box_outlined,
-                                            size: 20.sp,
-                                          )),
-                              )
-                      ],
                     ),
                   ),
-                )),
+                ],
+              ),
+              child: Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          allcustomerfordisplay[index].cusname,
+                          style: TextConstants.textstyle,
+                        ),
+                        TextButton(
+                            onPressed: () {
+                              _launchPhoneURL(index);
+                            },
+                            child: Text(
+                              allcustomerfordisplay[index].phone,
+                              style: TextStyle(
+                                  fontSize: 18.sp, fontFamily: 'newbodyfont'),
+                            )),
+                        allcustomer[index].address == null
+                            ? TextButton(
+                                child: Text('ADD LOCATION',
+                                    style: TextStyle(
+                                        fontSize: 16.sp,
+                                        fontFamily: 'newbodyfont')),
+                                onPressed: () {
+                                  inputlocation(index);
+                                },
+                              )
+                            : TextButton(
+                                child: Text("Google map",
+                                    style: TextStyle(
+                                        fontSize: 16.sp,
+                                        fontFamily: 'newbodyfont')),
+                                onPressed: () {
+                                  _openmap(index);
+                                },
+                              ),
+                      ],
+                    ),
+                    toggle == false
+                        ? SizedBox(
+                            height: 10,
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.only(left: 20.0),
+                            child: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    toggleselect[index] = !toggleselect[index];
+                                    toggleall = false;
+                                  });
+                                },
+                                icon: toggleselect[index] == false
+                                    ? Icon(
+                                        Icons.check_box_outline_blank,
+                                        size: 20.sp,
+                                      )
+                                    : Icon(
+                                        Icons.check_box_outlined,
+                                        size: 20.sp,
+                                      )),
+                          )
+                  ],
+                ),
+              ),
+            ),
           )
         : allcustomer[index].sconfrim == null
             ? Card(

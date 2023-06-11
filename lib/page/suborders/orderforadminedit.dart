@@ -1,7 +1,6 @@
 // ignore_for_file: no_logic_in_create_state, unnecessary_string_interpolations, prefer_const_constructors, unnecessary_new
 
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
@@ -115,9 +114,23 @@ class _orderforadminedit extends State<orderforadminedit> {
                       )),
                 ],
                 toolbarHeight: 7.h,
-                title: Text(
-                  "ORDER",
-                  style: TextConstants.appbartextsyle,
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "ORDER ${widget.ordernumber}",
+                    ),
+                    IconButton(
+                        onPressed: () {
+                          Clipboard.setData(
+                              new ClipboardData(text: "${widget.ordernumber}"));
+                        },
+                        icon: Icon(
+                          Icons.copy,
+                          size: 15.sp,
+                          color: Colors.amber,
+                        ))
+                  ],
                 ),
                 backgroundColor: ColorConstants.appbarcolor,
               ),
@@ -130,25 +143,6 @@ class _orderforadminedit extends State<orderforadminedit> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Text(
-                                "คำสั่งซื้อที่ ${widget.ordernumber}",
-                                style: TextConstants.textstyle,
-                              ),
-                              IconButton(
-                                  onPressed: () {
-                                    Clipboard.setData(new ClipboardData(
-                                        text: "${widget.ordernumber}"));
-                                  },
-                                  icon: Icon(
-                                    Icons.copy,
-                                    size: 15.sp,
-                                    color: Colors.blue,
-                                  ))
-                            ],
-                          ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -177,8 +171,8 @@ class _orderforadminedit extends State<orderforadminedit> {
                   togglecal == true ? chooseall() : SizedBox(),
                   SizedBox(height: 5.sp),
                   Container(
-                    color: Colors.grey[200],
-                    height: MediaQuery.of(context).size.height / 2.4,
+                    color: Colors.amber,
+                    height: MediaQuery.of(context).size.height / 2.2,
                     child: listitems(),
                   ),
                   textpriceall(),
@@ -758,7 +752,7 @@ class _orderforadminedit extends State<orderforadminedit> {
 
   Widget selectimage() {
     return Padding(
-        padding: EdgeInsets.all(5),
+        padding: EdgeInsets.all(4),
         child: Center(
             child: Column(children: [
           selectedImage == null
@@ -807,7 +801,7 @@ class _orderforadminedit extends State<orderforadminedit> {
           },
           child: Container(
             width: MediaQuery.of(context).size.width / 2,
-            height: MediaQuery.of(context).size.height / 16,
+            height: MediaQuery.of(context).size.height / 18,
             color: Colors.amber,
             child: Center(
               child: Text(
@@ -904,45 +898,17 @@ class _orderforadminedit extends State<orderforadminedit> {
 
       var body = {
         "message": "adminconfirm",
-        "ordernumber": allorderfordisplay[0].ordernumber,
         "date": DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()),
+        "ordernumber": allorderfordisplay[0].ordernumber,
       };
 
       http.Response response = await http.patch(Uri.parse(url),
           headers: {'Content-Type': 'application/json; charset=utf-8'},
           body: JsonEncoder().convert(body));
       updateprice();
-      if (selectedImage != null) {
-        onUploadImage();
-      }
     } catch (error) {
       print(error);
     }
-  }
-
-  onUploadImage() async {
-    SharedPreferences preferences1 = await SharedPreferences.getInstance();
-    stringpreferences1 = preferences1.getStringList("codestore");
-    var request = http.MultipartRequest(
-      'POST',
-      Uri.parse("http://185.78.165.189:3000/pythonapi/uploadimgdelivery"),
-    );
-    Map<String, String> headers = {"Content-type": "multipart/form-data"};
-    request.files.add(
-      http.MultipartFile(
-        'image',
-        selectedImage!.readAsBytes().asStream(),
-        selectedImage!.lengthSync(),
-        filename: selectedImage!.path.split('/').last,
-      ),
-    );
-    request.headers.addAll(headers);
-    var res = await request.send();
-    http.Response response = await http.Response.fromStream(res);
-    setState(() {
-      var resJson = jsonDecode(response.body);
-      selectedImage = null;
-    });
   }
 
   Future updateprice() async {
