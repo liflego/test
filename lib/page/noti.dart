@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:html';
 import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +17,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../classapi/class.dart';
 import 'package:http/http.dart' as http;
 import 'package:popup_card/popup_card.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 
 class notipage extends StatefulWidget {
   notipage({Key? key}) : super(key: key);
@@ -32,7 +32,6 @@ class _notipage extends State<notipage> {
   List<Getnotifordealer> allnoticefordisplay = [];
 
   List<bool> clickimg = [];
-  List<bool> saveimg = [];
 
   @override
   void initState() {
@@ -43,13 +42,33 @@ class _notipage extends State<notipage> {
         clickimg.clear();
         for (int i = 0; i < allnoticefordisplay.length; i++) {
           clickimg.add(false);
-          saveimg.add(false);
         }
       });
     });
 
     // TODO: implement initState
     super.initState();
+  }
+
+  void _saveNetworkImage(index) async {
+    String path =
+        "http://185.78.165.189:8000/img/${allnoticefordisplay[index].pathimg}/${allnoticefordisplay[index].nameimg}";
+    GallerySaver.saveImage(path, albumName: "SIGB").then((success) {
+      return showDialog(
+          context: context,
+          // ignore: unnecessary_new
+          builder: (_) => new AlertDialog(
+                content: new Text("IMAGE SAVE IN SIGB ALBUM ALREADY"),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('DONE'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              ));
+    });
   }
 
   @override
@@ -292,11 +311,14 @@ class _notipage extends State<notipage> {
                                                   "${allnoticefordisplay[index].namestore}",
                                               style: TextConstants.textstyle,
                                             ),
-                                            Text(
-                                              allnoticefordisplay[index]
-                                                  .datedelivery
-                                                  .substring(5, 25),
-                                              style: TextConstants.textstyle,
+                                            Flexible(
+                                              child: Text(
+                                                allnoticefordisplay[index]
+                                                    .datedelivery
+                                                    .substring(5, 25),
+                                                style: TextConstants.textstyle,
+                                                maxLines: 2,
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -320,6 +342,8 @@ class _notipage extends State<notipage> {
                                                 style: TextConstants.textstyle,
                                               ),
                                         Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             allnoticefordisplay[index]
                                                         .nameimg ==
@@ -364,7 +388,9 @@ class _notipage extends State<notipage> {
                                                               .buttoncolor)),
                                                 ),
                                                 IconButton(
-                                                    onPressed: () {},
+                                                    onPressed: () {
+                                                      _saveNetworkImage(index);
+                                                    },
                                                     icon: Icon(
                                                       Icons.download,
                                                       color: ColorConstants
@@ -418,6 +444,7 @@ class _notipage extends State<notipage> {
                                                   .date
                                                   .substring(5, 25),
                                               style: TextConstants.textstyle,
+                                              maxLines: 2,
                                             ),
                                           ],
                                         ),
