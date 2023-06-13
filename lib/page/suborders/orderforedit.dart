@@ -79,9 +79,24 @@ class _orderforedit extends State<orderforedit> {
                       size: 20.sp,
                     )),
                 toolbarHeight: 7.h,
-                title: Text(
-                  "ORDER",
-                  style: TextConstants.appbartextsyle,
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "คำสั่งซื้อที่ ${widget.ordernumber}",
+                      style: TextConstants.textstylewh,
+                    ),
+                    IconButton(
+                        onPressed: () {
+                          Clipboard.setData(
+                              new ClipboardData(text: "${widget.ordernumber}"));
+                        },
+                        icon: Icon(
+                          Icons.copy,
+                          size: 15.sp,
+                          color: Colors.amber,
+                        ))
+                  ],
                 ),
                 backgroundColor: ColorConstants.appbarcolor,
               ),
@@ -94,25 +109,6 @@ class _orderforedit extends State<orderforedit> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Text(
-                                "คำสั่งซื้อที่ ${widget.ordernumber}",
-                                style: TextConstants.textstyle,
-                              ),
-                              IconButton(
-                                  onPressed: () {
-                                    Clipboard.setData(new ClipboardData(
-                                        text: "${widget.ordernumber}"));
-                                  },
-                                  icon: Icon(
-                                    Icons.copy,
-                                    size: 15.sp,
-                                    color: Colors.blue,
-                                  ))
-                            ],
-                          ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [

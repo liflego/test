@@ -68,7 +68,7 @@ class _storehisState extends State<storehis> {
             body: ListView(children: [
               showdata(),
               SizedBox(
-                height: MediaQuery.of(context).size.height,
+                height: MediaQuery.of(context).size.height / 1.sp,
                 child: ListView.builder(
                   itemBuilder: (context, index) {
                     return listItem(index);

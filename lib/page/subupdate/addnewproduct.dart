@@ -321,8 +321,10 @@ class _addnewproductpage extends State<addnewproductpage> {
             style: TextConstants.textstyle,
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 8.0),
+            padding: const EdgeInsets.only(left: 10.0),
             child: DropdownButton(
+                style: TextStyle(fontSize: 15.sp, color: Colors.red),
+                iconEnabledColor: Colors.red,
                 value: selectedValue,
                 items: [
                   DropdownMenuItem(
@@ -466,7 +468,7 @@ class _addnewproductpage extends State<addnewproductpage> {
 
   Widget selectimage() {
     return Padding(
-        padding: EdgeInsets.all(5),
+        padding: EdgeInsets.all(8),
         child: Column(children: [
           selectedImage == null
               ? Text(

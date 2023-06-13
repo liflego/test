@@ -17,6 +17,8 @@ class ColorConstants {
 class TextConstants {
   static TextStyle? textstyle = TextStyle(
       fontSize: 18.sp, fontFamily: 'newbodyfont', color: Colors.black);
+  static TextStyle? textstylewh = TextStyle(
+      fontSize: 18.sp, fontFamily: 'newbodyfont', color: Colors.white);
   static TextStyle? textstyleforhistory = TextStyle(
       fontSize: 16.sp, fontFamily: 'newbodyfont', color: Colors.black);
   static TextStyle? textstyleforheader = TextStyle(

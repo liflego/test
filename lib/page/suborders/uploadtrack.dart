@@ -18,6 +18,7 @@ import 'dart:io' as io;
 
 class uploadtrack extends StatefulWidget {
   int ordernumber;
+
   uploadtrack({Key? key, required this.ordernumber}) : super(key: key);
 
   @override
@@ -67,7 +68,9 @@ class _uploadtrack extends State<uploadtrack> {
                     )),
               ),
               backgroundColor: ColorConstants.backgroundbody,
-              body: ListView(children: [selectimage(), buttondone()]),
+              body: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [selectimage(), buttondone()]),
             ),
           );
         },
@@ -101,7 +104,7 @@ class _uploadtrack extends State<uploadtrack> {
 
   Widget buttondone() {
     return Padding(
-      padding: EdgeInsets.all(20),
+      padding: EdgeInsets.all(20.sp),
       child: Container(
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(

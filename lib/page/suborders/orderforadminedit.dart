@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sigma_space/classapi/class.dart';
@@ -177,7 +176,6 @@ class _orderforadminedit extends State<orderforadminedit> {
                   ),
                   textpriceall(),
                   note(),
-                  selectimage(),
                   done()
                 ],
               )));
@@ -750,47 +748,6 @@ class _orderforadminedit extends State<orderforadminedit> {
     );
   }
 
-  Widget selectimage() {
-    return Padding(
-        padding: EdgeInsets.all(4),
-        child: Center(
-            child: Column(children: [
-          selectedImage == null
-              ? Text(
-                  "UPLOAD IMAGE",
-                  style: TextConstants.textStylenotes,
-                )
-              : Image.file(
-                  selectedImage!,
-                  width: 90.sp,
-                  height: 90.sp,
-                ),
-          TextButton.icon(
-              style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(ColorConstants.buttoncolor)),
-              onPressed: getImage,
-              icon: Icon(Icons.upload),
-              label: Text(
-                "UPLOAD",
-                style: TextConstants.textstyle,
-              ))
-        ])));
-  }
-
-  Future getImage() async {
-    // ignore: deprecated_member_use
-    final pickimage = await ImagePicker().getImage(source: ImageSource.gallery);
-    if (pickimage == null) {
-      return;
-    } else {
-      selectedImage = io.File(pickimage!.path);
-      setState(() {
-        getnameimg = selectedImage!.path.split('/').last.toString();
-      });
-    }
-  }
-
   Widget done() {
     return SizedBox(
       child: Padding(
@@ -798,6 +755,7 @@ class _orderforadminedit extends State<orderforadminedit> {
         child: TextButton(
           onPressed: () {
             updateadminconfirm();
+            updateprice();
           },
           child: Container(
             width: MediaQuery.of(context).size.width / 2,
@@ -905,7 +863,6 @@ class _orderforadminedit extends State<orderforadminedit> {
       http.Response response = await http.patch(Uri.parse(url),
           headers: {'Content-Type': 'application/json; charset=utf-8'},
           body: JsonEncoder().convert(body));
-      updateprice();
     } catch (error) {
       print(error);
     }
