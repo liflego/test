@@ -50,85 +50,90 @@ class _notiorderlist extends State<notiorderlist> {
   }
 
   Widget build(BuildContext context) {
-    return Sizer(builder: (context, orientation, deviceType) {
-      return SafeArea(
-          top: false,
-          child: Scaffold(
-              appBar: AppBar(
-                leading: IconButton(
-                    onPressed: () {
-                      Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(builder: (context) => MyApp()));
-                    },
-                    icon: Icon(
-                      Icons.arrow_back,
-                      color: Colors.white,
-                      size: 20.sp,
-                    )),
-                toolbarHeight: 7.h,
-                title: Text(
-                  "LIST ORDER",
-                  style: TextConstants.appbartextsyle,
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Sizer(builder: (context, orientation, deviceType) {
+        return SafeArea(
+            top: false,
+            child: Scaffold(
+                appBar: AppBar(
+                  leading: IconButton(
+                      onPressed: () {
+                        Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(builder: (context) => MyApp()));
+                      },
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: Colors.white,
+                        size: 20.sp,
+                      )),
+                  toolbarHeight: 7.h,
+                  title: Text(
+                    "LIST ORDER",
+                    style: TextConstants.appbartextsyle,
+                  ),
+                  backgroundColor: ColorConstants.appbarcolor,
                 ),
-                backgroundColor: ColorConstants.appbarcolor,
-              ),
-              body: ListView(
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Text(
-                                "ออเดอร์ที่ ${widget.ordernumber}",
-                                style: TextConstants.textstyle,
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "คำสั่งซื้อของ ${widget.namestore}",
-                                style: TextConstants.textstyle,
-                              ),
-                              Text(
-                                widget.date,
-                                style: TextConstants.textstyle,
-                              ),
-                            ],
-                          ),
-                          Text(
-                            "วิธีการชำระ : ${widget.pay}",
-                            style: TextConstants.textstyle,
-                          ),
-                          Text(
-                            "จำนวน ${widget.countorder} รายการ",
-                            style: TextConstants.textstyle,
-                          )
-                        ],
+                body: ListView(
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  "ออเดอร์ที่ ${widget.ordernumber}",
+                                  style: TextConstants.textstyle,
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "คำสั่งซื้อของ ${widget.namestore}",
+                                  style: TextConstants.textstyle,
+                                ),
+                                Text(
+                                  widget.date,
+                                  style: TextConstants.textstyle,
+                                ),
+                              ],
+                            ),
+                            Text(
+                              "วิธีการชำระ : ${widget.pay}",
+                              style: TextConstants.textstyle,
+                            ),
+                            Text(
+                              "จำนวน ${widget.countorder} รายการ",
+                              style: TextConstants.textstyle,
+                            )
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  Container(
-                    color: Colors.white,
-                    height: MediaQuery.of(context).size.height,
-                    width: MediaQuery.of(context).size.width,
-                    child: ListView.builder(
-                      itemCount: allorderfordisplay.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return cardlist(index);
-                      },
+                    Container(
+                      color: Colors.white,
+                      height: MediaQuery.of(context).size.height,
+                      width: MediaQuery.of(context).size.width,
+                      child: ListView.builder(
+                        itemCount: allorderfordisplay.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return cardlist(index);
+                        },
+                      ),
                     ),
-                  ),
-                ],
-              )));
-    });
+                  ],
+                )));
+      }),
+    );
   }
 
   Widget cardlist(index) {

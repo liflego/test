@@ -2,8 +2,6 @@ import 'dart:convert';
 // import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_signin_button/button_list.dart';
-import 'package:flutter_signin_button/flutter_signin_button.dart';
 // import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -35,51 +33,56 @@ class _createAcountfordealerState extends State<createAcountfordealer> {
 
   @override
   Widget build(BuildContext context) {
-    return Sizer(builder: (context, orientation, deviceType) {
-      return Scaffold(
-        backgroundColor: ColorConstants.backgroundbody,
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          centerTitle: true,
-          toolbarHeight: 10.h,
-          title: Text(
-            "REGISTER",
-            style: TextStyle(fontSize: 30.0.sp, fontFamily: 'newtitlefont'),
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Sizer(builder: (context, orientation, deviceType) {
+        return Scaffold(
+          backgroundColor: ColorConstants.backgroundbody,
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            centerTitle: true,
+            toolbarHeight: 10.h,
+            title: Text(
+              "REGISTER",
+              style: TextStyle(fontSize: 30.0.sp, fontFamily: 'newtitlefont'),
+            ),
+            backgroundColor: ColorConstants.appbarcolor,
+            leading: IconButton(
+                onPressed: () async {
+                  SharedPreferences pagepref =
+                      await SharedPreferences.getInstance();
+                  pagepref.setInt("pagepre", 1);
+                  Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (context) => login()));
+                },
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: Colors.white,
+                  size: 20.sp,
+                )),
           ),
-          backgroundColor: ColorConstants.appbarcolor,
-          leading: IconButton(
-              onPressed: () async {
-                SharedPreferences pagepref =
-                    await SharedPreferences.getInstance();
-                pagepref.setInt("pagepre", 1);
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => login()));
-              },
-              icon: Icon(
-                Icons.arrow_back,
-                color: Colors.white,
-                size: 20.sp,
-              )),
-        ),
-        body: SingleChildScrollView(
-          child: Form(
-            key: _formkey,
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 70.0),
-                ),
-                usernametext(),
-                namestoretext(),
-                producttext(),
-                phonenumbers(),
-                registerbt()
-              ],
+          body: SingleChildScrollView(
+            child: Form(
+              key: _formkey,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 70.0),
+                  ),
+                  usernametext(),
+                  namestoretext(),
+                  producttext(),
+                  phonenumbers(),
+                  registerbt()
+                ],
+              ),
             ),
           ),
-        ),
-      );
-    });
+        );
+      }),
+    );
   }
 
   Widget usernametext() {

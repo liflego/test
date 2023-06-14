@@ -76,110 +76,115 @@ class _orderforadminedit extends State<orderforadminedit> {
   }
 
   Widget build(BuildContext context) {
-    return Sizer(builder: (context, orientation, deviceType) {
-      return SafeArea(
-          top: false,
-          child: Scaffold(
-              appBar: AppBar(
-                leading: IconButton(
-                    onPressed: () {
-                      Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(builder: (context) => MyApp()));
-                    },
-                    icon: Icon(
-                      Icons.arrow_back,
-                      color: Colors.white,
-                      size: 20.sp,
-                    )),
-                actions: [
-                  IconButton(
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Sizer(builder: (context, orientation, deviceType) {
+        return SafeArea(
+            top: false,
+            child: Scaffold(
+                appBar: AppBar(
+                  leading: IconButton(
                       onPressed: () {
-                        if (togglecal == false) {
-                          setState(() {
-                            togglecal = true;
-                          });
-                        } else {
-                          setState(() {
-                            togglecal = false;
-                            listgetprice!.clear();
-                            listgetpricevat!.clear();
-                          });
-                        }
+                        Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(builder: (context) => MyApp()));
                       },
                       icon: Icon(
-                        Icons.calculate_rounded,
-                        size: 20.sp,
+                        Icons.arrow_back,
                         color: Colors.white,
+                        size: 20.sp,
                       )),
-                ],
-                toolbarHeight: 7.h,
-                title: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "ORDER ${widget.ordernumber}",
-                    ),
+                  actions: [
                     IconButton(
                         onPressed: () {
-                          Clipboard.setData(
-                              new ClipboardData(text: "${widget.ordernumber}"));
+                          if (togglecal == false) {
+                            setState(() {
+                              togglecal = true;
+                            });
+                          } else {
+                            setState(() {
+                              togglecal = false;
+                              listgetprice!.clear();
+                              listgetpricevat!.clear();
+                            });
+                          }
                         },
                         icon: Icon(
-                          Icons.copy,
-                          size: 15.sp,
-                          color: Colors.amber,
-                        ))
+                          Icons.calculate_rounded,
+                          size: 20.sp,
+                          color: Colors.white,
+                        )),
                   ],
+                  toolbarHeight: 7.h,
+                  title: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "ORDER ${widget.ordernumber}",
+                      ),
+                      IconButton(
+                          onPressed: () {
+                            Clipboard.setData(new ClipboardData(
+                                text: "${widget.ordernumber}"));
+                          },
+                          icon: Icon(
+                            Icons.copy,
+                            size: 15.sp,
+                            color: Colors.amber,
+                          ))
+                    ],
+                  ),
+                  backgroundColor: ColorConstants.appbarcolor,
                 ),
-                backgroundColor: ColorConstants.appbarcolor,
-              ),
-              body: ListView(
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                widget.cusname,
-                                style: TextConstants.textstyle,
-                              ),
-                              Text(
-                                widget.date,
-                                style: TextConstants.textstyle,
-                              ),
-                            ],
-                          ),
-                          Text(
-                            "วิธีการชำระ : ${widget.pay}",
-                            style: TextConstants.textstyle,
-                          ),
-                          Text(
-                            "จำนวน ${widget.amountlist} รายการ",
-                            style: TextConstants.textstyle,
-                          ),
-                        ],
+                body: ListView(
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  widget.cusname,
+                                  style: TextConstants.textstyle,
+                                ),
+                                Text(
+                                  widget.date,
+                                  style: TextConstants.textstyle,
+                                ),
+                              ],
+                            ),
+                            Text(
+                              "วิธีการชำระ : ${widget.pay}",
+                              style: TextConstants.textstyle,
+                            ),
+                            Text(
+                              "จำนวน ${widget.amountlist} รายการ",
+                              style: TextConstants.textstyle,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  togglecal == true ? chooseall() : SizedBox(),
-                  SizedBox(height: 5.sp),
-                  Container(
-                    color: Colors.amber,
-                    height: MediaQuery.of(context).size.height / 2.2,
-                    child: listitems(),
-                  ),
-                  textpriceall(),
-                  note(),
-                  done()
-                ],
-              )));
-    });
+                    togglecal == true ? chooseall() : SizedBox(),
+                    SizedBox(height: 5.sp),
+                    Container(
+                      color: Colors.amber,
+                      height: MediaQuery.of(context).size.height / 2.2,
+                      child: listitems(),
+                    ),
+                    textpriceall(),
+                    note(),
+                    done()
+                  ],
+                )));
+      }),
+    );
   }
 
   Widget chooseall() {

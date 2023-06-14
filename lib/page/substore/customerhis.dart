@@ -41,44 +41,49 @@ class _storehisState extends State<storehis> {
 
   @override
   Widget build(BuildContext context) {
-    return Sizer(builder: (context, orientation, deviceType) {
-      return SafeArea(
-          top: false,
-          child: Scaffold(
-            appBar: AppBar(
-              leading: new BackButton(
-                onPressed: () async {
-                  SharedPreferences pagepref =
-                      await SharedPreferences.getInstance();
-                  pagepref.setInt("pagepre", 2);
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Sizer(builder: (context, orientation, deviceType) {
+        return SafeArea(
+            top: false,
+            child: Scaffold(
+              appBar: AppBar(
+                leading: new BackButton(
+                  onPressed: () async {
+                    SharedPreferences pagepref =
+                        await SharedPreferences.getInstance();
+                    pagepref.setInt("pagepre", 2);
 
-                  Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => MyApp()));
-                },
-              ),
-              backgroundColor: ColorConstants.appbarcolor,
-              toolbarHeight: 7.h,
-              title: Text(
-                "HISTORY",
-                style: TextStyle(fontFamily: 'newtitlefont', fontSize: 25.sp),
-              ),
-            ),
-            backgroundColor: ColorConstants.backgroundbody,
-            //แก้ตรงนี้
-            body: ListView(children: [
-              showdata(),
-              SizedBox(
-                height: MediaQuery.of(context).size.height / 1.sp,
-                child: ListView.builder(
-                  itemBuilder: (context, index) {
-                    return listItem(index);
+                    Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) => MyApp()));
                   },
-                  itemCount: grouptype.length,
+                ),
+                backgroundColor: ColorConstants.appbarcolor,
+                toolbarHeight: 7.h,
+                title: Text(
+                  "HISTORY",
+                  style: TextStyle(fontFamily: 'newtitlefont', fontSize: 25.sp),
                 ),
               ),
-            ]),
-          ));
-    });
+              backgroundColor: ColorConstants.backgroundbody,
+              //แก้ตรงนี้
+              body: ListView(children: [
+                showdata(),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height / 1.sp,
+                  child: ListView.builder(
+                    itemBuilder: (context, index) {
+                      return listItem(index);
+                    },
+                    itemCount: grouptype.length,
+                  ),
+                ),
+              ]),
+            ));
+      }),
+    );
   }
 
   Widget showdata() {

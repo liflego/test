@@ -49,127 +49,132 @@ class _customerState extends State<customer> {
 
   @override
   Widget build(BuildContext context) {
-    return Sizer(builder: (context, orientation, deviceType) {
-      return SafeArea(
-        top: false,
-        child: Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            backgroundColor: ColorConstants.appbarcolor,
-            toolbarHeight: 7.h,
-            title: Text(
-              "CUSTOMERS",
-              style: TextStyle(fontFamily: 'newtitlefont', fontSize: 25.sp),
-            ),
-            actions: [
-              IconButton(
-                  onPressed: () {
-                    if (toggle1 == false) {
-                      toggle1 = true;
-                      allcustomerfordisplay.clear();
-                      allcustomer.clear();
-                      fectallcustomerdataforsale().then((value) {
-                        setState(() {
-                          allcustomer.addAll(value);
-                          allcustomerfordisplay = allcustomer;
-                        });
-                      });
-                    } else {
-                      toggle1 = false;
-                      getadmincf = 0;
-                      allcustomerfordisplay.clear();
-                      allcustomer.clear();
-                      fectallcustomerdata().then((value) {
-                        setState(() {
-                          allcustomer.addAll(value);
-                          allcustomerfordisplay = allcustomer;
-                        });
-                      });
-                    }
-                  },
-                  icon: Icon(Icons.work))
-            ],
-          ),
-          backgroundColor: ColorConstants.backgroundbody,
-          body: Form(
-            key: _formkey,
-            child: ListView(children: [
-              serchBar(),
-              countstore(),
-              SizedBox(
-                height: MediaQuery.of(context).size.height / 2,
-                child: ListView.builder(
-                  itemCount: allcustomerfordisplay.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return listItem(index);
-                  },
-                ),
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Sizer(builder: (context, orientation, deviceType) {
+        return SafeArea(
+          top: false,
+          child: Scaffold(
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              backgroundColor: ColorConstants.appbarcolor,
+              toolbarHeight: 7.h,
+              title: Text(
+                "CUSTOMERS",
+                style: TextStyle(fontFamily: 'newtitlefont', fontSize: 25.sp),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width / 1.3,
-                      child: TextFormField(
-                        validator: (value) {
-                          if (value!.length < 1) {
-                            return "Please enter message";
-                          }
-                        },
-                        controller: message,
-                        onFieldSubmitted: (value) => {
+              actions: [
+                IconButton(
+                    onPressed: () {
+                      if (toggle1 == false) {
+                        toggle1 = true;
+                        allcustomerfordisplay.clear();
+                        allcustomer.clear();
+                        fectallcustomerdataforsale().then((value) {
                           setState(() {
-                            message.text = value;
-                          })
-                        },
-                        maxLines: 3,
-                        decoration: InputDecoration(
-                            hintText: "Message box..",
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(width: 1))),
-                      ),
-                    ),
-                    toggle == true
-                        ? Container(
-                            color: Colors.red,
-                            width: MediaQuery.of(context).size.width / 7.5,
-                            height: MediaQuery.of(context).size.height / 10,
-                            child: IconButton(
-                                onPressed: () {
-                                  insertintonotice();
-                                },
-                                icon: Icon(
-                                  Icons.send,
-                                  size: 30.sp,
-                                  color: Colors.white,
-                                )),
-                          )
-                        : Container(
-                            color: Colors.amber,
-                            width: MediaQuery.of(context).size.width / 7.5,
-                            height: MediaQuery.of(context).size.height / 10,
-                            child: IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    toggle = !toggle;
-                                  });
-                                },
-                                icon: Icon(
-                                  Icons.check_box_outline_blank,
-                                  size: 30.sp,
-                                  color: Colors.white,
-                                )),
-                          ),
-                  ],
+                            allcustomer.addAll(value);
+                            allcustomerfordisplay = allcustomer;
+                          });
+                        });
+                      } else {
+                        toggle1 = false;
+                        getadmincf = 0;
+                        allcustomerfordisplay.clear();
+                        allcustomer.clear();
+                        fectallcustomerdata().then((value) {
+                          setState(() {
+                            allcustomer.addAll(value);
+                            allcustomerfordisplay = allcustomer;
+                          });
+                        });
+                      }
+                    },
+                    icon: Icon(Icons.work))
+              ],
+            ),
+            backgroundColor: ColorConstants.backgroundbody,
+            body: Form(
+              key: _formkey,
+              child: ListView(children: [
+                serchBar(),
+                countstore(),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height / 2,
+                  child: ListView.builder(
+                    itemCount: allcustomerfordisplay.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return listItem(index);
+                    },
+                  ),
                 ),
-              ),
-            ]),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width / 1.3,
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value!.length < 1) {
+                              return "Please enter message";
+                            }
+                          },
+                          controller: message,
+                          onFieldSubmitted: (value) => {
+                            setState(() {
+                              message.text = value;
+                            })
+                          },
+                          maxLines: 3,
+                          decoration: InputDecoration(
+                              hintText: "Message box..",
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(width: 1))),
+                        ),
+                      ),
+                      toggle == true
+                          ? Container(
+                              color: Colors.red,
+                              width: MediaQuery.of(context).size.width / 7.5,
+                              height: MediaQuery.of(context).size.height / 10,
+                              child: IconButton(
+                                  onPressed: () {
+                                    insertintonotice();
+                                  },
+                                  icon: Icon(
+                                    Icons.send,
+                                    size: 30.sp,
+                                    color: Colors.white,
+                                  )),
+                            )
+                          : Container(
+                              color: Colors.amber,
+                              width: MediaQuery.of(context).size.width / 7.5,
+                              height: MediaQuery.of(context).size.height / 10,
+                              child: IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      toggle = !toggle;
+                                    });
+                                  },
+                                  icon: Icon(
+                                    Icons.check_box_outline_blank,
+                                    size: 30.sp,
+                                    color: Colors.white,
+                                  )),
+                            ),
+                    ],
+                  ),
+                ),
+              ]),
+            ),
           ),
-        ),
-      );
-    });
+        );
+      }),
+    );
   }
 
   Widget serchBar() {

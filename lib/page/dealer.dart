@@ -62,231 +62,239 @@ class _dealerpageState extends State<dealerpage> {
 
   @override
   Widget build(BuildContext context) {
-    return Sizer(builder: (context, orientation, deviceType) {
-      return SafeArea(
-        top: false,
-        child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: ColorConstants.appbarcolor,
-            toolbarHeight: 7.h,
-            title: Text(
-              "DEALER",
-              style: TextStyle(fontFamily: 'newtitlefont', fontSize: 25.sp),
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Sizer(builder: (context, orientation, deviceType) {
+        return SafeArea(
+          top: false,
+          child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: ColorConstants.appbarcolor,
+              toolbarHeight: 7.h,
+              title: Text(
+                "DEALER",
+                style: TextStyle(fontFamily: 'newtitlefont', fontSize: 25.sp),
+              ),
+              actions: [
+                IconButton(
+                    onPressed: () {
+                      scanbarcode();
+                    },
+                    icon: Icon(Icons.qr_code_scanner))
+              ],
             ),
-            actions: [
-              IconButton(
-                  onPressed: () {
-                    scanbarcode();
-                  },
-                  icon: Icon(Icons.qr_code_scanner))
-            ],
-          ),
-          backgroundColor: ColorConstants.backgroundbody,
-          body: Form(
-            key: _formkey,
-            child: ListView(children: [
-              serchBar(),
-              countstore(),
-              SizedBox(
-                height: MediaQuery.of(context).size.height / 2,
-                child: ListView.builder(
-                  itemCount: alldealerfordisplay.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return listItem(index);
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width / 1.3,
-                      child: TextFormField(
-                        validator: (value) {
-                          if (value!.length < 1) {
-                            return "Please enter message";
-                          }
-                        },
-                        controller: message,
-                        onFieldSubmitted: (value) => {
-                          setState(() {
-                            message.text = value;
-                          })
-                        },
-                        maxLines: 3,
-                        decoration: InputDecoration(
-                            hintText: "Message box..",
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(width: 1))),
-                      ),
-                    ),
-                    toggle == true
-                        ? Container(
-                            color: Colors.red,
-                            width: MediaQuery.of(context).size.width / 7.5,
-                            height: MediaQuery.of(context).size.height / 10,
-                            child: IconButton(
-                                onPressed: () {
-                                  if (stringpreferences1![1] == "DEALER") {
-                                    insertintonoticefordealer();
-                                  } else {
-                                    insertintonotice();
-                                  }
-                                },
-                                icon: Icon(
-                                  Icons.send,
-                                  size: 30.sp,
-                                  color: Colors.white,
-                                )),
-                          )
-                        : Container(
-                            color: Colors.amber,
-                            width: MediaQuery.of(context).size.width / 7.5,
-                            height: MediaQuery.of(context).size.height / 10,
-                            child: IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    toggle = !toggle;
-                                  });
-                                },
-                                icon: Icon(
-                                  Icons.check_box_outline_blank,
-                                  size: 30.sp,
-                                  color: Colors.white,
-                                )),
-                          ),
-                  ],
-                ),
-              ),
-            ]),
-          ),
-          drawer: Drawer(
-            backgroundColor: Colors.grey[300],
-            child: ListView(
-              // Important: Remove any padding from the ListView.
-              padding: EdgeInsets.zero,
-              children: <Widget>[
-                DrawerHeader(
-                  child: Column(
-                    children: [
-                      Text(
-                        namestore,
-                        style: TextStyle(
-                            fontSize: 25.0,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'newtitlefont'),
-                      ),
-                    ],
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[50],
+            backgroundColor: ColorConstants.backgroundbody,
+            body: Form(
+              key: _formkey,
+              child: ListView(children: [
+                serchBar(),
+                countstore(),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height / 2,
+                  child: ListView.builder(
+                    itemCount: alldealerfordisplay.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return listItem(index);
+                    },
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Center(
-                      child: SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          child: auth == "null"
-                              ? TextButton(
-                                  style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all(
-                                        Colors.greenAccent[700]),
-                                  ),
-                                  child: Text(
-                                    "รับการแจ้งเตือนผ่าน LINE",
-                                    style: TextStyle(
-                                        fontSize: 20.0,
-                                        color: Colors.black,
-                                        fontFamily: 'newtitlefont'),
-                                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width / 1.3,
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value!.length < 1) {
+                              return "Please enter message";
+                            }
+                          },
+                          controller: message,
+                          onFieldSubmitted: (value) => {
+                            setState(() {
+                              message.text = value;
+                            })
+                          },
+                          maxLines: 3,
+                          decoration: InputDecoration(
+                              hintText: "Message box..",
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(width: 1))),
+                        ),
+                      ),
+                      toggle == true
+                          ? Container(
+                              color: Colors.red,
+                              width: MediaQuery.of(context).size.width / 7.5,
+                              height: MediaQuery.of(context).size.height / 10,
+                              child: IconButton(
                                   onPressed: () {
-                                    insertlineuid();
-                                    _openline();
+                                    if (stringpreferences1![1] == "DEALER") {
+                                      insertintonoticefordealer();
+                                    } else {
+                                      insertintonotice();
+                                    }
+                                  },
+                                  icon: Icon(
+                                    Icons.send,
+                                    size: 30.sp,
+                                    color: Colors.white,
+                                  )),
+                            )
+                          : Container(
+                              color: Colors.amber,
+                              width: MediaQuery.of(context).size.width / 7.5,
+                              height: MediaQuery.of(context).size.height / 10,
+                              child: IconButton(
+                                  onPressed: () {
                                     setState(() {
-                                      auth = "notnull";
+                                      toggle = !toggle;
                                     });
                                   },
-                                )
-                              : TextButton(
-                                  style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all(
-                                        Colors.red[400]),
-                                  ),
-                                  child: Text(
-                                    "ยกเลิกรับการแจ้งเตือนผ่าน LINE",
-                                    style: TextStyle(
-                                        fontSize: 20.0,
-                                        color: Colors.white,
-                                        fontFamily: 'newtitlefont'),
-                                  ),
-                                  onPressed: () {
-                                    cancellinenoti();
-                                  },
-                                ))),
+                                  icon: Icon(
+                                    Icons.check_box_outline_blank,
+                                    size: 30.sp,
+                                    color: Colors.white,
+                                  )),
+                            ),
+                    ],
+                  ),
                 ),
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 60.h, horizontal: 1.h),
-                  child: Center(
-                      child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: TextButton(
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.white),
-                      ),
-                      child: Text(
-                        "LOG OUT",
-                        style: TextStyle(
-                            fontSize: 20.0,
-                            color: Colors.black,
-                            fontFamily: 'newtitlefont'),
-                      ),
-                      onPressed: () async {
-                        SharedPreferences pagepref =
-                            await SharedPreferences.getInstance();
-                        pagepref.setInt("pagepre", 0);
-
-                        ////update login status
-                        String url2 =
-                            "http://185.78.165.189:3000/pythonapi/updateloginstatus";
-
-                        var body2 = {
-                          "loginstatus": "0",
-                          "username": stringpreferences1![5].toString(),
-                        };
-
-                        http.Response response2 = await http.patch(
-                            Uri.parse(url2),
-                            headers: {
-                              'Content-Type': 'application/json; charset=utf-8'
-                            },
-                            body: JsonEncoder().convert(body2));
-                        stringpreferences1!.clear();
-
-                        SharedPreferences preferences1 =
-                            await SharedPreferences.getInstance();
-                        preferences1.setStringList(
-                            "codestore", stringpreferences1!);
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => (login()),
-                          ),
-                        );
-                      },
+              ]),
+            ),
+            drawer: Drawer(
+              backgroundColor: Colors.grey[300],
+              child: ListView(
+                // Important: Remove any padding from the ListView.
+                padding: EdgeInsets.zero,
+                children: <Widget>[
+                  DrawerHeader(
+                    child: Column(
+                      children: [
+                        Text(
+                          namestore,
+                          style: TextStyle(
+                              fontSize: 25.0,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'newtitlefont'),
+                        ),
+                      ],
                     ),
-                  )),
-                )
-              ],
+                    decoration: BoxDecoration(
+                      color: Colors.grey[50],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                        child: SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            child: auth == "null"
+                                ? TextButton(
+                                    style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              Colors.greenAccent[700]),
+                                    ),
+                                    child: Text(
+                                      "รับการแจ้งเตือนผ่าน LINE",
+                                      style: TextStyle(
+                                          fontSize: 20.0,
+                                          color: Colors.black,
+                                          fontFamily: 'newtitlefont'),
+                                    ),
+                                    onPressed: () {
+                                      insertlineuid();
+                                      _openline();
+                                      setState(() {
+                                        auth = "notnull";
+                                      });
+                                    },
+                                  )
+                                : TextButton(
+                                    style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              Colors.red[400]),
+                                    ),
+                                    child: Text(
+                                      "ยกเลิกรับการแจ้งเตือนผ่าน LINE",
+                                      style: TextStyle(
+                                          fontSize: 20.0,
+                                          color: Colors.white,
+                                          fontFamily: 'newtitlefont'),
+                                    ),
+                                    onPressed: () {
+                                      cancellinenoti();
+                                    },
+                                  ))),
+                  ),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 60.h, horizontal: 1.h),
+                    child: Center(
+                        child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: TextButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.white),
+                        ),
+                        child: Text(
+                          "LOG OUT",
+                          style: TextStyle(
+                              fontSize: 20.0,
+                              color: Colors.black,
+                              fontFamily: 'newtitlefont'),
+                        ),
+                        onPressed: () async {
+                          SharedPreferences pagepref =
+                              await SharedPreferences.getInstance();
+                          pagepref.setInt("pagepre", 0);
+
+                          ////update login status
+                          String url2 =
+                              "http://185.78.165.189:3000/pythonapi/updateloginstatus";
+
+                          var body2 = {
+                            "loginstatus": "0",
+                            "username": stringpreferences1![5].toString(),
+                          };
+
+                          http.Response response2 = await http.patch(
+                              Uri.parse(url2),
+                              headers: {
+                                'Content-Type':
+                                    'application/json; charset=utf-8'
+                              },
+                              body: JsonEncoder().convert(body2));
+                          stringpreferences1!.clear();
+
+                          SharedPreferences preferences1 =
+                              await SharedPreferences.getInstance();
+                          preferences1.setStringList(
+                              "codestore", stringpreferences1!);
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => (login()),
+                            ),
+                          );
+                        },
+                      ),
+                    )),
+                  )
+                ],
+              ),
             ),
           ),
-        ),
-      );
-    });
+        );
+      }),
+    );
   }
 
   Widget serchBar() {

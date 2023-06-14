@@ -78,94 +78,100 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
 
   @override
   Widget build(BuildContext context) {
-    return Sizer(builder: (context, orientation, deviceType) {
-      return SafeArea(
-          top: false,
-          child: Scaffold(
-              appBar: AppBar(
-                leading: IconButton(
-                    onPressed: () async {
-                      if (stringpreferences1?[1] == "DEALER") {
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(
-                            builder: (context) => checkstock(
-                                  codeorder: [],
-                                  nameorder: [],
-                                  numorder: [],
-                                  numpercrate: [],
-                                  productset: [],
-                                  price: [],
-                                )));
-                      } else {
-                        SharedPreferences pagepref =
-                            await SharedPreferences.getInstance();
-                        pagepref.setInt("pagepre", 0);
-                        Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: (context) => MyApp()));
-                      }
-                    },
-                    icon: Icon(
-                      Icons.arrow_back,
-                      color: Colors.white,
-                      size: 20.sp,
-                    )),
-                actions: [
-                  IconButton(
-                      onPressed: () {
-                        if (togglecal == false) {
-                          setState(() {
-                            togglecal = true;
-                          });
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Sizer(builder: (context, orientation, deviceType) {
+        return SafeArea(
+            top: false,
+            child: Scaffold(
+                appBar: AppBar(
+                  leading: IconButton(
+                      onPressed: () async {
+                        if (stringpreferences1?[1] == "DEALER") {
+                          Navigator.of(context)
+                              .pushReplacement(MaterialPageRoute(
+                                  builder: (context) => checkstock(
+                                        codeorder: [],
+                                        nameorder: [],
+                                        numorder: [],
+                                        numpercrate: [],
+                                        productset: [],
+                                        price: [],
+                                      )));
                         } else {
-                          setState(() {
-                            togglecal = false;
-                            listgetprice!.clear();
-                            listgetpricevat!.clear();
-                          });
+                          SharedPreferences pagepref =
+                              await SharedPreferences.getInstance();
+                          pagepref.setInt("pagepre", 0);
+                          Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(builder: (context) => MyApp()));
                         }
                       },
                       icon: Icon(
-                        Icons.calculate_rounded,
-                        size: 20.sp,
+                        Icons.arrow_back,
                         color: Colors.white,
+                        size: 20.sp,
                       )),
-                  IconButton(
-                      onPressed: backtostock,
-                      icon: Icon(
-                        Icons.add_circle,
-                        size: 20.sp,
-                        color: Colors.white,
-                      ))
-                ],
-                toolbarHeight: 7.h,
-                title: widget.position == "DEALER"
-                    ? Text(
-                        "ORDER",
-                        style: TextConstants.appbartextsyle,
-                      )
-                    : Container(
-                        color: Color.fromARGB(255, 5, 61, 110),
-                        child: Row(
-                          children: [
-                            Icon(Icons.search),
-                            Padding(padding: EdgeInsets.only(left: 3.0.sp)),
-                            tabsearch(),
-                          ],
+                  actions: [
+                    IconButton(
+                        onPressed: () {
+                          if (togglecal == false) {
+                            setState(() {
+                              togglecal = true;
+                            });
+                          } else {
+                            setState(() {
+                              togglecal = false;
+                              listgetprice!.clear();
+                              listgetpricevat!.clear();
+                            });
+                          }
+                        },
+                        icon: Icon(
+                          Icons.calculate_rounded,
+                          size: 20.sp,
+                          color: Colors.white,
                         )),
-                backgroundColor: ColorConstants.appbarcolor,
-              ),
-              body: ListView(
-                children: [
-                  togglecal == true ? chooseall() : SizedBox(),
-                  Container(
-                    color: Colors.amber,
-                    height: MediaQuery.of(context).size.height / 2,
-                    child: listitems(),
-                  ),
-                  togglecal == true ? textpriceall() : SizedBox(),
-                  data()
-                ],
-              )));
-    });
+                    IconButton(
+                        onPressed: backtostock,
+                        icon: Icon(
+                          Icons.add_circle,
+                          size: 20.sp,
+                          color: Colors.white,
+                        ))
+                  ],
+                  toolbarHeight: 7.h,
+                  title: widget.position == "DEALER"
+                      ? Text(
+                          "ORDER",
+                          style: TextConstants.appbartextsyle,
+                        )
+                      : Container(
+                          color: Color.fromARGB(255, 5, 61, 110),
+                          child: Row(
+                            children: [
+                              Icon(Icons.search),
+                              Padding(padding: EdgeInsets.only(left: 3.0.sp)),
+                              tabsearch(),
+                            ],
+                          )),
+                  backgroundColor: ColorConstants.appbarcolor,
+                ),
+                body: ListView(
+                  children: [
+                    togglecal == true ? chooseall() : SizedBox(),
+                    Container(
+                      color: Colors.amber,
+                      height: MediaQuery.of(context).size.height / 2,
+                      child: listitems(),
+                    ),
+                    togglecal == true ? textpriceall() : SizedBox(),
+                    data()
+                  ],
+                )));
+      }),
+    );
   }
 
   Widget chooseall() {

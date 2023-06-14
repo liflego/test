@@ -278,7 +278,7 @@ class _addnewproductpage extends State<addnewproductpage> {
       child: Row(
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.width / 3.1,
+            width: MediaQuery.of(context).size.width / 3.5,
             child: TextFormField(
               onChanged: (text) => setState(() {
                 text = price.text.trim();

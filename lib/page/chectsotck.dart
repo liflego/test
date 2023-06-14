@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -89,205 +90,211 @@ class _checkstock extends State<checkstock> {
 
   @override
   Widget build(BuildContext context) {
-    return Sizer(
-      builder: (context, orientation, deviceType) {
-        return SafeArea(
-          top: false,
-          child: Scaffold(
-            appBar: AppBar(
-              automaticallyImplyLeading:
-                  stringpreferences1?[1] == "SALE" ? true : false,
-              toolbarHeight: 7.h,
-              title: Text(
-                "STOCK",
-                style: TextStyle(fontFamily: 'newtitlefont', fontSize: 25.sp),
-              ),
-              actions: [
-                stringpreferences1?[1] == "ADMIN"
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Sizer(
+        builder: (context, orientation, deviceType) {
+          return SafeArea(
+            top: false,
+            child: Scaffold(
+              appBar: AppBar(
+                automaticallyImplyLeading:
+                    stringpreferences1?[1] == "SALE" ? true : false,
+                toolbarHeight: 7.h,
+                title: Text(
+                  "STOCK",
+                  style: TextStyle(fontFamily: 'newtitlefont', fontSize: 25.sp),
+                ),
+                actions: [
+                  stringpreferences1?[1] == "ADMIN"
+                      ? IconButton(
+                          onPressed: () {
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (context) => addnewproductpage()));
+                          },
+                          icon: Icon(Icons.add_circle))
+                      : SizedBox()
+                ],
+                leading: stringpreferences1?[1] == "DEALER"
                     ? IconButton(
                         onPressed: () {
                           Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
-                                  builder: (context) => addnewproductpage()));
+                                  builder: ((context) => MyApp())));
                         },
-                        icon: Icon(Icons.add_circle))
-                    : SizedBox()
-              ],
-              leading: stringpreferences1?[1] == "DEALER"
-                  ? IconButton(
-                      onPressed: () {
-                        Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: ((context) => MyApp())));
-                      },
-                      icon: Icon(
-                        Icons.arrow_back,
-                        color: Colors.white,
-                      ))
-                  : null,
-              backgroundColor: ColorConstants.appbarcolor,
-            ),
-            backgroundColor: ColorConstants.backgroundbody,
-            body: SingleChildScrollView(
-              child: Column(children: [
-                choosetype(),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height / 1.6,
-                  child: ListView.builder(
-                    itemBuilder: (context, index) {
-                      return listItem(index);
-                    },
-                    itemCount: allproductfordisplay.length,
-                  ),
-                ),
-              ]),
-            ),
-            drawer: Drawer(
-              backgroundColor: Colors.grey[300],
-              child: ListView(
-                // Important: Remove any padding from the ListView.
-                padding: EdgeInsets.zero,
-                children: <Widget>[
-                  DrawerHeader(
-                    child: Column(
-                      children: [
-                        Text(
-                          namestore,
-                          style: TextStyle(
-                              fontSize: 25.0,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'newtitlefont'),
-                        ),
-                      ],
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[50],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Center(
-                        child: SizedBox(
-                            width: MediaQuery.of(context).size.width,
-                            child: auth == "null"
-                                ? TextButton(
-                                    style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all(
-                                              Colors.greenAccent[700]),
-                                    ),
-                                    child: Text(
-                                      "รับการแจ้งเตือนผ่าน LINE",
-                                      style: TextStyle(
-                                          fontSize: 20.0,
-                                          color: Colors.black,
-                                          fontFamily: 'newtitlefont'),
-                                    ),
-                                    onPressed: () {
-                                      insertlineuid();
-                                      _openline();
-                                      setState(() {
-                                        auth = "notnull";
-                                      });
-                                    },
-                                  )
-                                : TextButton(
-                                    style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all(
-                                              Colors.red[400]),
-                                    ),
-                                    child: Text(
-                                      "ยกเลิกรับการแจ้งเตือนผ่าน LINE",
-                                      style: TextStyle(
-                                          fontSize: 20.0,
-                                          color: Colors.white,
-                                          fontFamily: 'newtitlefont'),
-                                    ),
-                                    onPressed: () {
-                                      cancellinenoti();
-                                    },
-                                  ))),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 400.0, left: 8.0, right: 8.0),
-                    child: Center(
-                        child: SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: TextButton(
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(Colors.white),
-                        ),
-                        child: Text(
-                          "LOG OUT",
-                          style: TextStyle(
-                              fontSize: 20.0,
-                              color: Colors.black,
-                              fontFamily: 'newtitlefont'),
-                        ),
-                        onPressed: () async {
-                          SharedPreferences pagepref =
-                              await SharedPreferences.getInstance();
-                          pagepref.setInt("pagepre", 0);
-
-                          ////update login status
-                          String url2 =
-                              "http://185.78.165.189:3000/pythonapi/updateloginstatus";
-
-                          var body2 = {
-                            "loginstatus": "0",
-                            "username": stringpreferences1![5].toString(),
-                          };
-
-                          http.Response response2 = await http.patch(
-                              Uri.parse(url2),
-                              headers: {
-                                'Content-Type':
-                                    'application/json; charset=utf-8'
-                              },
-                              body: JsonEncoder().convert(body2));
-                          stringpreferences1!.clear();
-
-                          SharedPreferences preferences1 =
-                              await SharedPreferences.getInstance();
-                          preferences1.setStringList(
-                              "codestore", stringpreferences1!);
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => (login()),
-                            ),
-                          );
-                        },
-                      ),
-                    )),
-                  )
-                ],
+                        icon: Icon(
+                          Icons.arrow_back,
+                          color: Colors.white,
+                        ))
+                    : null,
+                backgroundColor: ColorConstants.appbarcolor,
               ),
-            ),
-            floatingActionButton: stringpreferences1?[1] == "ADMIN"
-                ? null
-                : FloatingActionButton(
-                    onPressed: gotoorder,
-                    backgroundColor: ColorConstants.appbarcolor,
-                    child: noti != 0
-                        ? Badge(
-                            backgroundColor: Colors.white,
-                            label: Text(
-                              '$noti',
-                              style: TextStyle(
-                                  fontSize: 12.0.sp,
-                                  fontFamily: 'newtitlefont',
-                                  color: Colors.red),
-                            ),
-                            child: Icon(Icons.list),
-                          )
-                        : Icon(Icons.list),
+              backgroundColor: ColorConstants.backgroundbody,
+              body: SingleChildScrollView(
+                child: Column(children: [
+                  choosetype(),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height / 1.6,
+                    child: ListView.builder(
+                      itemBuilder: (context, index) {
+                        return listItem(index);
+                      },
+                      itemCount: allproductfordisplay.length,
+                    ),
                   ),
-          ),
-        );
-      },
+                ]),
+              ),
+              drawer: Drawer(
+                backgroundColor: Colors.grey[300],
+                child: ListView(
+                  // Important: Remove any padding from the ListView.
+                  padding: EdgeInsets.zero,
+                  children: <Widget>[
+                    DrawerHeader(
+                      child: Column(
+                        children: [
+                          Text(
+                            namestore,
+                            style: TextStyle(
+                                fontSize: 25.0,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'newtitlefont'),
+                          ),
+                        ],
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[50],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Center(
+                          child: SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              child: auth == "null"
+                                  ? TextButton(
+                                      style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all(
+                                                Colors.greenAccent[700]),
+                                      ),
+                                      child: Text(
+                                        "รับการแจ้งเตือนผ่าน LINE",
+                                        style: TextStyle(
+                                            fontSize: 20.0,
+                                            color: Colors.black,
+                                            fontFamily: 'newtitlefont'),
+                                      ),
+                                      onPressed: () {
+                                        insertlineuid();
+                                        _openline();
+                                        setState(() {
+                                          auth = "notnull";
+                                        });
+                                      },
+                                    )
+                                  : TextButton(
+                                      style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all(
+                                                Colors.red[400]),
+                                      ),
+                                      child: Text(
+                                        "ยกเลิกรับการแจ้งเตือนผ่าน LINE",
+                                        style: TextStyle(
+                                            fontSize: 20.0,
+                                            color: Colors.white,
+                                            fontFamily: 'newtitlefont'),
+                                      ),
+                                      onPressed: () {
+                                        cancellinenoti();
+                                      },
+                                    ))),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          top: 400.0, left: 8.0, right: 8.0),
+                      child: Center(
+                          child: SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: TextButton(
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(Colors.white),
+                          ),
+                          child: Text(
+                            "LOG OUT",
+                            style: TextStyle(
+                                fontSize: 20.0,
+                                color: Colors.black,
+                                fontFamily: 'newtitlefont'),
+                          ),
+                          onPressed: () async {
+                            SharedPreferences pagepref =
+                                await SharedPreferences.getInstance();
+                            pagepref.setInt("pagepre", 0);
+
+                            ////update login status
+                            String url2 =
+                                "http://185.78.165.189:3000/pythonapi/updateloginstatus";
+
+                            var body2 = {
+                              "loginstatus": "0",
+                              "username": stringpreferences1![5].toString(),
+                            };
+
+                            http.Response response2 = await http.patch(
+                                Uri.parse(url2),
+                                headers: {
+                                  'Content-Type':
+                                      'application/json; charset=utf-8'
+                                },
+                                body: JsonEncoder().convert(body2));
+                            stringpreferences1!.clear();
+
+                            SharedPreferences preferences1 =
+                                await SharedPreferences.getInstance();
+                            preferences1.setStringList(
+                                "codestore", stringpreferences1!);
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => (login()),
+                              ),
+                            );
+                          },
+                        ),
+                      )),
+                    )
+                  ],
+                ),
+              ),
+              floatingActionButton: stringpreferences1?[1] == "ADMIN"
+                  ? null
+                  : FloatingActionButton(
+                      onPressed: gotoorder,
+                      backgroundColor: ColorConstants.appbarcolor,
+                      child: noti != 0
+                          ? Badge(
+                              badgeStyle: BadgeStyle(badgeColor: Colors.blue),
+                              badgeContent: Text(
+                                '$noti',
+                                style: TextStyle(
+                                    fontSize: 12.0.sp,
+                                    fontFamily: 'newtitlefont',
+                                    color: Colors.red),
+                              ),
+                              child: Icon(Icons.list),
+                            )
+                          : Icon(Icons.list),
+                    ),
+            ),
+          );
+        },
+      ),
     );
   }
 

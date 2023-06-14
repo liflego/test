@@ -73,32 +73,37 @@ class _notipage extends State<notipage> {
 
   @override
   Widget build(BuildContext context) {
-    return Sizer(builder: (context, orientation, deviceType) {
-      return SafeArea(
-          top: false,
-          child: Scaffold(
-            appBar: AppBar(
-              automaticallyImplyLeading: false,
-              backgroundColor: ColorConstants.appbarcolor,
-              toolbarHeight: 7.h,
-              title: Text(
-                "NOTICE",
-                style: TextStyle(fontFamily: 'newtitlefont', fontSize: 25.sp),
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Sizer(builder: (context, orientation, deviceType) {
+        return SafeArea(
+            top: false,
+            child: Scaffold(
+              appBar: AppBar(
+                automaticallyImplyLeading: false,
+                backgroundColor: ColorConstants.appbarcolor,
+                toolbarHeight: 7.h,
+                title: Text(
+                  "NOTICE",
+                  style: TextStyle(fontFamily: 'newtitlefont', fontSize: 25.sp),
+                ),
               ),
-            ),
-            backgroundColor: ColorConstants.backgroundbody,
-            body: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              child: ListView.builder(
-                itemCount: allnoticefordisplay.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return listitem(index);
-                },
+              backgroundColor: ColorConstants.backgroundbody,
+              body: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                child: ListView.builder(
+                  itemCount: allnoticefordisplay.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return listitem(index);
+                  },
+                ),
               ),
-            ),
-          ));
-    });
+            ));
+      }),
+    );
   }
 
   Widget listitem(index) {

@@ -60,91 +60,96 @@ class _orderforedit extends State<orderforedit> {
   }
 
   Widget build(BuildContext context) {
-    return Sizer(builder: (context, orientation, deviceType) {
-      return SafeArea(
-          top: false,
-          child: Scaffold(
-              appBar: AppBar(
-                leading: IconButton(
-                    onPressed: () async {
-                      SharedPreferences pagepref =
-                          await SharedPreferences.getInstance();
-                      pagepref.setInt("pagepre", 1);
-                      Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(builder: (context) => MyApp()));
-                    },
-                    icon: Icon(
-                      Icons.arrow_back,
-                      color: Colors.white,
-                      size: 20.sp,
-                    )),
-                toolbarHeight: 7.h,
-                title: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "คำสั่งซื้อที่ ${widget.ordernumber}",
-                      style: TextConstants.textstylewh,
-                    ),
-                    IconButton(
-                        onPressed: () {
-                          Clipboard.setData(
-                              new ClipboardData(text: "${widget.ordernumber}"));
-                        },
-                        icon: Icon(
-                          Icons.copy,
-                          size: 15.sp,
-                          color: Colors.amber,
-                        ))
-                  ],
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Sizer(builder: (context, orientation, deviceType) {
+        return SafeArea(
+            top: false,
+            child: Scaffold(
+                appBar: AppBar(
+                  leading: IconButton(
+                      onPressed: () async {
+                        SharedPreferences pagepref =
+                            await SharedPreferences.getInstance();
+                        pagepref.setInt("pagepre", 1);
+                        Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(builder: (context) => MyApp()));
+                      },
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: Colors.white,
+                        size: 20.sp,
+                      )),
+                  toolbarHeight: 7.h,
+                  title: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "คำสั่งซื้อที่ ${widget.ordernumber}",
+                        style: TextConstants.textstylewh,
+                      ),
+                      IconButton(
+                          onPressed: () {
+                            Clipboard.setData(new ClipboardData(
+                                text: "${widget.ordernumber}"));
+                          },
+                          icon: Icon(
+                            Icons.copy,
+                            size: 15.sp,
+                            color: Colors.amber,
+                          ))
+                    ],
+                  ),
+                  backgroundColor: ColorConstants.appbarcolor,
                 ),
-                backgroundColor: ColorConstants.appbarcolor,
-              ),
-              body: ListView(
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                widget.cusname,
-                                style: TextConstants.textstyle,
-                              ),
-                              Text(
-                                widget.date,
-                                style: TextConstants.textstyle,
-                              ),
-                            ],
-                          ),
-                          Text(
-                            "วิธีการชำระ : ${widget.pay}",
-                            style: TextConstants.textstyle,
-                          ),
-                          Text(
-                            "จำนวน ${widget.amountlist} รายการ",
-                            style: TextConstants.textstyle,
-                          )
-                        ],
+                body: ListView(
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  widget.cusname,
+                                  style: TextConstants.textstyle,
+                                ),
+                                Text(
+                                  widget.date,
+                                  style: TextConstants.textstyle,
+                                ),
+                              ],
+                            ),
+                            Text(
+                              "วิธีการชำระ : ${widget.pay}",
+                              style: TextConstants.textstyle,
+                            ),
+                            Text(
+                              "จำนวน ${widget.amountlist} รายการ",
+                              style: TextConstants.textstyle,
+                            )
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 5.sp),
-                  Container(
-                    color: Colors.white,
-                    height: MediaQuery.of(context).size.height / 2.4,
-                    child: listitems(),
-                  ),
-                  note(),
-                  stringpreferences1?[1] == "ADMIN" ? SizedBox() : done()
-                ],
-              )));
-    });
+                    SizedBox(height: 5.sp),
+                    Container(
+                      color: Colors.white,
+                      height: MediaQuery.of(context).size.height / 2.4,
+                      child: listitems(),
+                    ),
+                    note(),
+                    stringpreferences1?[1] == "ADMIN" ? SizedBox() : done()
+                  ],
+                )));
+      }),
+    );
   }
 
   Widget listitems() {
