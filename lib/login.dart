@@ -1,14 +1,8 @@
 import 'dart:convert';
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-// import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_hex_color/flutter_hex_color.dart';
 import 'package:sigma_space/page/sublogin/Createdealerac.dart';
-import 'package:sigma_space/page/sublogin/googlelogin.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'classapi/class.dart';
 import 'main.dart';
 import 'package:sizer/sizer.dart';
@@ -260,7 +254,7 @@ class _loginState extends State<login> {
 
         if (jsonRes["success"] == 1 &&
             (jsonRes["loginstatus"] == null || jsonRes["loginstatus"] == 0)) {
-          if (jsonRes["auth"] == null) {
+          if (jsonRes["b.auth"] == null) {
             stringpreferences1 = [
               jsonRes["codestore"],
               jsonRes["position"],
@@ -275,7 +269,7 @@ class _loginState extends State<login> {
               jsonRes["position"],
               jsonRes["userid"].toString(),
               jsonRes["namestore"],
-              jsonRes["auth"],
+              jsonRes["b.auth"],
               jsonRes["username"]
             ];
           }
@@ -284,6 +278,7 @@ class _loginState extends State<login> {
               await SharedPreferences.getInstance();
 
           preferences1.setStringList("codestore", stringpreferences1);
+          print(stringpreferences1);
 
           Navigator.of(context)
               .pushReplacement(MaterialPageRoute(builder: (context) {

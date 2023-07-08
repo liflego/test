@@ -62,7 +62,6 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
   List<String>? stringpreferences1;
   String? stringpreferences2;
   List<String>? getdatatocheckstock;
-
   List<Getcustomerstore> alldata = [];
   late int lastorder;
 
@@ -89,6 +88,10 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
                 appBar: AppBar(
                   leading: IconButton(
                       onPressed: () async {
+                        SharedPreferences preferences1 =
+                            await SharedPreferences.getInstance();
+                        stringpreferences1 =
+                            preferences1.getStringList("codestore");
                         if (stringpreferences1?[1] == "DEALER") {
                           Navigator.of(context)
                               .pushReplacement(MaterialPageRoute(
@@ -958,7 +961,7 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
         //filter lineauth
         Iterable<Getcustomerstore> visiauth =
             alldata.where((auth) => auth.name.contains(mysearh.text.trim()));
-        visi.forEach((auth) => getauth = auth.auth);
+        visi.forEach((auth) => getauth = auth.auth.toString());
       }
 
       for (var i = 0; i < widget.codeorder.length; i++) {
@@ -1161,7 +1164,8 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
           "messages": [
             {
               "type": "text",
-              "text": "ORDER $lastorder \n จากเซลล์ ${stringpreferences1[2]}"
+              "text":
+                  "NEW ORDER $lastorder \n จากเซลล์ ID: ${stringpreferences1[2]}"
             }
           ]
         };

@@ -298,8 +298,9 @@ class _orderfromstoreState extends State<orderfromstore> {
                                             fontFamily: 'newtitlefont'),
                                       ),
                                       onPressed: () {
-                                        insertlineuid();
-                                        _openline();
+                                        // insertlineuid();
+                                        // _openline();
+                                        // showlineqrcode();
                                         setState(() {
                                           auth = "notnull";
                                         });
@@ -512,10 +513,32 @@ class _orderfromstoreState extends State<orderfromstore> {
 
   Future<void> _openline() async {
     String LineURL = 'https://page.line.me/962ekjzu';
-    await canLaunch(LineURL)
-        ? await launch(LineURL)
-        : throw 'Could not launch $LineURL';
+    var url = Uri.parse(LineURL);
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
+
+  void showlineqrcode() => showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+            content: SizedBox(
+              height: MediaQuery.of(context).size.height / 2.5,
+              child: Column(
+                children: [
+                  Image.asset("assets/images/lineqrcode.png"),
+                  Center(
+                    child: Text(
+                      "ADD LINE",
+                      style: TextConstants.textstyleforheader,
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ));
 
   void cancellinenoti() => showDialog(
         context: context,

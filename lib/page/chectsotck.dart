@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
-import 'package:badges/badges.dart';
+import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -18,6 +18,7 @@ import 'package:sigma_space/update.dart';
 import 'package:sizer/sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+// ignore: must_be_immutable, camel_case_types
 class checkstock extends StatefulWidget {
   List<String> codeorder = [];
   List<String> nameorder = [];
@@ -70,6 +71,7 @@ class _checkstock extends State<checkstock> {
   @override
   void initState() {
     click = false;
+    // ignore: unnecessary_null_comparison
     if (widget.codeorder == null) {
     } else {
       noti = (widget.codeorder).length;
@@ -190,7 +192,8 @@ class _checkstock extends State<checkstock> {
                                       ),
                                       onPressed: () {
                                         insertlineuid();
-                                        _openline();
+                                        // _openline();
+                                        showlineqrcode();
                                         setState(() {
                                           auth = "notnull";
                                         });
@@ -246,6 +249,7 @@ class _checkstock extends State<checkstock> {
                               "username": stringpreferences1![5].toString(),
                             };
 
+                            // ignore: unused_local_variable
                             http.Response response2 = await http.patch(
                                 Uri.parse(url2),
                                 headers: {
@@ -278,8 +282,9 @@ class _checkstock extends State<checkstock> {
                       onPressed: gotoorder,
                       backgroundColor: ColorConstants.appbarcolor,
                       child: noti != 0
-                          ? Badge(
-                              badgeStyle: BadgeStyle(badgeColor: Colors.blue),
+                          ? badges.Badge(
+                              badgeStyle:
+                                  badges.BadgeStyle(badgeColor: Colors.blue),
                               badgeContent: Text(
                                 '$noti',
                                 style: TextStyle(
@@ -287,9 +292,9 @@ class _checkstock extends State<checkstock> {
                                     fontFamily: 'newtitlefont',
                                     color: Colors.red),
                               ),
-                              child: Icon(Icons.list),
+                              child: Icon(Icons.shopping_cart_outlined),
                             )
-                          : Icon(Icons.list),
+                          : Icon(Icons.shopping_cart_outlined),
                     ),
             ),
           );
@@ -383,13 +388,16 @@ class _checkstock extends State<checkstock> {
                                               width: 1),
                                           color: Colors.grey[50],
                                         ),
-                                        child: Center(
-                                          child: Text(
-                                            "${grouptype[index]}",
-                                            maxLines: 1,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 12.0.sp),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(5.0),
+                                          child: Center(
+                                            child: Text(
+                                              "${grouptype[index]}",
+                                              maxLines: 1,
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 12.0.sp),
+                                            ),
                                           ),
                                         ),
                                       ));
@@ -645,8 +653,8 @@ class _checkstock extends State<checkstock> {
                         amount: allproductfordisplay[index].amount,
                         amountper: allproductfordisplay[index].amountpercrate,
                         price: allproductfordisplay[index].price,
-                        pathimg: allproductfordisplay[index].pathimg,
-                        nameimg: allproductfordisplay[index].nameimg,
+                        pathimg: allproductfordisplay[index].pathimg.toString(),
+                        nameimg: allproductfordisplay[index].nameimg.toString(),
                       )));
             } else {
               if (allproductfordisplay[index].amount == 0) {
@@ -669,7 +677,7 @@ class _checkstock extends State<checkstock> {
                         Row(
                           children: [
                             SizedBox(
-                              width: MediaQuery.of(context).size.width / 1.8,
+                              width: MediaQuery.of(context).size.width / 2,
                               child: Text(
                                 allproductfordisplay[index].nameproduct +
                                     "(" +
@@ -940,6 +948,7 @@ class _checkstock extends State<checkstock> {
                           width: 20.w,
                           child: Center(
                             child: TextFormField(
+                              keyboardType: TextInputType.number,
                               textAlign: TextAlign.center,
                               onFieldSubmitted: (String value) {
                                 setState(() {
@@ -1084,16 +1093,36 @@ class _checkstock extends State<checkstock> {
 
   Future<void> _openline() async {
     String LineURL = 'https://page.line.me/962ekjzu';
+
     await canLaunch(LineURL)
         ? await launch(LineURL)
         : throw 'Could not launch $LineURL';
   }
 
+  void showlineqrcode() => showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+            content: SizedBox(
+              height: MediaQuery.of(context).size.height / 2.5,
+              child: Column(
+                children: [
+                  Image.asset("assets/images/lineqrcode.png"),
+                  Center(
+                    child: Text(
+                      "ADD LINE",
+                      style: TextConstants.textstyleforheader,
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ));
+
   void cancellinenoti() => showDialog(
         context: context,
         builder: (context) => AlertDialog(
           content: SizedBox(
-            height: 80.sp,
+            height: 120.sp,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -1114,6 +1143,7 @@ class _checkstock extends State<checkstock> {
                             ))),
                         onPressed: () {
                           deletelineuid();
+                          Navigator.canPop(context);
                         }),
                     TextButton(
                         child: Container(
@@ -1126,9 +1156,7 @@ class _checkstock extends State<checkstock> {
                               style: TextStyle(color: Colors.white),
                             ))),
                         onPressed: () {
-                          Navigator.canPop(context)
-                              ? Navigator.pop(context)
-                              : null;
+                          Navigator.canPop(context);
                         })
                   ],
                 ),

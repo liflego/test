@@ -40,9 +40,9 @@ class Getallproduct {
   String alltype;
   int score;
   int price;
-  int fav;
-  String pathimg;
-  String nameimg;
+  int? fav;
+  String? pathimg;
+  String? nameimg;
 
   Getallproduct(
       this.codeproduct,
@@ -62,10 +62,10 @@ class Getallcustomer {
   String cuscode;
   String cusname;
   String phone;
-  String address;
+  String? address;
   String codestore;
   int sconfrim;
-  String auth;
+  String? auth;
   int saleid;
   Getallcustomer(this.cuscode, this.cusname, this.phone, this.address,
       this.codestore, this.sconfrim, this.auth, this.saleid);
@@ -75,12 +75,12 @@ class Getalldealer {
   String cuscode;
   String cusname;
   String phone;
-  String address;
+  String? address;
   String codestore;
   int sconfrim;
   String companyname;
-  String auth;
-  int saleid;
+  String? auth;
+  int? saleid;
   Getalldealer(this.cuscode, this.cusname, this.phone, this.address,
       this.codestore, this.sconfrim, this.companyname, this.auth, this.saleid);
 }
@@ -95,7 +95,7 @@ class GetorderBycodestoreandcuscodeandordernumber {
   String pay;
   String notes;
   String date;
-  num price;
+  num? price;
 
   GetorderBycodestoreandcuscodeandordernumber(
       this.ordernumber,
@@ -153,7 +153,7 @@ class Getcustomerstore {
   String name;
   String code;
   int dealerid;
-  String auth;
+  String? auth;
   Getcustomerstore(this.name, this.code, this.dealerid, this.auth);
 }
 
@@ -161,13 +161,13 @@ class Getallorders {
   String cuscode;
   int ordernumber;
   String pay;
-  num price;
+  num? price;
   int saleconfirm;
   String cusname;
   int amountlist;
   String date;
-  String auth;
-  String track;
+  String? auth;
+  String? track;
 
   Getallorders(
       this.cuscode,

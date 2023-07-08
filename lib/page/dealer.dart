@@ -208,11 +208,12 @@ class _dealerpageState extends State<dealerpage> {
                                           fontFamily: 'newtitlefont'),
                                     ),
                                     onPressed: () {
-                                      insertlineuid();
-                                      _openline();
-                                      setState(() {
-                                        auth = "notnull";
-                                      });
+                                      // insertlineuid();
+                                      showlineqrcode();
+                                      // _openline();
+                                      // setState(() {
+                                      //   auth = "notnull";
+                                      // });
                                     },
                                   )
                                 : TextButton(
@@ -420,7 +421,7 @@ class _dealerpageState extends State<dealerpage> {
                   } else {
                     getdatatocheckstock = [
                       alldealerfordisplay[index].codestore,
-                      alldealerfordisplay[index].auth
+                      alldealerfordisplay[index].auth!
                     ];
                   }
                 });
@@ -865,6 +866,7 @@ class _dealerpageState extends State<dealerpage> {
         "userid": stringpreferences1![2],
       };
 
+      // ignore: unused_local_variable
       http.Response response = await http.post(Uri.parse(url),
           headers: {'Content-Type': 'application/json; charset=utf-8'},
           body: JsonEncoder().convert(body));
@@ -874,12 +876,31 @@ class _dealerpageState extends State<dealerpage> {
   }
 
   Future<void> _openline() async {
-    String LineURL = 'https://page.line.me/962ekjzu';
-    await canLaunch(LineURL)
-        ? await launch(LineURL)
-        : throw 'Could not launch $LineURL';
+    String LineURL =
+        'https://page.line.me/R/ti/p/@962ekjzu?from=page&searhId=962ekjzu';
+    var uri = Uri.parse(LineURL);
+    // ignore: deprecated_member_use
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      throw 'Could not launch $uri';
+    }
   }
 
+  void showlineqrcode() => showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+            content: SizedBox(
+              child: Column(
+                children: [
+                  Image.asset("assets/images/lineqrcode.png"),
+                  Center(
+                    child: Text("ADD LINE "),
+                  )
+                ],
+              ),
+            ),
+          ));
   void cancellinenoti() => showDialog(
         context: context,
         builder: (context) => AlertDialog(

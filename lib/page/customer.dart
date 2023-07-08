@@ -1,11 +1,13 @@
+// ignore_for_file: unused_local_variable
+
 import 'dart:convert';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sigma_space/main.dart';
+import 'package:sigma_space/page/chectsotck.dart';
 import 'package:sigma_space/page/substore/customerhis.dart';
 import 'package:sizer/sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -35,6 +37,7 @@ class _customerState extends State<customer> {
   int getadmincfforsale = 0;
   List<int> getsaleid = [];
   bool toggle1 = false;
+  bool clickorder = false;
   @override
   void initState() {
     fectallcustomerdata().then((value) {
@@ -297,106 +300,130 @@ class _customerState extends State<customer> {
                     stringpreferences1![2]
                 ? ColorConstants.cardcolor
                 : ColorConstants.colorcardorder,
-            child: Slidable(
-              endActionPane: ActionPane(
-                motion: ScrollMotion(),
-                children: [
-                  Container(
-                    color: Colors.blue[900],
-                    width: MediaQuery.of(context).size.width / 2.1,
-                    height: MediaQuery.of(context).size.height,
-                    child: OutlinedButton(
-                      onPressed: () => gotosubstore(index),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.history_rounded,
-                            color: Colors.white,
-                            size: 22.sp,
-                          ),
-                          Text(
-                            "HISTORY",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontFamily: 'newbodyfont',
-                                fontSize: 15.sp),
-                          )
-                        ],
+            child: OutlinedButton(
+              onPressed: () async {
+                setState(() {
+                  clickorder = true;
+                });
+                SharedPreferences clickorderprefer =
+                    await SharedPreferences.getInstance();
+
+                clickorderprefer.setBool("true", clickorder);
+
+                Navigator.of(context)
+                    .pushReplacement(MaterialPageRoute(builder: (context) {
+                  return checkstock(
+                      codeorder: [],
+                      nameorder: [],
+                      numorder: [],
+                      numpercrate: [],
+                      productset: [],
+                      price: []);
+                }));
+              },
+              child: Slidable(
+                endActionPane: ActionPane(
+                  motion: ScrollMotion(),
+                  children: [
+                    Container(
+                      color: Colors.blue[900],
+                      width: MediaQuery.of(context).size.width / 2.5,
+                      height: MediaQuery.of(context).size.height,
+                      child: OutlinedButton(
+                        onPressed: () => gotosubstore(index),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.history_rounded,
+                              color: Colors.white,
+                              size: 22.sp,
+                            ),
+                            Text(
+                              "HISTORY",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'newbodyfont',
+                                  fontSize: 15.sp),
+                            )
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              child: Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          allcustomerfordisplay[index].cusname,
-                          style: TextConstants.textstyle,
-                        ),
-                        TextButton(
-                            onPressed: () {
-                              _launchPhoneURL(index);
-                            },
-                            child: Text(
-                              allcustomerfordisplay[index].phone,
-                              style: TextStyle(
-                                  fontSize: 18.sp, fontFamily: 'newbodyfont'),
-                            )),
-                        allcustomer[index].address == null
-                            ? TextButton(
-                                child: Text('ADD LOCATION',
-                                    style: TextStyle(
-                                        fontSize: 16.sp,
-                                        fontFamily: 'newbodyfont')),
-                                onPressed: () {
-                                  inputlocation(index);
-                                },
-                              )
-                            : TextButton(
-                                child: Text("Google map",
-                                    style: TextStyle(
-                                        fontSize: 16.sp,
-                                        fontFamily: 'newbodyfont')),
-                                onPressed: () {
-                                  _openmap(index);
-                                },
-                              ),
-                      ],
-                    ),
-                    toggle == false
-                        ? SizedBox(
-                            height: 10,
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(left: 20.0),
-                            child: IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    toggleselect[index] = !toggleselect[index];
-                                    toggleall = false;
-                                  });
-                                },
-                                icon: toggleselect[index] == false
-                                    ? Icon(
-                                        Icons.check_box_outline_blank,
-                                        size: 20.sp,
-                                      )
-                                    : Icon(
-                                        Icons.check_box_outlined,
-                                        size: 20.sp,
-                                      )),
-                          )
                   ],
+                ),
+                child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            allcustomerfordisplay[index].cusname,
+                            style: TextConstants.textstyle,
+                          ),
+                          TextButton(
+                              onPressed: () {
+                                _launchPhoneURL(index);
+                              },
+                              child: Text(
+                                allcustomerfordisplay[index].phone,
+                                style: TextStyle(
+                                    fontSize: 18.sp, fontFamily: 'newbodyfont'),
+                              )),
+                          allcustomer[index].address == null
+                              ? TextButton(
+                                  child: Text('ADD LOCATION',
+                                      style: TextStyle(
+                                          fontSize: 16.sp,
+                                          fontFamily: 'newbodyfont')),
+                                  onPressed: () {
+                                    inputlocation(index);
+                                  },
+                                )
+                              : TextButton(
+                                  child: Text("Google map",
+                                      style: TextStyle(
+                                          fontSize: 16.sp,
+                                          fontFamily: 'newbodyfont')),
+                                  onPressed: () {
+                                    _openmap(index);
+                                  },
+                                ),
+                        ],
+                      ),
+                      toggle == false
+                          ? SizedBox(
+                              height: 10,
+                            )
+                          : Padding(
+                              padding: const EdgeInsets.only(left: 20.0),
+                              child: IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      toggleselect[index] =
+                                          !toggleselect[index];
+                                      toggleall = false;
+                                    });
+                                  },
+                                  icon: toggleselect[index] == false
+                                      ? Icon(
+                                          Icons.check_box_outline_blank,
+                                          size: 20.sp,
+                                        )
+                                      : Icon(
+                                          Icons.check_box_outlined,
+                                          size: 20.sp,
+                                        )),
+                            )
+                    ],
+                  ),
                 ),
               ),
             ),
           )
+        // ignore: unnecessary_null_comparison
         : allcustomer[index].sconfrim == null
             ? Card(
                 color: Colors.grey[50],
@@ -766,7 +793,7 @@ class _customerState extends State<customer> {
           ));
 
   Future<void> _openmap(Index) async {
-    String googleURL = allcustomerfordisplay[Index].address;
+    String googleURL = allcustomerfordisplay[Index].address.toString();
     await canLaunch(googleURL)
         ? await launch(googleURL)
         : throw 'Could not launch $googleURL';
