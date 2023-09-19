@@ -67,8 +67,9 @@ class Getallcustomer {
   int sconfrim;
   String? auth;
   int saleid;
+  int cusid;
   Getallcustomer(this.cuscode, this.cusname, this.phone, this.address,
-      this.codestore, this.sconfrim, this.auth, this.saleid);
+      this.codestore, this.sconfrim, this.auth, this.saleid, this.cusid);
 }
 
 class Getalldealer {

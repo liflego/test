@@ -8,7 +8,8 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
 import 'package:sigma_space/login.dart';
-import 'package:sigma_space/page/sublogin/googlelogin.dart';
+import 'package:sigma_space/main.dart';
+import 'package:sigma_space/page/sublogin/choose.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../classapi/class.dart';
 import 'package:sizer/sizer.dart';
@@ -23,13 +24,15 @@ class createAcountfordealer extends StatefulWidget {
 
 class _createAcountfordealerState extends State<createAcountfordealer> {
   TextEditingController usernameString = TextEditingController();
-  TextEditingController namestoreString = TextEditingController();
+  TextEditingController nameString = TextEditingController();
   TextEditingController producttypeString = TextEditingController();
   TextEditingController phoneString = TextEditingController();
+  TextEditingController passwordString = TextEditingController();
   final _formkey = GlobalKey<FormState>();
   late String codestore;
   late int ttt;
   late String s;
+  EmailOTP myauth = EmailOTP();
 
   @override
   Widget build(BuildContext context) {
@@ -72,9 +75,10 @@ class _createAcountfordealerState extends State<createAcountfordealer> {
                     padding: const EdgeInsets.only(top: 70.0),
                   ),
                   usernametext(),
-                  namestoretext(),
-                  producttext(),
+                  nametext(),
                   phonenumbers(),
+                  sentotp(),
+                  OTPtext(),
                   registerbt()
                 ],
               ),
@@ -113,12 +117,12 @@ class _createAcountfordealerState extends State<createAcountfordealer> {
     );
   }
 
-  Widget namestoretext() {
+  Widget nametext() {
     return Padding(
       padding: EdgeInsets.only(top: 10, left: 40, right: 40),
       child: TextFormField(
         decoration: InputDecoration(
-          hintText: "YOUR NAME STORE",
+          hintText: "YOUR NAME",
           hintStyle: TextStyle(
               fontFamily: "newbodyfont",
               fontSize: 15.sp,
@@ -130,39 +134,11 @@ class _createAcountfordealerState extends State<createAcountfordealer> {
             borderSide: BorderSide(color: Colors.amber, width: 2),
           ),
         ),
-        controller: namestoreString,
+        controller: nameString,
         // ignore: body_might_complete_normally_nullable
         validator: (input) {
           if (input!.length < 1) {
-            return "PLEASE ENTER NAME STORE";
-          }
-        },
-      ),
-    );
-  }
-
-  Widget producttext() {
-    return Padding(
-      padding: EdgeInsets.only(top: 10, left: 40, right: 40),
-      child: TextFormField(
-        decoration: InputDecoration(
-          hintText: "YOUR PRODUCT TYPE",
-          hintStyle: TextStyle(
-              fontFamily: "newbodyfont",
-              fontSize: 15.sp,
-              color: Colors.black45),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.amber, width: 2),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.amber, width: 2),
-          ),
-        ),
-        controller: producttypeString,
-        // ignore: body_might_complete_normally_nullable
-        validator: (input) {
-          if (input!.length < 1) {
-            return "PLEASE ENTER PRODUCT TYPE";
+            return "PLEASE ENTER NAME";
           }
         },
       ),
@@ -173,7 +149,7 @@ class _createAcountfordealerState extends State<createAcountfordealer> {
     return Padding(
       padding: EdgeInsets.only(top: 10, left: 40, right: 40),
       child: TextFormField(
-        maxLength: 1,
+        maxLength: 10,
         decoration: InputDecoration(
           hintText: "YOUR PHONE NUMBERS",
           hintStyle: TextStyle(
@@ -200,12 +176,23 @@ class _createAcountfordealerState extends State<createAcountfordealer> {
 
   Widget registerbt() {
     return Padding(
-      padding: EdgeInsets.only(top: 60, left: 40, right: 40),
+      padding: EdgeInsets.only(top: 5, left: 40, right: 40),
       child: TextButton(
         style: ButtonStyle(
             backgroundColor:
                 MaterialStateProperty.all(ColorConstants.buttoncolor)),
-        onPressed: doregister,
+        onPressed: () async {
+          if (await myauth.verifyOTP(otp: passwordString.text) == true) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("OTP is verified"),
+            ));
+            doregister();
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("Invalid OTP"),
+            ));
+          }
+        },
         child: Center(
           child: Text(
             "REGISTER",
@@ -215,6 +202,77 @@ class _createAcountfordealerState extends State<createAcountfordealer> {
                 fontFamily: 'newbodyfont'),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget sentotp() {
+    return Padding(
+      padding: EdgeInsets.only(top: 5, left: 40, right: 40),
+      // ignore: deprecated_member_use
+      child: Container(
+        decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(width: 2, color: Colors.amber)),
+        child: TextButton(
+          onPressed: () async {
+            myauth.setConfig(
+                appEmail: usernameString.text,
+                appName: "SIGB OTP",
+                userEmail: usernameString.text,
+                otpLength: 6,
+                otpType: OTPType.digitsOnly);
+            if (await myauth.sendOTP() == true) {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text("OTP has been sent"),
+              ));
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text("Oops, OTP send failed"),
+              ));
+            }
+          },
+          child: Center(
+            child: Text(
+              "SENT OTP",
+              style: TextStyle(
+                  fontSize: 20.0.sp,
+                  color: ColorConstants.buttoncolor,
+                  fontFamily: 'newbodyfont'),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget OTPtext() {
+    return Padding(
+      padding: EdgeInsets.only(top: 60, left: 40, right: 40),
+      child: TextFormField(
+        keyboardType: TextInputType.number,
+        decoration: InputDecoration(
+          filled: false,
+          hintText: "OTP VERIFICATION",
+          hintStyle: TextStyle(
+              fontFamily: "newbodyfont",
+              fontSize: 15.sp,
+              color: Colors.black45),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.amber, width: 2),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.amber, width: 2),
+          ),
+        ),
+        obscureText: false,
+        controller: passwordString,
+        validator: (input) {
+          if (input!.isEmpty) {
+            return "Please enter password";
+          }
+          return null;
+        },
       ),
     );
   }
@@ -242,35 +300,68 @@ class _createAcountfordealerState extends State<createAcountfordealer> {
   }
 
   Future doregister() async {
-    getnewuser();
+    // getnewuser();
+    print("aa");
     if (_formkey.currentState!.validate()) {
       try {
         String url = "http://185.78.165.189:3000/pythonapi/createuserwithgg";
         var body = {
           "username": usernameString.text.trim(),
-          "uid": usernameString.text.trim(),
-          "codestore": codestore,
-          "namestore": namestoreString.text.trim(),
-          "producttype": producttypeString.text.trim(),
-          "position": 'DEALER',
+          "name": nameString.text.trim(),
           "phonenumbers": phoneString.text.trim(),
           "datecreate":
               DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()),
+          "loginstatus": "1"
         };
 
         http.Response response = await http.post(Uri.parse(url),
             headers: {'Content-Type': 'application/json; charset=utf-8'},
             body: JsonEncoder().convert(body));
+      } catch (error) {
+        print(error);
+      }
+    }
+  }
+
+  Future doLogin() async {
+    try {
+      String url = "http://185.78.165.189:3000/pythonapi/login";
+      List<String> users;
+      var body = {
+        "username": usernameString.text.trim(),
+      };
+
+      http.Response response = await http.post(Uri.parse(url),
+          headers: {'Content-Type': 'application/json; charset=utf-8'},
+          body: JsonEncoder().convert(body));
+
+      var jsonRes = json.decode(response.body);
+
+      if (jsonRes["success"] == 1 &&
+          (jsonRes["loginstatus"] == null || jsonRes["loginstatus"] == 0)) {
+        users = [
+          jsonRes["userid"].toString(),
+          jsonRes["username"].toString(),
+          jsonRes["codestore"].toString(),
+          jsonRes["name"].toString(),
+          jsonRes["position"].toString(),
+          jsonRes["namestore"].toString(),
+          jsonRes["loginstatus"].toString(),
+          jsonRes["auth"].toString(),
+        ];
+        SharedPreferences preferences1 = await SharedPreferences.getInstance();
+
+        preferences1.setStringList("userid", users);
 
         return Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => (login()),
+            builder: (context) => (choose()),
           ),
         );
-      } catch (error) {
-        print(error);
       }
+    } catch (error) {
+      return;
     }
   }
 }

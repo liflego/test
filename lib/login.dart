@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sigma_space/page/sublogin/Createdealerac.dart';
+import 'package:sigma_space/page/sublogin/choose.dart';
 import 'classapi/class.dart';
 import 'main.dart';
 import 'package:sizer/sizer.dart';
@@ -29,6 +30,7 @@ class _loginState extends State<login> {
   List<String> stringpreferences1 = [];
   List<String> stringpreferences2 = [];
   EmailOTP myauth = EmailOTP();
+  late List<String> users;
 
   @override
   void initState() {
@@ -214,7 +216,7 @@ class _loginState extends State<login> {
           }));
         },
         child: Text(
-          "CREATE DEALER ACCOUNT",
+          "CREATE ACCOUNT !",
           style: TextStyle(
               fontSize: 18.sp,
               fontFamily: 'newbodyfont',
@@ -254,36 +256,22 @@ class _loginState extends State<login> {
 
         if (jsonRes["success"] == 1 &&
             (jsonRes["loginstatus"] == null || jsonRes["loginstatus"] == 0)) {
-          if (jsonRes["b.auth"] == null) {
-            stringpreferences1 = [
-              jsonRes["codestore"],
-              jsonRes["position"],
-              jsonRes["userid"].toString(),
-              jsonRes["namestore"],
-              "null",
-              jsonRes["username"]
-            ];
-          } else {
-            stringpreferences1 = [
-              jsonRes["codestore"],
-              jsonRes["position"],
-              jsonRes["userid"].toString(),
-              jsonRes["namestore"],
-              jsonRes["b.auth"],
-              jsonRes["username"]
-            ];
-          }
+          users = [
+            jsonRes["userid"].toString(),
+            jsonRes["username"].toString(),
+            jsonRes["codestore"].toString(),
+            jsonRes["name"].toString(),
+            jsonRes["position"].toString(),
+            jsonRes["namestore"].toString(),
+            jsonRes["loginstatus"].toString(),
+            jsonRes["auth"].toString(),
+          ];
 
           SharedPreferences preferences1 =
               await SharedPreferences.getInstance();
 
-          preferences1.setStringList("codestore", stringpreferences1);
-          print(stringpreferences1);
+          preferences1.setStringList("userid", users);
 
-          Navigator.of(context)
-              .pushReplacement(MaterialPageRoute(builder: (context) {
-            return MyApp();
-          }));
           ////update login status
           String url2 =
               "http://185.78.165.189:3000/pythonapi/updateloginstatus";
@@ -296,6 +284,13 @@ class _loginState extends State<login> {
           http.Response response2 = await http.patch(Uri.parse(url2),
               headers: {'Content-Type': 'application/json; charset=utf-8'},
               body: JsonEncoder().convert(body2));
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => (choose()),
+            ),
+          );
         } else {
           return showDialog(
               context: context,
@@ -321,7 +316,7 @@ class _loginState extends State<login> {
         return showDialog(
             context: context,
             builder: (_) => new AlertDialog(
-                  content: new Text("OTP INVALID"),
+                  content: new Text("CAN NOT LOG IN"),
                   actions: <Widget>[
                     TextButton(
                       child: Text('DONE'),
@@ -334,97 +329,4 @@ class _loginState extends State<login> {
       }
     }
   }
-
-  // Future doLogingg() async {
-  //   try {
-  //     String url = "http://185.78.165.189:3000/pythonapi/login";
-
-  //     var body = {
-  //       "username": FirebaseAuth.instance.currentUser!.email,
-  //       "uid": FirebaseAuth.instance.currentUser!.uid
-  //     };
-  //     print(body);
-
-  //     http.Response response = await http.post(Uri.parse(url),
-  //         headers: {'Content-Type': 'application/json; charset=utf-8'},
-  //         body: JsonEncoder().convert(body));
-
-  //     if (response.statusCode == 200) {
-  //       var jsonRes = json.decode(response.body);
-
-  //       if (jsonRes["success"] == 1) {
-  //         if (jsonRes["auth"] == null) {
-  //           stringpreferences1 = [
-  //             jsonRes["codestore"],
-  //             jsonRes["position"],
-  //             jsonRes["userid"].toString(),
-  //             jsonRes["namestore"],
-  //             "null",
-  //           ];
-  //         } else {
-  //           stringpreferences1 = [
-  //             jsonRes["codestore"],
-  //             jsonRes["position"],
-  //             jsonRes["userid"].toString(),
-  //             jsonRes["namestore"],
-  //             jsonRes["auth"],
-  //           ];
-  //         }
-
-  //         SharedPreferences preferences1 =
-  //             await SharedPreferences.getInstance();
-  //         preferences1.setStringList("codestore", stringpreferences1);
-
-  //         Navigator.of(context)
-  //             .pushReplacement(MaterialPageRoute(builder: (context) {
-  //           return MyApp();
-  //         }));
-  //       } else {
-  //         return Navigator.of(context)
-  //             .pushReplacement(MaterialPageRoute(builder: (context) {
-  //           return handleAuthState();
-  //         }));
-  //       }
-  //     } else {
-  //       //print("Server error");
-  //       return Navigator.of(context)
-  //           .pushReplacement(MaterialPageRoute(builder: (context) {
-  //         return googlelogin();
-  //       }));
-  //     }
-  //   } catch (error) {
-  //     print(error);
-  //   }
-  // }
-
-  // signInWithGoogle() async {
-  //   // Trigger the authentication flow
-  //   final GoogleSignInAccount? googleUser =
-  //       await GoogleSignIn(scopes: <String>["email"]).signIn();
-
-  //   // Obtain the auth details from the request
-  //   final GoogleSignInAuthentication googleAuth =
-  //       await googleUser!.authentication;
-
-  //   // Create a new credential
-  //   final credential = GoogleAuthProvider.credential(
-  //     accessToken: googleAuth.accessToken,
-  //     idToken: googleAuth.idToken,
-  //   );
-  //   doLogingg();
-  //   // Once signed in, return the UserCredential
-  //   return await FirebaseAuth.instance.signInWithCredential(credential);
-  // }
-
-  // handleAuthState() {
-  //   return StreamBuilder(
-  //       stream: FirebaseAuth.instance.authStateChanges(),
-  //       builder: (BuildContext context, snapshot) {
-  //         if (snapshot.hasData) {
-  //           return googlelogin();
-  //         } else {
-  //           return login();
-  //         }
-  //       });
-  // }
 }

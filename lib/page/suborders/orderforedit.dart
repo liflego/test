@@ -252,7 +252,7 @@ class _orderforedit extends State<orderforedit> {
 
   Future btdone() async {
     try {
-      String url = "http://185.78.165.189:3000/nodejsapi/updatenotes";
+      String url = "http://185.78.165.189:3000/pythonapi/updatenotes";
       var body = {
         "notes": notes.text.trim(),
         "ordernumber": widget.ordernumber,

@@ -65,7 +65,7 @@ class _customerState extends State<customer> {
               backgroundColor: ColorConstants.appbarcolor,
               toolbarHeight: 7.h,
               title: Text(
-                "CUSTOMERS",
+                "CUSTOMER",
                 style: TextStyle(fontFamily: 'newtitlefont', fontSize: 25.sp),
               ),
               actions: [
@@ -73,6 +73,7 @@ class _customerState extends State<customer> {
                     onPressed: () {
                       if (toggle1 == false) {
                         toggle1 = true;
+                        print(toggle1);
                         allcustomerfordisplay.clear();
                         allcustomer.clear();
                         fectallcustomerdataforsale().then((value) {
@@ -83,6 +84,7 @@ class _customerState extends State<customer> {
                         });
                       } else {
                         toggle1 = false;
+
                         getadmincf = 0;
                         allcustomerfordisplay.clear();
                         allcustomer.clear();
@@ -94,7 +96,9 @@ class _customerState extends State<customer> {
                         });
                       }
                     },
-                    icon: Icon(Icons.work))
+                    icon: toggle1 == true
+                        ? Icon(Icons.work, color: Colors.amber)
+                        : Icon(Icons.work))
               ],
             ),
             backgroundColor: ColorConstants.backgroundbody,
@@ -307,8 +311,16 @@ class _customerState extends State<customer> {
                 });
                 SharedPreferences clickorderprefer =
                     await SharedPreferences.getInstance();
-
-                clickorderprefer.setBool("true", clickorder);
+                clickorderprefer.setBool("setbool", clickorder);
+                SharedPreferences listdealerdata =
+                    await SharedPreferences.getInstance();
+                List<String> dealerdata = [
+                  allcustomerfordisplay[index].cuscode,
+                  allcustomerfordisplay[index].cusname,
+                  allcustomerfordisplay[index].cusid.toString(),
+                  allcustomerfordisplay[index].auth.toString()
+                ];
+                listdealerdata.setStringList("dealerdata", dealerdata);
 
                 Navigator.of(context)
                     .pushReplacement(MaterialPageRoute(builder: (context) {
@@ -570,7 +582,8 @@ class _customerState extends State<customer> {
           u["MAX(c.codestore)"],
           u["MAX(c.sconfirm)"],
           u["auth"],
-          u["MAX(c.saleid)"]);
+          u["MAX(c.saleid)"],
+          u["cusid"]);
       _allcustomer.add(data);
     }
     for (var i in jsonres) {
@@ -856,7 +869,8 @@ class _customerState extends State<customer> {
           u["MAX(c.codestore)"],
           u["MAX(c.sconfirm)"],
           u["auth"],
-          u["MAX(c.saleid)"]);
+          u["MAX(c.saleid)"],
+          u["cusid"]);
       _allcustomerforsale.add(data);
     }
 

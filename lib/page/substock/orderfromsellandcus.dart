@@ -19,6 +19,7 @@ class orderfromsellandcus extends StatefulWidget {
   List<String> productset = [];
   List<int> price = [];
   String position;
+  String namestore;
 
   orderfromsellandcus(
       {Key? key,
@@ -28,7 +29,8 @@ class orderfromsellandcus extends StatefulWidget {
       required this.numpercrate,
       required this.productset,
       required this.price,
-      required this.position})
+      required this.position,
+      required this.namestore})
       : super(key: key);
 
   @override
@@ -64,7 +66,7 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
   List<String>? getdatatocheckstock;
   List<Getcustomerstore> alldata = [];
   late int lastorder;
-
+  List<String>? dealerdata = [];
   @override
   void initState() {
     mysearh.addListener(_printLatestValue);
@@ -104,11 +106,16 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
                                         price: [],
                                       )));
                         } else {
-                          SharedPreferences pagepref =
-                              await SharedPreferences.getInstance();
-                          pagepref.setInt("pagepre", 0);
-                          Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(builder: (context) => MyApp()));
+                          Navigator.of(context)
+                              .pushReplacement(MaterialPageRoute(
+                                  builder: (context) => checkstock(
+                                        codeorder: [],
+                                        nameorder: [],
+                                        numorder: [],
+                                        numpercrate: [],
+                                        price: [],
+                                        productset: [],
+                                      )));
                         }
                       },
                       icon: Icon(
@@ -150,15 +157,10 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
                           "ORDER",
                           style: TextConstants.appbartextsyle,
                         )
-                      : Container(
-                          color: Color.fromARGB(255, 5, 61, 110),
-                          child: Row(
-                            children: [
-                              Icon(Icons.search),
-                              Padding(padding: EdgeInsets.only(left: 3.0.sp)),
-                              tabsearch(),
-                            ],
-                          )),
+                      : Text(
+                          widget.namestore,
+                          style: TextConstants.appbartextsyle,
+                        ),
                   backgroundColor: ColorConstants.appbarcolor,
                 ),
                 body: ListView(
@@ -482,26 +484,26 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
     );
   }
 
-  Widget tabsearch() {
-    return Expanded(
-      child: TextFieldSearch(
-          label: '',
-          textStyle: TextStyle(
-              color: Colors.white, fontFamily: "newtitlefont", fontSize: 20.sp),
-          controller: mysearh,
-          decoration: InputDecoration(
-            hintText: "เลือกร้านค้า",
-            hintStyle: TextStyle(color: Colors.white),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(width: 2, color: HexColor('#1034A6')),
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-          future: () {
-            return fetchSimpleData();
-          }),
-    );
-  }
+  // Widget tabsearch() {
+  //   return Expanded(
+  //     child: TextFieldSearch(
+  //         label: '',
+  //         textStyle: TextStyle(
+  //             color: Colors.white, fontFamily: "newtitlefont", fontSize: 20.sp),
+  //         controller: mysearh,
+  //         decoration: InputDecoration(
+  //           hintText: "เลือกร้านค้า",
+  //           hintStyle: TextStyle(color: Colors.white),
+  //           focusedBorder: OutlineInputBorder(
+  //             borderSide: BorderSide(width: 2, color: HexColor('#1034A6')),
+  //             borderRadius: BorderRadius.circular(10),
+  //           ),
+  //         ),
+  //         future: () {
+  //           return fetchSimpleData();
+  //         }),
+  //   );
+  // }
 
   Widget listitems() {
     return Padding(
@@ -851,38 +853,38 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
     );
   }
 
-  Future<List> fetchSimpleData() async {
-    await Future.delayed(Duration(milliseconds: 500));
-    List _list = <dynamic>[];
+  // Future<List> fetchSimpleData() async {
+  //   await Future.delayed(Duration(milliseconds: 500));
+  //   List _list = <dynamic>[];
 
-    // create a list from the text input of three items
-    // to mock a list of items from an http call
-    List<String> stringpreferences1;
-    SharedPreferences preferences1 = await SharedPreferences.getInstance();
-    stringpreferences1 = preferences1.getStringList("codestore")!;
-    String url = "http://185.78.165.189:3000/pythonapi/fullcustomer";
-    var body = {
-      "codestore": stringpreferences1[0],
-    };
+  //   // create a list from the text input of three items
+  //   // to mock a list of items from an http call
+  //   List<String> stringpreferences1;
+  //   SharedPreferences preferences1 = await SharedPreferences.getInstance();
+  //   stringpreferences1 = preferences1.getStringList("codestore")!;
+  //   String url = "http://185.78.165.189:3000/pythonapi/fullcustomer";
+  //   var body = {
+  //     "codestore": stringpreferences1[0],
+  //   };
 
-    http.Response response = await http.post(Uri.parse(url),
-        headers: {'Content-Type': 'application/json; charset=utf-8'},
-        body: JsonEncoder().convert(body));
+  //   http.Response response = await http.post(Uri.parse(url),
+  //       headers: {'Content-Type': 'application/json; charset=utf-8'},
+  //       body: JsonEncoder().convert(body));
 
-    dynamic jsonres = json.decode(response.body);
+  //   dynamic jsonres = json.decode(response.body);
 
-    for (var u in jsonres) {
-      Getcustomerstore data = Getcustomerstore(
-          u["MAX(c.cusname)"] + "[" + u["MAX(c.cuscode)"] + "]",
-          u["MAX(c.cuscode)"],
-          u["MAX(c.dealerid)"],
-          u["auth"]);
-      alldata.add(data);
-      _list.add(u["MAX(c.cusname)"] + "[" + u["MAX(c.cuscode)"] + "]");
-    }
+  //   for (var u in jsonres) {
+  //     Getcustomerstore data = Getcustomerstore(
+  //         u["MAX(c.cusname)"] + "[" + u["MAX(c.cuscode)"] + "]",
+  //         u["MAX(c.cuscode)"],
+  //         u["MAX(c.dealerid)"],
+  //         u["auth"]);
+  //     alldata.add(data);
+  //     _list.add(u["MAX(c.cusname)"] + "[" + u["MAX(c.cuscode)"] + "]");
+  //   }
 
-    return _list;
-  }
+  //   return _list;
+  // }
 
 //สร้างเงื่อนไขสำหรับร้านค้าสั่งของเอง
   Future done() async {
@@ -939,9 +941,11 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
           notes.text = "-";
         });
       }
+
       String getcuscode = "";
       String getcodestore = "";
       String getauth = "";
+      List<String> getdealerlist;
       int getdealerid = 0;
       if (stringpreferences1![1] == "DEALER") {
         getcodestore = getdatatocheckstock![0];
@@ -949,19 +953,12 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
         getdealerid = int.parse(stringpreferences1![2]);
       } else {
         getcodestore = stringpreferences1![0];
-        //filtet cuscode
-        Iterable<Getcustomerstore> visi = alldata.where(
-            (customercode) => customercode.name.contains(mysearh.text.trim()));
-        visi.forEach((customercode) => getcuscode = customercode.code);
-        //filter cusid
-        Iterable<Getcustomerstore> visicusid =
-            alldata.where((cusid) => cusid.name.contains(mysearh.text.trim()));
-        visi.forEach((cusid) => getdealerid = cusid.dealerid);
-        print("cusid is $getdealerid");
-        //filter lineauth
-        Iterable<Getcustomerstore> visiauth =
-            alldata.where((auth) => auth.name.contains(mysearh.text.trim()));
-        visi.forEach((auth) => getauth = auth.auth.toString());
+        SharedPreferences listdealerdata =
+            await SharedPreferences.getInstance();
+
+        getdealerlist = listdealerdata.getStringList("dealerdata")!;
+        getcuscode = getdealerlist[0];
+        getdealerid = int.parse(getdealerlist[2]);
       }
 
       for (var i = 0; i < widget.codeorder.length; i++) {
@@ -1165,7 +1162,7 @@ class _orderfromsellandcus extends State<orderfromsellandcus> {
             {
               "type": "text",
               "text":
-                  "NEW ORDER $lastorder \n จากเซลล์ ID: ${stringpreferences1[2]}"
+                  "NEW ORDER $lastorder \nจากเซลล์ ID: ${stringpreferences1[2]} \nดำเนินการต่อที่ SIGB APP"
             }
           ]
         };

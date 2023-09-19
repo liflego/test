@@ -68,8 +68,17 @@ class _checkstock extends State<checkstock> {
   bool clickfav = false;
   String namestore = "";
   String auth = "";
+  bool clickorder = false;
+  void getclickorder() async {
+    SharedPreferences clickorderprefer = await SharedPreferences.getInstance();
+    if (clickorderprefer.getBool("setbool") == true) {
+      clickorder = true;
+    }
+  }
+
   @override
   void initState() {
+    getclickorder();
     click = false;
     // ignore: unnecessary_null_comparison
     if (widget.codeorder == null) {
@@ -120,18 +129,36 @@ class _checkstock extends State<checkstock> {
                           icon: Icon(Icons.add_circle))
                       : SizedBox()
                 ],
-                leading: stringpreferences1?[1] == "DEALER"
-                    ? IconButton(
-                        onPressed: () {
+                leading: clickorder == false
+                    ? (stringpreferences1?[1] == "DEALER"
+                        ? IconButton(
+                            onPressed: () {
+                              Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                      builder: ((context) => MyApp())));
+                            },
+                            icon: Icon(
+                              Icons.arrow_back,
+                              color: Colors.white,
+                            ))
+                        : null)
+                    : IconButton(
+                        onPressed: () async {
+                          setState(() {
+                            clickorder = false;
+                          });
+
+                          SharedPreferences clickorderprefer =
+                              await SharedPreferences.getInstance();
+
+                          clickorderprefer.setBool("setbool", clickorder);
+                          SharedPreferences pagepref =
+                              await SharedPreferences.getInstance();
+                          pagepref.setInt("pagepre", 2);
                           Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                  builder: ((context) => MyApp())));
+                              MaterialPageRoute(builder: (context) => MyApp()));
                         },
-                        icon: Icon(
-                          Icons.arrow_back,
-                          color: Colors.white,
-                        ))
-                    : null,
+                        icon: Icon(Icons.arrow_back)),
                 backgroundColor: ColorConstants.appbarcolor,
               ),
               backgroundColor: ColorConstants.backgroundbody,
@@ -283,8 +310,7 @@ class _checkstock extends State<checkstock> {
                       backgroundColor: ColorConstants.appbarcolor,
                       child: noti != 0
                           ? badges.Badge(
-                              badgeStyle:
-                                  badges.BadgeStyle(badgeColor: Colors.blue),
+                              badgeColor: Colors.blue,
                               badgeContent: Text(
                                 '$noti',
                                 style: TextStyle(
@@ -641,7 +667,7 @@ class _checkstock extends State<checkstock> {
               )
             : null,
         child: OutlinedButton(
-          onPressed: () {
+          onPressed: () async {
             if (stringpreferences1?[1] == "ADMIN") {
               Navigator.of(context).pushReplacement(MaterialPageRoute(
                   builder: (context) => updatepage(
@@ -660,7 +686,14 @@ class _checkstock extends State<checkstock> {
               if (allproductfordisplay[index].amount == 0) {
                 return null;
               } else {
-                inputnumber(index);
+                SharedPreferences clickorderprefer =
+                    await SharedPreferences.getInstance();
+                clickorder = clickorderprefer.getBool("setbool")!;
+                if (clickorder == true) {
+                  inputnumber(index);
+                } else {
+                  return null;
+                }
               }
             }
           },
@@ -1013,16 +1046,20 @@ class _checkstock extends State<checkstock> {
           ));
 
   Future gotoorder() async {
+    SharedPreferences listdealerdata = await SharedPreferences.getInstance();
+
+    List<String> dealerdata = listdealerdata.getStringList("dealerdata")!;
+
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => orderfromsellandcus(
-              codeorder: codeorder,
-              nameorder: nameorder,
-              numorder: numorder,
-              numpercrate: numpercrate,
-              productset: productset,
-              price: price,
-              position: stringpreferences1![1],
-            )));
+            codeorder: codeorder,
+            nameorder: nameorder,
+            numorder: numorder,
+            numpercrate: numpercrate,
+            productset: productset,
+            price: price,
+            position: stringpreferences1![1],
+            namestore: dealerdata[1].toString())));
   }
 
   Future getdatafromorderpage() async {
@@ -1181,5 +1218,12 @@ class _checkstock extends State<checkstock> {
     } catch (e) {
       print(e);
     }
+  }
+
+  Future getcusdata() async {
+    SharedPreferences listdealerdata = await SharedPreferences.getInstance();
+    setState(() {
+      List<String> dealerdata = listdealerdata.getStringList("dealerdata")!;
+    });
   }
 }
