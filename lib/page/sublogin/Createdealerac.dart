@@ -301,7 +301,7 @@ class _createAcountfordealerState extends State<createAcountfordealer> {
 
   Future doregister() async {
     // getnewuser();
-    print("aa");
+
     if (_formkey.currentState!.validate()) {
       try {
         String url = "http://185.78.165.189:3000/pythonapi/createuserwithgg";
