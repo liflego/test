@@ -113,11 +113,8 @@ class _checkstock extends State<checkstock> {
               appBar: AppBar(
                 automaticallyImplyLeading:
                     stringpreferences1?[1] == "SALE" ? true : false,
-                toolbarHeight: 7.h,
-                title: Text(
-                  "STOCK",
-                  style: TextStyle(fontFamily: 'newtitlefont', fontSize: 25.sp),
-                ),
+                toolbarHeight: MediaQuery.of(context).size.height / 6,
+                title: choosetype(),
                 actions: [
                   stringpreferences1?[1] == "ADMIN"
                       ? IconButton(
@@ -164,9 +161,8 @@ class _checkstock extends State<checkstock> {
               backgroundColor: ColorConstants.backgroundbody,
               body: SingleChildScrollView(
                 child: Column(children: [
-                  choosetype(),
                   SizedBox(
-                    height: MediaQuery.of(context).size.height / 1.6,
+                    height: MediaQuery.of(context).size.height / 1.48,
                     child: ListView.builder(
                       itemBuilder: (context, index) {
                         return listItem(index);
@@ -303,25 +299,34 @@ class _checkstock extends State<checkstock> {
                   ],
                 ),
               ),
-              floatingActionButton: stringpreferences1?[1] == "ADMIN"
-                  ? null
-                  : FloatingActionButton(
-                      onPressed: gotoorder,
-                      backgroundColor: ColorConstants.appbarcolor,
-                      child: noti != 0
-                          ? badges.Badge(
-                              badgeColor: Colors.blue,
-                              badgeContent: Text(
-                                '$noti',
-                                style: TextStyle(
-                                    fontSize: 12.0.sp,
-                                    fontFamily: 'newtitlefont',
-                                    color: Colors.red),
-                              ),
-                              child: Icon(Icons.shopping_cart_outlined),
-                            )
-                          : Icon(Icons.shopping_cart_outlined),
-                    ),
+              floatingActionButton: Wrap(
+                //will break to another line on overflow
+                direction:
+                    Axis.vertical, //use vertical to show  on vertical axis
+                children: <Widget>[
+                  Container(
+                      margin: EdgeInsets.all(10),
+                      child: FloatingActionButton(
+                        backgroundColor: ColorConstants.appbarcolor,
+                        onPressed: () {
+                          //action code for button 1
+                        },
+                        child: Icon(Icons.shopping_cart_outlined),
+                      )), //button first
+
+                  Container(
+                      margin: EdgeInsets.all(10),
+                      child: FloatingActionButton(
+                        onPressed: () {
+                          //action code for button 3
+                        },
+                        backgroundColor: Colors.deepPurple,
+                        child: Icon(Icons.logout),
+                      )), // button third
+
+                  // Add more buttons here
+                ],
+              ),
             ),
           );
         },
@@ -332,201 +337,176 @@ class _checkstock extends State<checkstock> {
   Widget choosetype() {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 0.w, horizontal: 0.h),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.grey[50],
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(10),
-            bottomRight: Radius.circular(10),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.1), //color of shadow
-              spreadRadius: 5, //spread radius
-              blurRadius: 5, // blur radius
-              offset: Offset(0, 2), // changes position of shadow
-              //first paramerter of offset is left-right
-              //second parameter is top to down
-            ),
-            //you can set more BoxShadow() here
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            serchBar(),
-            //choostype
-            stringpreferences1?[1] == "ADMIN"
-                ? Row(
-                    children: [
-                      SizedBox(
-                        height: 7.0.h,
-                        width: MediaQuery.of(context).size.width / 1.15,
-                        child: toggle != 0
-                            ? SizedBox(
-                                width: MediaQuery.of(context).size.width / 4,
-                                height: MediaQuery.of(context).size.height,
-                                child: Center(
-                                    child: toggle == 1
-                                        ? Text(
-                                            "เรียงลำดับจำนวนจากน้อยไปมาก",
-                                            style: TextStyle(
-                                                fontSize: 18.sp,
-                                                fontFamily: 'newbodyfont',
-                                                color: Colors.red),
-                                          )
-                                        : Text(
-                                            "เรียงลำดับจำนวนจากมากไปน้อย",
-                                            style: TextStyle(
-                                                fontSize: 18.sp,
-                                                fontFamily: 'newbodyfont',
-                                                color: Colors.red),
-                                          )),
-                              )
-                            : ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: grouptype.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return TextButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          allproductfordisplay =
-                                              allproduct.where((_allproduct) {
-                                            var nameproduct = _allproduct
-                                                .alltype
-                                                .toLowerCase();
-                                            return nameproduct
-                                                .contains(grouptype[index]);
-                                          }).toList();
-                                        });
-                                      },
-                                      child: Container(
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                4,
-                                        height:
-                                            MediaQuery.of(context).size.height,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          border: Border.all(
-                                              color: HexColor('#39474F'),
-                                              width: 1),
-                                          color: Colors.grey[50],
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(5.0),
-                                          child: Center(
-                                            child: Text(
-                                              "${grouptype[index]}",
-                                              maxLines: 1,
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 12.0.sp),
-                                            ),
-                                          ),
-                                        ),
-                                      ));
-                                },
-                              ),
-                      ),
-                      IconButton(
-                          onPressed: () {
-                            setState(() {
-                              toggle = toggle + 1;
-
-                              if (toggle == 1) {
-                                allproduct.clear();
-                                allproductfordisplay.clear();
-                                fectalldataasc().then((value) {
-                                  setState(() {
-                                    allproduct.addAll(value);
-                                    allproductfordisplay = allproduct;
-                                  });
-                                });
-                              } else if (toggle == 2) {
-                                allproduct.clear();
-                                allproductfordisplay.clear();
-                                fectalldatadesc().then((value) {
-                                  setState(() {
-                                    allproduct.addAll(value);
-                                    allproductfordisplay = allproduct;
-                                  });
-                                });
-                              } else {
-                                toggle = 0;
-                              }
-                            });
-                          },
-                          icon: Icon(
-                            Icons.sort_outlined,
-                            color: Colors.red,
-                            size: 25.sp,
-                          ))
-                    ],
-                  )
-                ////here for customer
-                : SizedBox(
-                    height: 7.0.h,
-                    width: MediaQuery.of(context).size.width,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: grouptype.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return TextButton(
-                            onPressed: () {
-                              if (grouptype[index] == "FAVORITE") {
-                                setState(() {
-                                  grouptype[0] = "หน้าหลัก";
-                                  allproductfordisplay =
-                                      allproduct.where((_allproduct) {
-                                    var nameproduct = _allproduct.fav
-                                        .toString()
-                                        .toLowerCase();
-                                    return nameproduct.contains("1");
-                                  }).toList();
-                                });
-                              } else if (grouptype[index] == "หน้าหลัก") {
-                                setState(() {
-                                  grouptype[0] = "FAVORITE";
-                                  allproductfordisplay = allproduct;
-                                });
-                              } else {
-                                setState(() {
-                                  grouptype[0] = "FAVORITE";
-                                  allproductfordisplay =
-                                      allproduct.where((_allproduct) {
-                                    var nameproduct =
-                                        _allproduct.alltype.toLowerCase();
-                                    return nameproduct
-                                        .contains(grouptype[index]);
-                                  }).toList();
-                                });
-                              }
-                            },
-                            child: Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          serchBar(),
+          //choostype
+          stringpreferences1?[1] == "ADMIN"
+              ? Row(
+                  children: [
+                    SizedBox(
+                      height: 7.0.h,
+                      width: MediaQuery.of(context).size.width / 1.15,
+                      child: toggle != 0
+                          ? SizedBox(
                               width: MediaQuery.of(context).size.width / 4,
                               height: MediaQuery.of(context).size.height,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                    color: HexColor('#39474F'), width: 1),
-                                color: Colors.grey[50],
-                              ),
                               child: Center(
-                                child: Text(
-                                  "${grouptype[index]}",
-                                  maxLines: 1,
-                                  style: TextStyle(
-                                      color: Colors.black, fontSize: 12.0.sp),
-                                ),
-                              ),
-                            ));
-                      },
+                                  child: toggle == 1
+                                      ? Text(
+                                          "เรียงลำดับจำนวนจากน้อยไปมาก",
+                                          style: TextStyle(
+                                              fontSize: 18.sp,
+                                              fontFamily: 'newbodyfont',
+                                              color: Colors.red),
+                                        )
+                                      : Text(
+                                          "เรียงลำดับจำนวนจากมากไปน้อย",
+                                          style: TextStyle(
+                                              fontSize: 18.sp,
+                                              fontFamily: 'newbodyfont',
+                                              color: Colors.red),
+                                        )),
+                            )
+                          : ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: grouptype.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return TextButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        allproductfordisplay =
+                                            allproduct.where((_allproduct) {
+                                          var nameproduct =
+                                              _allproduct.alltype.toLowerCase();
+                                          return nameproduct
+                                              .contains(grouptype[index]);
+                                        }).toList();
+                                      });
+                                    },
+                                    child: Container(
+                                      width:
+                                          MediaQuery.of(context).size.width / 4,
+                                      height:
+                                          MediaQuery.of(context).size.height,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(
+                                            color: HexColor('#39474F'),
+                                            width: 1),
+                                        color: Colors.grey[50],
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(5.0),
+                                        child: Center(
+                                          child: Text(
+                                            "${grouptype[index]}",
+                                            maxLines: 1,
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 12.0.sp),
+                                          ),
+                                        ),
+                                      ),
+                                    ));
+                              },
+                            ),
                     ),
+                    IconButton(
+                        onPressed: () {
+                          setState(() {
+                            toggle = toggle + 1;
+
+                            if (toggle == 1) {
+                              allproduct.clear();
+                              allproductfordisplay.clear();
+                              fectalldataasc().then((value) {
+                                setState(() {
+                                  allproduct.addAll(value);
+                                  allproductfordisplay = allproduct;
+                                });
+                              });
+                            } else if (toggle == 2) {
+                              allproduct.clear();
+                              allproductfordisplay.clear();
+                              fectalldatadesc().then((value) {
+                                setState(() {
+                                  allproduct.addAll(value);
+                                  allproductfordisplay = allproduct;
+                                });
+                              });
+                            } else {
+                              toggle = 0;
+                            }
+                          });
+                        },
+                        icon: Icon(
+                          Icons.sort_outlined,
+                          color: Colors.red,
+                          size: 25.sp,
+                        ))
+                  ],
+                )
+              ////here for customer
+              : SizedBox(
+                  height: 7.0.h,
+                  width: MediaQuery.of(context).size.width,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: grouptype.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return TextButton(
+                          onPressed: () {
+                            if (grouptype[index] == "FAVORITE") {
+                              setState(() {
+                                grouptype[0] = "หน้าหลัก";
+                                allproductfordisplay =
+                                    allproduct.where((_allproduct) {
+                                  var nameproduct =
+                                      _allproduct.fav.toString().toLowerCase();
+                                  return nameproduct.contains("1");
+                                }).toList();
+                              });
+                            } else if (grouptype[index] == "หน้าหลัก") {
+                              setState(() {
+                                grouptype[0] = "FAVORITE";
+                                allproductfordisplay = allproduct;
+                              });
+                            } else {
+                              setState(() {
+                                grouptype[0] = "FAVORITE";
+                                allproductfordisplay =
+                                    allproduct.where((_allproduct) {
+                                  var nameproduct =
+                                      _allproduct.alltype.toLowerCase();
+                                  return nameproduct.contains(grouptype[index]);
+                                }).toList();
+                              });
+                            }
+                          },
+                          child: Container(
+                            width: MediaQuery.of(context).size.width / 4,
+                            height: MediaQuery.of(context).size.height,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                  color: HexColor('#39474F'), width: 1),
+                              color: Colors.grey[50],
+                            ),
+                            child: Center(
+                              child: Text(
+                                "${grouptype[index]}",
+                                maxLines: 1,
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 12.0.sp),
+                              ),
+                            ),
+                          ));
+                    },
                   ),
-          ],
-        ),
+                ),
+        ],
       ),
     );
   }
