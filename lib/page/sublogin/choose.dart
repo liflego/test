@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -44,9 +46,8 @@ class _chooseState extends State<choose> {
           key: _formkey,
           child: Center(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: 100.sp),
                 SizedBox(
                   width: MediaQuery.of(context).size.width / 2,
                   height: MediaQuery.of(context).size.height / 10,
@@ -69,7 +70,7 @@ class _chooseState extends State<choose> {
                                                 2,
                                         height:
                                             MediaQuery.of(context).size.height /
-                                                3,
+                                                2.sp,
                                         child: Column(
                                           children: [
                                             Text(
@@ -159,8 +160,8 @@ class _chooseState extends State<choose> {
                                     contentPadding: const EdgeInsets.all(20),
                                     actions: <Widget>[
                                       TextButton(
-                                        child: const Text('DONE'),
                                         onPressed: updatesuserstore,
+                                        child: const Text('DONE'),
                                       )
                                     ],
                                   ));
@@ -252,7 +253,7 @@ class _chooseState extends State<choose> {
         SharedPreferences preferences1 = await SharedPreferences.getInstance();
         getuser = preferences1.getStringList("userid")!;
         var body2 = {
-          "userid": getuser[1].toString(),
+          "userid": getuser[0].toString(),
           "namestore": namestore.text.trim(),
           "producttype": producttype.text.trim(),
           "position": "owner",
