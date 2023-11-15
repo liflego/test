@@ -24,22 +24,18 @@ class updatepage extends StatefulWidget {
   int amount;
   int amountper;
   int price;
-  String pathimg;
-  String nameimg;
 
-  updatepage(
-      {Key? key,
-      required this.codeproduct,
-      required this.nameproduct,
-      required this.type,
-      required this.pdpd,
-      required this.score,
-      required this.amount,
-      required this.amountper,
-      required this.price,
-      required this.pathimg,
-      required this.nameimg})
-      : super(key: key);
+  updatepage({
+    Key? key,
+    required this.codeproduct,
+    required this.nameproduct,
+    required this.type,
+    required this.pdpd,
+    required this.score,
+    required this.amount,
+    required this.amountper,
+    required this.price,
+  }) : super(key: key);
 
   @override
   _updatepage createState() => _updatepage();
@@ -64,7 +60,6 @@ class _updatepage extends State<updatepage> {
     score.text = widget.score.toString();
     amount.text = "0";
     price.text = widget.price.toString();
-    getnameimg = widget.nameimg;
     super.initState();
   }
 
@@ -470,15 +465,6 @@ class _updatepage extends State<updatepage> {
                                 ),
                               ],
                             ),
-                            widget.nameimg == null || widget.nameimg == "null"
-                                ? SizedBox()
-                                : Container(
-                                    color: Colors.white,
-                                    height: 90.sp,
-                                    width: 90.sp,
-                                    child: Image.network(
-                                        "http://185.78.165.189:8080/img/${widget.pathimg}/${widget.nameimg}"),
-                                  ),
                           ],
                         ),
                       ],

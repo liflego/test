@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sigma_space/classapi/class.dart';
 import 'package:sigma_space/login.dart';
 import 'package:sigma_space/main.dart';
+import 'package:sigma_space/page/sublogin/choose.dart';
 import 'package:sizer/sizer.dart';
 
 class showlogo extends StatefulWidget {
@@ -29,7 +30,7 @@ class _showlogoState extends State<showlogo> {
             .pushReplacement(MaterialPageRoute(builder: (context) => login()));
       } else {
         Navigator.of(context)
-            .pushReplacement(MaterialPageRoute(builder: (context) => MyApp()));
+            .pushReplacement(MaterialPageRoute(builder: (context) => choose()));
       }
     });
 
@@ -39,8 +40,8 @@ class _showlogoState extends State<showlogo> {
   autologin() async {
     final preferences1 = await SharedPreferences.getInstance();
 
-    if (preferences1.getStringList("codestore") != null) {
-      strintpre = preferences1.getStringList("codestore")!;
+    if (preferences1.getStringList("userid") != null) {
+      strintpre = preferences1.getStringList("userid")!;
     }
   }
 

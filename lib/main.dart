@@ -65,11 +65,11 @@ class MyAppState extends State<MyApp> {
     return Sizer(builder: (context, orientation, device) {
       return Scaffold(
         backgroundColor: Colors.white,
-        body: position?[1] == "ADMIN"
+        body: position?[3] == "ADMIN"
             ? _pageOption[_selectpage]
-            : position?[1] == "DEALER"
+            : position?[3] == "DEALER"
                 ? _pageOption3[_selectpage]
-                : _pageOption2[_selectpage],
+                : _pageOption2[0],
         bottomNavigationBar: BottomNavigationBar(
             backgroundColor: ColorConstants.appbarcolor,
             selectedItemColor: Colors.amber,
@@ -80,9 +80,9 @@ class MyAppState extends State<MyApp> {
                 _selectpage = index;
               });
             },
-            items: position?[1] == "ADMIN"
+            items: position?[3] == "ADMIN"
                 ? [
-                    new BottomNavigationBarItem(
+                    BottomNavigationBarItem(
                       icon: Icon(
                         Icons.list,
                         size: 30.sp,
@@ -90,7 +90,7 @@ class MyAppState extends State<MyApp> {
                       label: "ORDER",
                     ),
                     // ignore: unnecessary_new
-                    new BottomNavigationBarItem(
+                    BottomNavigationBarItem(
                       icon: Icon(
                         Icons.check_box_outlined,
                         size: 30.sp,
@@ -98,16 +98,16 @@ class MyAppState extends State<MyApp> {
                       label: "UPDATE",
                     ),
                   ]
-                : position?[1] == "DEALER"
+                : position?[3] == "DEALER"
                     ? [
-                        new BottomNavigationBarItem(
+                        BottomNavigationBarItem(
                           icon: Icon(
                             Icons.people_alt_sharp,
                             size: 30.sp,
                           ),
                           label: "DEALER",
                         ),
-                        new BottomNavigationBarItem(
+                        BottomNavigationBarItem(
                           icon: Icon(
                             Icons.notifications_outlined,
                             size: 30.sp,
@@ -116,26 +116,26 @@ class MyAppState extends State<MyApp> {
                         ),
                       ]
                     : [
-                        new BottomNavigationBarItem(
+                        BottomNavigationBarItem(
                           icon: Icon(
                             Icons.check_box_outlined,
                             size: 30.sp,
                           ),
                           label: "STOCK",
                         ),
-                        new BottomNavigationBarItem(
+                        BottomNavigationBarItem(
                           icon: Icon(
                             Icons.list,
                             size: 30.sp,
                           ),
                           label: "ORDER",
                         ),
-                        new BottomNavigationBarItem(
+                        BottomNavigationBarItem(
                           icon: Icon(
-                            Icons.store_sharp,
+                            Icons.person,
                             size: 30.sp,
                           ),
-                          label: "STORE",
+                          label: "CUSTOMER",
                         ),
                       ]),
       );
@@ -146,7 +146,7 @@ class MyAppState extends State<MyApp> {
     SharedPreferences preferences1 = await SharedPreferences.getInstance();
 
     setState(() {
-      stringpreferences1 = preferences1.getStringList("codestore");
+      stringpreferences1 = preferences1.getStringList("userid");
     });
   }
 

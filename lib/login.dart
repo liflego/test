@@ -259,7 +259,6 @@ class _loginState extends State<login> {
           users = [
             jsonRes["userid"].toString(),
             jsonRes["username"].toString(),
-            jsonRes["codestore"].toString(),
             jsonRes["name"].toString(),
             jsonRes["position"].toString(),
             jsonRes["namestore"].toString(),
@@ -294,17 +293,17 @@ class _loginState extends State<login> {
         } else {
           return showDialog(
               context: context,
-              builder: (_) => new AlertDialog(
+              builder: (_) => AlertDialog(
                     content: SizedBox(
                       width: MediaQuery.of(context).size.width,
-                      child: new Text(
+                      child: Text(
                         "EMAIL ADDRESS ALREADY IN USE!",
                         style: TextStyle(color: Colors.red, fontSize: 12.sp),
                       ),
                     ),
                     actions: <Widget>[
                       TextButton(
-                        child: Text('DONE'),
+                        child: const Text('DONE'),
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
@@ -315,11 +314,11 @@ class _loginState extends State<login> {
       } catch (error) {
         return showDialog(
             context: context,
-            builder: (_) => new AlertDialog(
-                  content: new Text("CAN NOT LOG IN"),
+            builder: (_) => AlertDialog(
+                  content: const Text("CAN NOT LOG IN"),
                   actions: <Widget>[
                     TextButton(
-                      child: Text('DONE'),
+                      child: const Text('DONE'),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },

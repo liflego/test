@@ -671,17 +671,14 @@ class _checkstock extends State<checkstock> {
             if (stringpreferences1?[1] == "ADMIN") {
               Navigator.of(context).pushReplacement(MaterialPageRoute(
                   builder: (context) => updatepage(
-                        codeproduct: allproductfordisplay[index].codeproduct,
-                        nameproduct: allproductfordisplay[index].nameproduct,
-                        type: allproductfordisplay[index].alltype,
-                        pdpd: allproductfordisplay[index].productset,
-                        score: allproductfordisplay[index].score,
-                        amount: allproductfordisplay[index].amount,
-                        amountper: allproductfordisplay[index].amountpercrate,
-                        price: allproductfordisplay[index].price,
-                        pathimg: allproductfordisplay[index].pathimg.toString(),
-                        nameimg: allproductfordisplay[index].nameimg.toString(),
-                      )));
+                      codeproduct: allproductfordisplay[index].codeproduct,
+                      nameproduct: allproductfordisplay[index].nameproduct,
+                      type: allproductfordisplay[index].alltype,
+                      pdpd: allproductfordisplay[index].productset,
+                      score: allproductfordisplay[index].score,
+                      amount: allproductfordisplay[index].amount,
+                      amountper: allproductfordisplay[index].amountpercrate,
+                      price: allproductfordisplay[index].price)));
             } else {
               if (allproductfordisplay[index].amount == 0) {
                 return null;
@@ -771,20 +768,6 @@ class _checkstock extends State<checkstock> {
                       ],
                     ),
                   ),
-                  allproductfordisplay[index].nameimg == null ||
-                          allproductfordisplay[index].nameimg == "null"
-                      ? SizedBox()
-                      : Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            // add border
-                            border: Border.all(width: 2, color: Colors.white),
-                          ),
-                          height: 90.sp,
-                          width: 90.sp,
-                          child: Image.network(
-                              "http://185.78.165.189:8080/img/${allproductfordisplay[index].pathimg}/${allproductfordisplay[index].nameimg}"),
-                        )
                 ],
               ),
             ),
@@ -796,14 +779,14 @@ class _checkstock extends State<checkstock> {
 
   Future<List<Getallproduct>> fectalldata() async {
     SharedPreferences preferences1 = await SharedPreferences.getInstance();
-    stringpreferences1 = preferences1.getStringList("codestore");
+    stringpreferences1 = preferences1.getStringList("userid");
     SharedPreferences preferences2 = await SharedPreferences.getInstance();
     stringpreferences2 = preferences2.getStringList("dealercode");
 
     namestore = stringpreferences1![3];
     auth = stringpreferences1![4];
 
-    String url = "http://185.78.165.189:3000/pythonapi/codestore";
+    String url = "http://185.78.165.189:3000/pythonapi/userid";
     String url1 = "http://185.78.165.189:3000/pythonapi/getproductfordealer";
 
     List getgrouptype = [];
@@ -832,15 +815,13 @@ class _checkstock extends State<checkstock> {
             u["type"],
             u["score"],
             u["price"],
-            u["fav"],
-            u["pathimg"],
-            u["nameimg"]);
+            u["fav"]);
         _allproduct.add(data);
         getgrouptype.add(u["type"]);
         getamount.add(u["amount"]);
       }
     } else {
-      var body = {"codestore": stringpreferences1![0]};
+      var body = {"userid": stringpreferences1![0]};
       http.Response response = await http.post(Uri.parse(url),
           headers: {'Content-Type': 'application/json; charset=utf-8'},
           body: JsonEncoder().convert(body));
@@ -853,14 +834,12 @@ class _checkstock extends State<checkstock> {
             u["amount"],
             u["amountpercrate"],
             u["productset"],
-            u["type"],
+            u["pdtype"],
             u["score"],
             u["price"],
-            u["fav"],
-            u["pathimg"],
-            u["nameimg"]);
+            u["fav"]);
         _allproduct.add(data);
-        getgrouptype.add(u["type"]);
+        getgrouptype.add(u["pdtype"]);
         getamount.add(u["amount"]);
       }
     }
@@ -893,9 +872,7 @@ class _checkstock extends State<checkstock> {
           u["type"],
           u["score"],
           u["price"],
-          u["fav"],
-          u["pathimg"],
-          u["nameimg"]);
+          u["fav"]);
       _allproduct.add(data);
     }
 
@@ -926,9 +903,7 @@ class _checkstock extends State<checkstock> {
           u["type"],
           u["score"],
           u["price"],
-          u["fav"],
-          u["pathimg"],
-          u["nameimg"]);
+          u["fav"]);
       _allproduct.add(data);
     }
 
